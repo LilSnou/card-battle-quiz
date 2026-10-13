@@ -51,29 +51,26 @@ h1,h2,h3,.serif{font-family:Georgia,'Palatino Linotype','Times New Roman',serif;
 }
 
 /* ---------- Экран настройки ---------- */
-#screen-setup{max-width:980px; margin:0 auto; padding:40px 18px 70px; text-align:center;}
-.logo{
-  font-size:54px; letter-spacing:4px; color:var(--gold);
-  text-shadow:0 0 22px rgba(232,194,104,.45), 0 4px 0 #000;
+#screen-setup{
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:34px; padding:30px 18px;
 }
-.logo-sub{margin:12px 0 8px; color:var(--violet); font-size:20px;}
-.rules{
-  margin:24px auto 34px; max-width:860px; text-align:left;
-  background:rgba(0,0,0,.4); border:1px solid var(--edge); border-radius:16px;
-  padding:22px 30px; font-size:17.5px; line-height:1.65; color:var(--silver);
-}
-.rules b{color:var(--gold);}
-.rules li{margin:7px 0 7px 20px;}
-.nickname-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:14px; max-width:900px; margin:0 auto;}
-@media (max-width:820px){.nickname-grid{grid-template-columns:repeat(2,1fr);}}
-.nick-slot{display:flex; flex-direction:column; gap:6px;}
-.nick-slot label{font-size:14px; color:var(--violet); text-align:left; padding-left:8px;}
+.nickname-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; width:100%; max-width:660px;}
+.nick-slot{display:flex; align-items:center; gap:14px;}
 .nick-slot input{
-  background:#140e1d; border:2px solid var(--edge); border-radius:12px;
-  padding:13px 10px; font-size:17px; font-weight:600; color:var(--gold-bright);
+  flex:1; min-width:0;
+  background:#140e1d; border:2px solid var(--edge); border-radius:13px;
+  padding:15px 16px; font-size:19px; font-weight:600; color:var(--gold-bright);
   text-align:center; outline:none; box-shadow:inset 0 3px 8px rgba(0,0,0,.6);
 }
-.nick-slot input:focus{border-color:var(--gold); box-shadow:0 0 14px rgba(232,194,104,.35);}
+.nick-slot input:focus{border-color:var(--gold); box-shadow:0 0 16px rgba(232,194,104,.4);}
+.avatar{
+  flex:none; width:56px; height:56px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-size:30px;
+  border:2px solid var(--edge); box-shadow:inset 0 0 14px rgba(0,0,0,.5), 0 4px 10px rgba(0,0,0,.5);
+  background:var(--panel-2);
+}
+.avatar-sm{flex:none; width:32px; height:32px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:18px; background:rgba(0,0,0,.45); border:1px solid var(--edge);}
 .btn{
   display:inline-block; cursor:pointer; user-select:none;
   font-family:Georgia,serif; font-weight:700; letter-spacing:.8px;
@@ -91,12 +88,11 @@ h1,h2,h3,.serif{font-family:Georgia,'Palatino Linotype','Times New Roman',serif;
   box-shadow:0 0 16px rgba(212,63,63,.3), 0 8px 18px rgba(0,0,0,.55);
 }
 .btn-ruby:hover{box-shadow:0 0 30px rgba(212,63,63,.6), 0 8px 18px rgba(0,0,0,.55);}
-.btn-big{font-size:24px; padding:18px 52px; margin-top:30px;}
-.hint{font-size:14.5px; color:var(--muted); text-align:center; margin-top:14px;}
+.btn-big{font-size:24px; padding:18px 56px;}
 
 /* ---------- Игровой экран ---------- */
-#screen-game{max-width:1240px; margin:0 auto; padding:18px 16px 80px;}
-#topbar{display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:14px; flex-wrap:wrap; text-align:center;}
+#screen-game{max-width:1280px; margin:0 auto; padding:18px 16px 80px;}
+#topbar{display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:14px; flex-wrap:wrap;}
 #chapter{font-size:32px; color:var(--gold); text-shadow:0 0 16px rgba(232,194,104,.4); letter-spacing:2px; flex:1; text-align:center;}
 #round-label{font-size:18px; color:var(--violet); font-weight:600;}
 #mute-btn{background:var(--panel); border:2px solid var(--edge); color:var(--silver); border-radius:12px; padding:9px 16px; cursor:pointer; font-size:16px;}
@@ -114,8 +110,9 @@ h1,h2,h3,.serif{font-family:Georgia,'Palatino Linotype','Times New Roman',serif;
 .boss-emoji{font-size:78px; line-height:1; filter:drop-shadow(0 6px 10px rgba(0,0,0,.7));}
 .boss-name{font-size:25px; margin:10px 0 4px; color:var(--ruby); text-shadow:0 0 12px rgba(212,63,63,.5); letter-spacing:1px;}
 .duel-side{width:320px;}
-.duel-side .who{font-size:23px; font-weight:700; color:var(--gold-bright); margin:4px 0;}
+.duel-side .who{font-size:23px; font-weight:700; color:var(--gold-bright); margin:6px 0; display:flex; align-items:center; justify-content:center; gap:10px;}
 .duel-side .role{font-size:14px; color:var(--violet); letter-spacing:2px;}
+.duel-avatar{width:60px; height:60px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:34px; background:rgba(0,0,0,.45); border:2px solid var(--edge); margin:0 auto;}
 .duel-arrow{display:flex; align-items:center; justify-content:center; font-size:48px; animation:pulseArrow 1.1s infinite; text-shadow:0 0 20px rgba(212,63,63,.7);}
 @keyframes pulseArrow{0%,100%{transform:scale(1);}50%{transform:scale(1.25);}}
 
@@ -134,7 +131,7 @@ h1,h2,h3,.serif{font-family:Georgia,'Palatino Linotype','Times New Roman',serif;
 .hp-fill.low{background:linear-gradient(180deg,#f6c35c,#c96a1e);}
 .hp-fill.crit{background:linear-gradient(180deg,#f0705c,#a3261e);}
 .hp-text{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:#fff; text-shadow:0 1px 3px #000; letter-spacing:.5px;}
-.small .hp-bar{height:16px;} .small .hp-text{font-size:12px;}
+.small .hp-bar{height:16px;} .small .hp-text{font-size:13px;}
 
 /* --- Стол с картами тем --- */
 #table-label{text-align:center; font-size:21px; color:var(--silver); margin:8px 0 14px;}
@@ -164,8 +161,8 @@ h1,h2,h3,.serif{font-family:Georgia,'Palatino Linotype','Times New Roman',serif;
 .topic-card.empty{opacity:.3; pointer-events:none; filter:grayscale(1);}
 
 /* --- Сетка игроков --- */
-#players-grid{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:14px; max-width:1150px; margin:0 auto;}
-@media (max-width:1050px){#players-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+#players-grid{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:14px; max-width:1180px; margin:0 auto;}
+@media (max-width:1080px){#players-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 .player-card{padding:12px 14px; transition:box-shadow .2s, transform .2s;}
 .player-card.active{border-color:var(--gold); box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 0 26px rgba(232,194,104,.55); transform:translateY(-4px);}
 .player-card.dead{filter:grayscale(.9) brightness(.6);}
@@ -173,7 +170,8 @@ h1,h2,h3,.serif{font-family:Georgia,'Palatino Linotype','Times New Roman',serif;
   content:"☠"; position:absolute; top:6px; right:10px; font-size:24px; color:var(--ruby); z-index:2;
   text-shadow:0 0 8px rgba(212,63,63,.7);
 }
-.p-name{font-family:Georgia,serif; font-weight:700; font-size:19px; color:var(--gold-bright); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.p-head{display:flex; align-items:center; gap:9px;}
+.p-name{font-family:Georgia,serif; font-weight:700; font-size:20px; color:var(--gold-bright); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .p-stats{display:flex; justify-content:space-between; font-size:14px; color:var(--muted); margin-top:6px;}
 .p-stats b{color:var(--silver);}
 .p-queue{position:absolute; top:-11px; left:-8px; background:var(--panel-2); border:1px solid var(--gold); color:var(--gold-bright); font-size:12px; font-weight:700; border-radius:10px; padding:3px 9px; box-shadow:0 3px 8px rgba(0,0,0,.6);}
@@ -184,12 +182,12 @@ h1,h2,h3,.serif{font-family:Georgia,'Palatino Linotype','Times New Roman',serif;
 /* ---------- Модалка вопроса ---------- */
 .overlay{
   position:fixed; inset:0; background:rgba(5,3,8,.78); backdrop-filter:blur(3px);
-  display:flex; align-items:center; justify-content:center; z-index:100; padding:16px;
+  display:flex; align-items:center; justify-content:center; z-index:100; padding:14px;
   opacity:0; pointer-events:none; transition:opacity .25s;
 }
 .overlay.show{opacity:1; pointer-events:auto;}
 .q-card{
-  width:min(760px, 96vw); max-height:92vh; overflow:auto; padding:26px 34px 30px;
+  width:min(1000px, 97vw); max-height:94vh; overflow:auto; padding:30px 42px 36px;
   border-color:var(--gold);
   transform:rotateY(80deg) scale(.8); transition:transform .35s;
 }
@@ -200,40 +198,48 @@ h1,h2,h3,.serif{font-family:Georgia,'Palatino Linotype','Times New Roman',serif;
   animation:megaGlow 1.2s infinite alternate;
 }
 @keyframes megaGlow{from{box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 0 26px rgba(212,63,63,.5);} to{box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 0 56px rgba(212,63,63,.85);}}
-.q-head{display:flex; justify-content:space-between; align-items:center; gap:12px; border-bottom:1px solid var(--edge); padding-bottom:14px;}
-.q-topic{font-family:Georgia,serif; font-weight:700; font-size:21px; color:var(--violet);}
-.q-for{font-size:17px; color:var(--silver); margin-top:4px; text-align:right;}
+.q-head{display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid var(--edge); padding-bottom:14px;}
+.q-topic{font-family:Georgia,serif; font-weight:700; font-size:24px; color:var(--violet);}
+.q-for{font-size:19px; color:var(--silver); margin-top:5px; text-align:left;}
 .q-for b{color:var(--gold);}
-.q-diff{font-size:24px; letter-spacing:2px; color:var(--gold); white-space:nowrap;}
-.q-diff .dmg-note{font-size:15px; color:var(--muted); letter-spacing:0;}
+.q-right{display:flex; flex-direction:column; align-items:flex-end; gap:6px;}
+.q-diff{font-size:26px; letter-spacing:2px; color:var(--gold); white-space:nowrap;}
+.q-diff .dmg-note{font-size:16px; color:var(--muted); letter-spacing:0;}
+.q-timer{
+  font-family:Georgia,serif; font-size:46px; font-weight:700; line-height:1;
+  color:var(--silver); text-shadow:0 0 14px rgba(215,220,229,.35);
+}
+.q-timer.low{color:var(--ruby); text-shadow:0 0 18px rgba(212,63,63,.8); animation:timerPulse .5s infinite alternate;}
+@keyframes timerPulse{from{transform:scale(1);} to{transform:scale(1.12);}}
+.q-timer-label{font-size:12px; color:var(--muted); letter-spacing:2px;}
 .q-mega-label{
-  font-family:Georgia,serif; font-size:26px; font-weight:700; color:#ff6b5e;
-  text-shadow:0 0 14px rgba(212,63,63,.8); letter-spacing:2px; text-align:center; margin-top:10px;
+  font-family:Georgia,serif; font-size:30px; font-weight:700; color:#ff6b5e;
+  text-shadow:0 0 14px rgba(212,63,63,.8); letter-spacing:2px; text-align:center; margin-top:12px;
   animation:megaPulse 1s infinite alternate;
 }
 @keyframes megaPulse{from{transform:scale(1);} to{transform:scale(1.06);}}
-.q-text{font-family:Georgia,serif; font-size:25px; line-height:1.45; margin:20px 6px; color:var(--silver); text-align:center;}
-.q-opts{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
-@media (max-width:640px){.q-opts{grid-template-columns:1fr;}}
+.q-text{font-family:Georgia,serif; font-size:30px; line-height:1.45; margin:24px 6px; color:var(--silver); text-align:center;}
+.q-opts{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+@media (max-width:680px){.q-opts{grid-template-columns:1fr;}}
 .q-opt{
-  cursor:pointer; text-align:left; font-size:18px; font-weight:600; color:var(--silver);
+  cursor:pointer; text-align:left; font-size:20px; font-weight:600; color:var(--silver);
   background:linear-gradient(165deg,#241a33,#171021);
-  border:2px solid var(--edge); border-radius:13px; padding:15px 14px;
-  display:flex; gap:11px; align-items:center;
+  border:2px solid var(--edge); border-radius:14px; padding:18px 16px;
+  display:flex; gap:13px; align-items:center;
   transition:transform .1s, border-color .15s, box-shadow .15s;
 }
 .q-opt:hover{border-color:var(--gold); box-shadow:0 0 16px rgba(232,194,104,.35); transform:translateY(-2px);}
 .q-opt .letter{
-  flex:0 0 30px; height:30px; border-radius:9px; background:var(--panel-2);
+  flex:0 0 34px; height:34px; border-radius:10px; background:var(--panel-2);
   border:1px solid var(--violet); color:var(--violet);
-  display:flex; align-items:center; justify-content:center; font-family:Georgia,serif; font-weight:700; font-size:17px;
+  display:flex; align-items:center; justify-content:center; font-family:Georgia,serif; font-weight:700; font-size:19px;
 }
 .q-opt.correct{border-color:var(--emerald); background:linear-gradient(165deg,#14301f,#0e2418); box-shadow:0 0 18px rgba(74,222,128,.4);}
 .q-opt.correct .letter{border-color:var(--emerald); color:var(--emerald);}
 .q-opt.wrong{border-color:var(--ruby); background:linear-gradient(165deg,#331315,#240e10); box-shadow:0 0 18px rgba(212,63,63,.4);}
 .q-opt.wrong .letter{border-color:var(--ruby); color:#ff8a80;}
-.q-opt.disabled{pointer-events:none; opacity:.8;}
-.q-actions{margin-top:20px; text-align:center;}
+.q-opt.disabled{pointer-events:none; opacity:.85;}
+.q-actions{margin-top:22px; text-align:center;}
 
 /* ---------- Тост ---------- */
 #toast{
@@ -251,6 +257,7 @@ h1,h2,h3,.serif{font-family:Georgia,'Palatino Linotype','Times New Roman',serif;
 #screen-results{max-width:1060px; margin:0 auto; padding:36px 16px 70px;}
 #results-title{text-align:center; font-size:44px; color:var(--gold); text-shadow:0 0 22px rgba(232,194,104,.5);}
 #results-sub{text-align:center; color:var(--violet); margin:10px 0 30px; font-size:19px;}
+#results-sub:empty{display:none;}
 .podium{display:flex; justify-content:center; gap:20px; margin-bottom:32px; flex-wrap:wrap;}
 .podium .card{width:250px; padding:20px; text-align:center; border-color:var(--gold);}
 .podium .medal{font-size:48px;}
@@ -271,25 +278,8 @@ table.stats td.place{font-weight:800; font-family:Georgia,serif; color:var(--sil
 
 <!-- ================= ЭКРАН НАСТРОЙКИ ================= -->
 <div id="screen-setup">
-  <div class="logo">☠ ТЁМНЫЕ КАРТЫ ☠</div>
-  <div class="logo-sub">Квиз-битва экипажа против Босса · карточная игра для компании до 10 человек</div>
-
-  <div class="rules">
-    <b>📜 Законы Битвы:</b>
-    <li>10 игроков, у каждого <b>500 HP</b>. Босс владеет <b>1500 HP</b>.</li>
-    <li>Ход случайного игрока (за круг отвечают все): он выбирает карту темы со стола.</li>
-    <li><b>Правильный ответ</b> — урон Боссу: ★ = 50, ★★ = 100, ★★★ = 150.</li>
-    <li><b>Неправильный ответ</b> — столько же урона получает сам игрок. При 0 HP — выбыл.</li>
-    <li>🔥 <b>Мегавопрос</b> может появиться один раз за игру — он сносит <b>500 HP</b> цели!</li>
-    <li>Кто добил Босса — <b>+3 балла</b>. Затем Глава II: игроки бьют друг друга.</li>
-    <li>Финал — когда остаётся <b>3 игрока</b>. Топ-3 по урону получают <b>5 / 3 / 1 балл</b>.</li>
-    <li>Если все вопросы закончились раньше — игра завершается, места по <b>урону и HP</b>.</li>
-  </div>
-
-  <h2 style="color:var(--gold); margin-bottom:16px; font-size:26px;">⚒ Экипаж — впишите ники</h2>
   <div class="nickname-grid" id="nick-grid"></div>
   <button class="btn btn-ruby btn-big" id="start-btn">⚔ Начать битву</button>
-  <div class="hint">Пустые поля получат ники «Игрок 1…10». Игроки отвечают вслух, правильность отмечает ведущий.</div>
 </div>
 
 <!-- ================= ИГРОВОЙ ЭКРАН ================= -->
@@ -303,8 +293,8 @@ table.stats td.place{font-weight:800; font-family:Georgia,serif; color:var(--sil
   <div id="arena">
     <!-- Босс (глава I) -->
     <div id="boss-zone" class="card arena-card">
-      <div class="boss-emoji" id="boss-emoji">🦑</div>
-      <div class="boss-name" id="boss-name">КРАКЕН, ПОЖИРАТЕЛЬ МОРЕЙ</div>
+      <div class="boss-emoji" id="boss-emoji">👹</div>
+      <div class="boss-name" id="boss-name">ТЁМНЫЙ ВЛАДЫКА</div>
       <div class="hp-wrap">
         <div class="hp-bar"><div class="hp-fill" id="boss-hp-fill"></div><div class="hp-text" id="boss-hp-text"></div></div>
       </div>
@@ -314,15 +304,15 @@ table.stats td.place{font-weight:800; font-family:Georgia,serif; color:var(--sil
     <div id="duel-zone" class="hidden" style="display:flex; gap:18px; align-items:stretch;">
       <div class="card arena-card duel-side">
         <div class="role">АТАКУЕТ</div>
+        <div class="duel-avatar" id="attacker-avatar">🗡️</div>
         <div class="who" id="attacker-name">—</div>
-        <div class="boss-emoji" style="font-size:56px;" id="attacker-emoji">🗡️</div>
         <div class="hp-wrap small"><div class="hp-bar"><div class="hp-fill" id="attacker-hp-fill"></div><div class="hp-text" id="attacker-hp-text"></div></div></div>
       </div>
       <div class="duel-arrow">⚔️</div>
       <div class="card arena-card duel-side">
         <div class="role">ЦЕЛЬ</div>
+        <div class="duel-avatar" id="target-avatar">🎯</div>
         <div class="who" id="target-name">—</div>
-        <div class="boss-emoji" style="font-size:56px;" id="target-emoji">🎯</div>
         <div class="hp-wrap small"><div class="hp-bar"><div class="hp-fill" id="target-hp-fill"></div><div class="hp-text" id="target-hp-text"></div></div></div>
       </div>
     </div>
@@ -341,7 +331,11 @@ table.stats td.place{font-weight:800; font-family:Georgia,serif; color:var(--sil
         <div class="q-topic" id="q-topic">Тема</div>
         <div class="q-for" id="q-for" style="text-align:left;">Отвечает: —</div>
       </div>
-      <div class="q-diff" id="q-diff">★</div>
+      <div class="q-right">
+        <div class="q-diff" id="q-diff">★</div>
+        <div class="q-timer hidden" id="q-timer">15</div>
+        <div class="q-timer-label hidden" id="q-timer-label">СЕКУНД</div>
+      </div>
     </div>
     <div id="q-mega-label" class="q-mega-label hidden">🔥 МЕГАВОПРОС 🔥</div>
     <div class="q-text" id="q-text"></div>
@@ -364,7 +358,7 @@ table.stats td.place{font-weight:800; font-family:Georgia,serif; color:var(--sil
 
 <!-- ================= ЭКРАН ИТОГОВ ================= -->
 <div id="screen-results" class="hidden">
-  <div id="results-title">☠ ИГРА ОКОНЧЕНА ☠</div>
+  <div id="results-title">ИГРА ОКОНЧЕНА</div>
   <div id="results-sub"></div>
   <div class="podium" id="podium"></div>
   <div class="table-wrap"><table class="stats" id="stats-table"></table></div>
@@ -383,8 +377,25 @@ const BOSS_HP         = 1500;  // HP босса
 const DMG             = {1:50, 2:100, 3:150}; // урон по сложности ★/★★/★★★
 const MEGA_DMG        = 500;   // урон мегавопроса
 const MEGA_CHANCE     = 0.12;  // шанс, что следующий вопрос станет мега (один раз за игру)
+const ANSWER_TIME     = 15;    // секунд на ответ (у мегавопроса таймера нет)
 const BOSS_KILL_BONUS = 3;     // баллы за добивание босса
 const PRIZE           = [5, 3, 1]; // баллы за 1/2/3 место по итогам
+
+/* ============================================================
+   АВАТАРКИ ИГРОКОВ (10 штук, распределяются рандомно)
+   ============================================================ */
+const AVATARS = [
+  {emoji:"🧙", name:"Маг",      color:"#5b21b6"},
+  {emoji:"🐉", name:"Дракон",   color:"#9d174d"},
+  {emoji:"🧟", name:"Зомби",    color:"#065f46"},
+  {emoji:"🤓", name:"Школьник", color:"#92400e"},
+  {emoji:"🐱", name:"Котик",    color:"#1e40af"},
+  {emoji:"🗿", name:"Мем",      color:"#7c2d12"},
+  {emoji:"👧", name:"Девочка",  color:"#4c1d95"},
+  {emoji:"😎", name:"Крутой",   color:"#0f766e"},
+  {emoji:"🐺", name:"Волк",     color:"#854d0e"},
+  {emoji:"👻", name:"Призрак",  color:"#6b21a8"}
+];
 
 /* ============================================================
    ТЕМЫ И ВОПРОСЫ (тестовые — потом заменим на свои)
@@ -393,28 +404,28 @@ const PRIZE           = [5, 3, 1]; // баллы за 1/2/3 место по ит
    ============================================================ */
 const TOPICS = [
   {
-    name:"Пиратская история", emoji:"🏴‍☠️",
+    name:"Кино и мультфильмы", emoji:"🎬",
     questions:[
-      {difficulty:1, text:"Кто считается «отцом пиратства» Золотого века?", options:["Эдвард Тич, Чёрная Борода","Генри Морган","Калико Джек","Ван Дер Декен"], answer:0},
-      {difficulty:1, text:"Как назывался классический пиратский флаг с черепом?", options:["Джолли Роджер","Блэк Баннер","Королевский штандарт","Морской дракон"], answer:0},
-      {difficulty:1, text:"Остров-убежище пиратов в Карибском море?", options:["Нассау","Мадагаскар","Тасмания","Бали"], answer:0},
-      {difficulty:1, text:"Кто из пираток был осуждён в 1720 году вместе с Энн Бонни?", options:["Мэри Рид","Леди Грей","Анна Мария","Изабель"], answer:0},
-      {difficulty:2, text:"Как назывался флагманский корабль Чёрной Бороды?", options:["Queen Anne's Revenge","Black Pearl","Golden Hind","Flying Dutchman"], answer:0},
-      {difficulty:2, text:"Что означал чёрный флаг по пиратским правилам?", options:["Пощады не будет, бой на уничтожение","Торговля без боя","Право на отступление","Приглашение к обеду"], answer:0},
-      {difficulty:2, text:"Когда пришёлся расцвет «Золотого века пиратства»?", options:["Начало XVIII века","Середина XVI века","Конец XIX века","Во времена Троянской войны"], answer:0},
-      {difficulty:2, text:"Пират Бартоломью Робертс прославился тем, что...", options:["Захватил более 400 кораблей","Переплыл Тихий океан в одиночку","Изобрёл компас","Открыл Антарктиду"], answer:0},
-      {difficulty:3, text:"Кто из британских офицеров погубил Чёрную Бороду в бою?", options:["Лейтенант Роберт Мэйнор","Капитан Джонс","Адмирал Нельсон","Генерал Веллингтон"], answer:0},
-      {difficulty:3, text:"Как называли испанских пиратов, действовавших по королевской лицензии?", options:["Корсары","Буканьеры","Флибустьеры","Канониры"], answer:0},
-      {difficulty:1, text:"Какой остров в Индийском океане славился пиратской республикой?", options:["Мадагаскар","Маврикий","Реюньон","Занзибар"], answer:0},
-      {difficulty:1, text:"Как называли пиратов Карибов, живших за счёт охоты и грабежа?", options:["Буканьеры","Корсары","Флибустьеры","Канониры"], answer:0},
-      {difficulty:2, text:"Кто на пиратском корабле следил за добычей и правами команды?", options:["Квартирмейстер","Боцман","Рульман","Капеллан"], answer:0},
-      {difficulty:2, text:"Кто был наставником и капитаном Чёрной Бороды?", options:["Бенджамин Хорниголд","Сэмюэл Беллами","Джек Рэкхэм","Генри Морган"], answer:0},
-      {difficulty:3, text:"У берегов какой колонии был убит Чёрная Борода?", options:["Северная Каролина","Вирджиния","Багамы","Ямайка"], answer:0},
-      {difficulty:1, text:"Как называется самый большой парус на мачте?", options:["Грот","Фок","Крюйс","Брамсель"], answer:0},
-      {difficulty:2, text:"Что такое «шканцы»?", options:["Палуба между мачтами, откуда управляли парусами","Толстый канат","Грузовой трюм","Кормовое колесо"], answer:0},
-      {difficulty:2, text:"Что пираты делили поровну по своему кодексу?", options:["Добычу","Провизию","Паруса","Карты"], answer:0},
-      {difficulty:1, text:"На каком море хозяйничали алжирские корсары?", options:["Средиземное","Карибское","Баренцево","Жёлтое"], answer:0},
-      {difficulty:3, text:"Как называется национальный флаг корабля?", options:["Гюйс","Вымпел","Флагшток","Брейд-вымпел"], answer:0}
+      {difficulty:1, text:"Кто снял фильм «Аватар» (2009)?", options:["Джеймс Кэмерон","Стивен Спилберг","Кристофер Нолан","Ридли Скотт"], answer:0},
+      {difficulty:1, text:"Какого цвета таблетку выбрил Нео в «Матрице»?", options:["Красную","Синюю","Зелёную","Чёрную"], answer:0},
+      {difficulty:1, text:"Сколько гномов помогало Белоснежке?", options:["7","5","9","12"], answer:0},
+      {difficulty:1, text:"Как зовут принцессу из мультфильма «Холодное сердце»?", options:["Эльза","Арань","Мерида","Покахонтас"], answer:0},
+      {difficulty:1, text:"Какая студия создала мультфильм «В поисках Немо»?", options:["Pixar","DreamWorks","Sony Pictures","Blue Sky"], answer:0},
+      {difficulty:2, text:"Кто озвучил Шрека в оригинальной озвучке?", options:["Майк Майерс","Эдди Мерфи","Том Хэнкс","Джим Керри"], answer:0},
+      {difficulty:2, text:"Кто сыграл Индиану Джонса?", options:["Харрисон Форд","Том Круз","Брэд Питт","Леонардо ДиКаприо"], answer:0},
+      {difficulty:2, text:"Кто главный злодей в «Короле Леве»?", options:["Шрам","Кову","Зазу","Банти"], answer:0},
+      {difficulty:2, text:"В каком городе орудует Бэтмен?", options:["Готэм","Метрополис","Стар-Сити","Хэдленд"], answer:0},
+      {difficulty:2, text:"Кто написал книжную основу «Гарри Поттера»?", options:["Джоан Роулинг","Джон Толкин","Джордж Мартин","Станислав Лем"], answer:0},
+      {difficulty:2, text:"Сколько хоббитов вместе с Фродо отправилось в поход из Шира?", options:["4","3","5","2"], answer:0},
+      {difficulty:2, text:"Как зовут робота из мультфильма «ВАЛЛ-И»?", options:["ВАЛЛ-Э","ОМНИ-9","ЧЕЛ-7","РУБИН"], answer:0},
+      {difficulty:3, text:"В каком году вышел первый «Звёздный войны»?", options:["1977","1980","1975","1983"], answer:0},
+      {difficulty:3, text:"Кто сыграл Джокера в «Тёмном рыцаре»?", options:["Хит Леджер","Джек Николсон","Хоакин Феникс","Джаред Лето"], answer:0},
+      {difficulty:3, text:"Как назывался первый полнометражный мультфильм Pixar?", options:["«История игрушек»","«Жизнь насекомых»","«Вверх»","«Багз Банни»"], answer:0},
+      {difficulty:3, text:"Кто озвучивает Машу в «Маше и Медведе»?", options:["Карина Разумовская","Клара Румянова","Тася Носова","Людмила Хитяева"], answer:0},
+      {difficulty:3, text:"Сколько всего частей у цикла «Матрица»?", options:["4","3","2","5"], answer:0},
+      {difficulty:3, text:"Какой мультфильм Pixar посвящён музыке и Мексике?", options:["«Тайна Коко»","«Головоломка»","«Вверх»","«Немо»"], answer:0},
+      {difficulty:1, text:"Как называют желтых помощников Грю?", options:["Миньоны","Гремлины","Смурфы","Пиксели"], answer:0},
+      {difficulty:1, text:"Кто главный герой мультфильма «Шрек»?", options:["Шрек","Осёл","Фиона","Лорд Фаркуад"], answer:0}
     ]
   },
   {
@@ -462,7 +473,7 @@ const TOPICS = [
       {difficulty:2, text:"В каком году произошла Куликовская битва?", options:["1380","1240","1480","1147"], answer:0},
       {difficulty:2, text:"Кто из русских правителей принял титул императора в 1721 году?", options:["Пётр I","Иван Грозный","Екатерина II","Александр I"], answer:0},
       {difficulty:2, text:"Кто, по преданию, основал Карфаген?", options:["Финикийцы","Римляне","Древние греки","Египтяне"], answer:0},
-      {difficulty:3, text:"Как звали коня Александра Македонского?", options:["Буцефал","Роксана","Борей","Зевс"], answer:0},
+      {difficulty:3, text:"Как звали коня Александра Македонского?", options:["Буцефал","Роксана","Борей","Аида"], answer:0},
       {difficulty:3, text:"В каком году произошло Крещение Руси?", options:["988","862","1054","1147"], answer:0},
       {difficulty:3, text:"Кто первым в мире полетел в космос в 1961 году?", options:["Юрий Гагарин","Алан Шепард","Нил Армстронг","Герман Титов"], answer:0}
     ]
@@ -526,16 +537,13 @@ let state = null;
 let muted = false;
 
 function newGame(names){
+  const avOrder = shuffle(AVATARS.map((a,i)=>i)); // аватарки рандомно игрокам
   const players = names.map((n,i)=>({
     id:i, name:n, hp:START_HP, alive:true,
-    dmgBoss:0,       // урон боссу
-    dmgDealt:0,      // всего нанесено урона (боссу + игрокам)
-    dmgTaken:0,      // всего получено урона
-    correct:0,       // верных ответов
-    answers:0,       // всего ответов
-    killedBy:null,   // кто добил (в PvP)
-    eliminatedIn:null,
-    points:0
+    avatar:AVATARS[avOrder[i]],
+    dmgBoss:0, dmgDealt:0, dmgTaken:0,
+    correct:0, answers:0,
+    killedBy:null, eliminatedIn:null, points:0
   }));
   state = {
     phase:"boss",              // boss | pvp | end
@@ -544,9 +552,9 @@ function newGame(names){
     boss:{hp:BOSS_HP, maxHp:BOSS_HP},
     bossKiller:null,
     queue:[], queuePos:0,
-    current:null,              // {attackerIdx, targetIdx|null, mega:bool}
+    current:null,              // {attackerIdx, targetIdx|null, mega, answerIdx, q, answered}
     pools:TOPICS.map(t=>makePool(t.questions.length)),
-    megaUsed:false,            // мегавопрос за игру только один раз
+    megaUsed:false,
     finishReason:null
   };
   newRound();
@@ -600,6 +608,7 @@ const sfx = {
   wrong:()=>{tone(160,.3,"sawtooth",.16); tone(110,.35,"sawtooth",.16,.08);},
   hit:()=>tone(90,.18,"square",.2),
   mega:()=>{[220,180,140,100].forEach((f,i)=>tone(f,.25,"sawtooth",.2,i*.09));},
+  tick:()=>tone(880,.05,"square",.06),
   die:()=>{tone(300,.2,"sawtooth",.18); tone(180,.3,"sawtooth",.18,.15); tone(90,.5,"sawtooth",.18,.3);},
   win:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.22,"sine",.2,i*.14));}
 };
@@ -631,8 +640,10 @@ function renderDuelZone(){
   const at = state.players[state.current.attackerIdx];
   const tg = state.players[state.current.targetIdx];
   $("attacker-name").textContent = at.name;
+  $("attacker-avatar").textContent = at.avatar.emoji;
   setHpBar($("attacker-hp-fill"), $("attacker-hp-text"), at.hp, START_HP);
   $("target-name").textContent = tg.name;
+  $("target-avatar").textContent = tg.avatar.emoji;
   setHpBar($("target-hp-fill"), $("target-hp-text"), tg.hp, START_HP);
 }
 
@@ -643,16 +654,16 @@ function renderTable(){
     const left = state.pools[i].order.length - state.pools[i].pos;
     const div = document.createElement("div");
     div.className = "card topic-card" + (left<=0 ? " empty" : "");
-    div.innerHTML = '<div class="t-emoji">'+t.emoji+'</div><div class="t-name">'+esc(t.name)+'</div><div class="t-left">в колоде: '+left+'</div>';
+    div.innerHTML = '<div class="t-emoji">'+t.emoji+'</div><div class="t-name">'+esc(t.name)+'</div>';
     div.onclick = ()=>pickTopic(i);
     wrap.appendChild(div);
   });
   const cur = state.players[state.current.attackerIdx];
   if(state.phase==="pvp"){
     const tg = state.players[state.current.targetIdx];
-    $("table-label").innerHTML = "Ходит <b>"+esc(cur.name)+"</b> · цель: <b>"+esc(tg.name)+"</b> — выбери карту темы";
+    $("table-label").innerHTML = "<b>"+esc(cur.name)+"</b> ⚔ <b>"+esc(tg.name)+"</b>";
   }else{
-    $("table-label").innerHTML = "Ходит <b>"+esc(cur.name)+"</b> — выбери карту темы";
+    $("table-label").innerHTML = "Ходит <b>"+esc(cur.name)+"</b>";
   }
 }
 
@@ -666,9 +677,8 @@ function renderPlayers(){
     const isCurrent = state.current && state.current.attackerIdx===i;
     const badge = (p.alive && !isCurrent && qPos>=state.queuePos) ? '<div class="p-queue">'+(qPos - state.queuePos + 1)+'</div>' : "";
     div.innerHTML = badge +
-      '<div class="p-name">'+esc(p.name)+'</div>'+
-      '<div class="hp-wrap small"><div class="hp-bar"><div class="hp-fill"></div><div class="hp-text"></div></div></div>'+
-      '<div class="p-stats"><span>⚔ <b>'+p.dmgDealt+'</b></span><span>❤ <b>'+Math.max(0,p.hp)+'</b></span><span>🏆 <b>'+p.points+'</b></span></div>';
+      '<div class="p-head"><span class="avatar-sm" title="'+esc(p.avatar.name)+'">'+p.avatar.emoji+'</span><div class="p-name">'+esc(p.name)+'</div></div>'+
+      '<div class="hp-wrap small"><div class="hp-bar"><div class="hp-fill"></div><div class="hp-text"></div></div></div>';
     setHpBar(div.querySelector(".hp-fill"), div.querySelector(".hp-text"), p.hp, START_HP);
     div.id = "pcard-"+i;
     grid.appendChild(div);
@@ -684,10 +694,42 @@ function renderAll(){
 }
 
 /* ============================================================
+   ТАЙМЕР ОТВЕТА
+   ============================================================ */
+let timerId = null, timeLeft = 0;
+function startTimer(){
+  stopTimer();
+  timeLeft = ANSWER_TIME;
+  $("q-timer").textContent = timeLeft;
+  $("q-timer").classList.remove("low");
+  $("q-timer").classList.remove("hidden");
+  $("q-timer-label").classList.remove("hidden");
+  timerId = setInterval(()=>{
+    timeLeft--;
+    $("q-timer").textContent = Math.max(0,timeLeft);
+    if(timeLeft<=5 && timeLeft>0) sfx.tick();
+    if(timeLeft<=5) $("q-timer").classList.add("low");
+    if(timeLeft<=0){
+      stopTimer();
+      onTimeUp();
+    }
+  }, 1000);
+}
+function stopTimer(){
+  if(timerId!==null){ clearInterval(timerId); timerId = null; }
+}
+function hideTimer(){
+  stopTimer();
+  $("q-timer").classList.add("hidden");
+  $("q-timer-label").classList.add("hidden");
+}
+
+/* ============================================================
    ИГРОВОЙ ПОТОК
    ============================================================ */
 function nextTurn(){
   $("q-overlay").classList.remove("show");
+  hideTimer();
   // ---- условия завершения ----
   if(state.phase==="boss" && state.boss.hp<=0){ bossDefeated(); return; }
   if(state.phase==="pvp" && alivePlayers().length<=3){ finishGame("last3"); return; }
@@ -711,9 +753,9 @@ function nextTurn(){
     const targets = alivePlayers().filter(p=>p.id!==idx);
     if(targets.length===0){ finishGame("last3"); return; }
     const target = targets[Math.floor(Math.random()*targets.length)];
-    state.current = {attackerIdx:idx, targetIdx:target.id, mega:false};
+    state.current = {attackerIdx:idx, targetIdx:target.id, mega:false, answered:false};
   }else{
-    state.current = {attackerIdx:idx, targetIdx:null, mega:false};
+    state.current = {attackerIdx:idx, targetIdx:null, mega:false, answered:false};
   }
   sfx.flip();
   renderAll();
@@ -727,11 +769,12 @@ function pickTopic(topicIdx){
   const at = state.players[state.current.attackerIdx];
   const tg = state.current.targetIdx!==null ? state.players[state.current.targetIdx] : null;
 
-  // ---- мегавопрос: один раз за игру ----
+  // ---- мегавопрос: один раз за игру, без таймера ----
   const mega = !state.megaUsed && Math.random() < MEGA_CHANCE;
   if(mega){ state.megaUsed = true; }
   state.current.mega = mega;
   state.current.answered = false;
+  state.current.q = q;
 
   const dmgShown = mega ? MEGA_DMG : DMG[q.difficulty];
   $("q-topic").textContent = TOPICS[topicIdx].emoji + " " + TOPICS[topicIdx].name;
@@ -740,86 +783,104 @@ function pickTopic(topicIdx){
     : "★".repeat(q.difficulty) + ' <span class="dmg-note">урон '+dmgShown+'</span>';
   $("q-mega-label").classList.toggle("hidden", !mega);
   $("q-card").classList.toggle("mega", mega);
-  $("q-for").textContent = state.phase==="boss"
-    ? "Отвечает: " + at.name
-    : at.name + " ⚔ " + tg.name;
+  $("q-for").innerHTML = state.phase==="boss"
+    ? "Отвечает: <b>"+esc(at.name)+"</b>"
+    : "<b>"+esc(at.name)+"</b> ⚔ <b>"+esc(tg.name)+"</b>";
   $("q-text").textContent = q.text;
 
+  // ---- варианты ответа в случайном порядке ----
+  const variants = shuffle(q.options.map((text,origIdx)=>({text, correct:origIdx===q.answer})));
+  state.current.answerIdx = variants.findIndex(v=>v.correct);
   const opts = $("q-opts");
   opts.innerHTML = "";
   const letters = ["А","Б","В","Г"];
-  q.options.forEach((o,i)=>{
+  variants.forEach((v,i)=>{
     const b = document.createElement("button");
     b.className = "q-opt";
-    b.innerHTML = '<span class="letter">'+letters[i]+'</span><span>'+esc(o)+'</span>';
-    b.onclick = ()=>answer(q, i);
+    b.innerHTML = '<span class="letter">'+letters[i]+'</span><span>'+esc(v.text)+'</span>';
+    b.onclick = ()=>answer(i);
     opts.appendChild(b);
   });
   $("q-next").classList.add("hidden");
   $("q-overlay").classList.add("show");
+  if(mega){ hideTimer(); } else { startTimer(); }
 }
 
-function answer(q, chosen){
+function answer(chosen){
   if(!state.current || state.current.answered) return;
   state.current.answered = true;
-  const correct = chosen===q.answer;
-  const mega = state.current.mega;
-  const dmg = mega ? MEGA_DMG : DMG[q.difficulty];
-  const at = state.players[state.current.attackerIdx];
-
-  // подсветка вариантов
+  stopTimer();
+  const correct = chosen===state.current.answerIdx;
   const btns = $("q-opts").querySelectorAll(".q-opt");
   btns.forEach((b,i)=>{
     b.classList.add("disabled");
-    if(i===q.answer) b.classList.add("correct");
+    if(i===state.current.answerIdx) b.classList.add("correct");
     if(i===chosen && !correct) b.classList.add("wrong");
   });
+  if(correct) resolveCorrect(); else resolveWrong(null);
+}
 
-  at.answers++;
-  if(correct){
-    at.correct++;
-    if(state.phase==="boss"){
-      const d = Math.min(dmg, state.boss.hp);
-      state.boss.hp -= dmg;
-      at.dmgBoss += d; at.dmgDealt += d;
-      sfx.correct(); sfx.hit(); if(mega) sfx.mega();
-      toast(mega
-        ? '<span class="t-bad">🔥 МЕГАВОПРОС!</span> Босс теряет <b>'+dmg+'</b> HP!'
-        : '<span class="t-good">✔ Верно!</span> '+esc(at.name)+' наносит БОССУ <b>'+dmg+'</b> урона');
-      floatDamage($("boss-zone"), "-"+dmg, mega ? "dmg-red" : "dmg-green");
-      $("boss-zone").classList.add("shake");
-      setTimeout(()=>$("boss-zone").classList.remove("shake"), 550);
-      renderBossZone();
-    }else{
-      const tg = state.players[state.current.targetIdx];
-      const d = Math.min(dmg, tg.hp);
-      tg.hp -= dmg; tg.dmgTaken += dmg;
-      at.dmgDealt += d;
-      tg.killedBy = tg.hp<=0 ? at.name : tg.killedBy;
-      sfx.correct(); sfx.hit(); if(mega) sfx.mega();
-      toast(mega
-        ? '<span class="t-bad">🔥 МЕГАВОПРОС!</span> '+esc(tg.name)+' теряет <b>'+dmg+'</b> HP!'
-        : '<span class="t-good">✔ Верно!</span> '+esc(at.name)+' бьёт '+esc(tg.name)+' на <b>'+dmg+'</b> урона');
-      floatDamage($("pcard-"+tg.id), "-"+dmg, "dmg-red");
-      $("pcard-"+tg.id).classList.add("shake");
-      setTimeout(()=>$("pcard-"+tg.id)?.classList.remove("shake"), 550);
-      checkPlayerDead(tg, at.name);
-      renderPlayers(); renderDuelZone();
-    }
-  }else{
-    const d = Math.min(dmg, at.hp);
-    at.hp -= dmg; at.dmgTaken += dmg;
-    sfx.wrong(); sfx.hit(); if(mega) sfx.mega();
+function onTimeUp(){
+  if(!state.current || state.current.answered) return;
+  state.current.answered = true;
+  const btns = $("q-opts").querySelectorAll(".q-opt");
+  btns.forEach((b,i)=>{
+    b.classList.add("disabled");
+    if(i===state.current.answerIdx) b.classList.add("correct");
+  });
+  resolveWrong('<span class="t-bad">⏰ Время вышло!</span>');
+}
+
+function resolveCorrect(){
+  const mega = state.current.mega;
+  const dmg = mega ? MEGA_DMG : DMG[state.current.q.difficulty];
+  const at = state.players[state.current.attackerIdx];
+  at.answers++; at.correct++;
+  if(state.phase==="boss"){
+    const d = Math.min(dmg, state.boss.hp);
+    state.boss.hp -= dmg;
+    at.dmgBoss += d; at.dmgDealt += d;
+    sfx.correct(); sfx.hit(); if(mega) sfx.mega();
     toast(mega
-      ? '<span class="t-bad">🔥 МЕГАВОПРОС! Неверно…</span> '+esc(at.name)+' теряет <b>'+dmg+'</b> HP!'
-      : '<span class="t-bad">✘ Неверно…</span> '+esc(at.name)+' получает <b>'+dmg+'</b> урона');
-    floatDamage($("pcard-"+at.id), "-"+dmg, "dmg-red");
-    $("pcard-"+at.id).classList.add("shake");
-    setTimeout(()=>$("pcard-"+at.id)?.classList.remove("shake"), 550);
-    checkPlayerDead(at, null);
-    renderPlayers();
-    if(state.phase==="pvp") renderDuelZone();
+      ? '<span class="t-bad">🔥 МЕГАВОПРОС!</span> Босс теряет <b>'+dmg+'</b> HP!'
+      : '<span class="t-good">✔ Верно!</span> '+esc(at.name)+' наносит БОССУ <b>'+dmg+'</b> урона');
+    floatDamage($("boss-zone"), "-"+dmg, mega ? "dmg-red" : "dmg-green");
+    $("boss-zone").classList.add("shake");
+    setTimeout(()=>$("boss-zone").classList.remove("shake"), 550);
+    renderBossZone();
+  }else{
+    const tg = state.players[state.current.targetIdx];
+    const d = Math.min(dmg, tg.hp);
+    tg.hp -= dmg; tg.dmgTaken += dmg;
+    at.dmgDealt += d;
+    tg.killedBy = tg.hp<=0 ? at.name : tg.killedBy;
+    sfx.correct(); sfx.hit(); if(mega) sfx.mega();
+    toast(mega
+      ? '<span class="t-bad">🔥 МЕГАВОПРОС!</span> '+esc(tg.name)+' теряет <b>'+dmg+'</b> HP!'
+      : '<span class="t-good">✔ Верно!</span> '+esc(at.name)+' бьёт '+esc(tg.name)+' на <b>'+dmg+'</b> урона');
+    floatDamage($("pcard-"+tg.id), "-"+dmg, "dmg-red");
+    $("pcard-"+tg.id).classList.add("shake");
+    setTimeout(()=>$("pcard-"+tg.id)?.classList.remove("shake"), 550);
+    checkPlayerDead(tg, at.name);
+    renderPlayers(); renderDuelZone();
   }
+  $("q-next").classList.remove("hidden");
+}
+
+function resolveWrong(prefix){
+  const mega = state.current.mega;
+  const dmg = mega ? MEGA_DMG : DMG[state.current.q.difficulty];
+  const at = state.players[state.current.attackerIdx];
+  at.answers++;
+  at.hp -= dmg; at.dmgTaken += dmg;
+  sfx.wrong(); sfx.hit(); if(mega) sfx.mega();
+  toast((prefix || '<span class="t-bad">✘ Неверно…</span>')+' '+esc(at.name)+' получает <b>'+dmg+'</b> урона');
+  floatDamage($("pcard-"+at.id), "-"+dmg, "dmg-red");
+  $("pcard-"+at.id).classList.add("shake");
+  setTimeout(()=>$("pcard-"+at.id)?.classList.remove("shake"), 550);
+  checkPlayerDead(at, null);
+  renderPlayers();
+  if(state.phase==="pvp") renderDuelZone();
   $("q-next").classList.remove("hidden");
 }
 
@@ -838,7 +899,7 @@ function bossDefeated(){
   killer.points += BOSS_KILL_BONUS;
   sfx.win();
   showBanner("🏆", "БОСС ПОВЕРЖЕН!",
-    "Добил: <b style='color:var(--gold)'>"+esc(killer.name)+"</b> — получает <b>+"+BOSS_KILL_BONUS+" балла</b>!<br>Начинается Глава II: экипаж сражается между собой. Останутся трое.",
+    esc(killer.name)+" <b style='color:var(--gold)'>+"+BOSS_KILL_BONUS+"</b>",
     ()=>{
       state.phase = "pvp";
       state.round = 1;
@@ -852,10 +913,11 @@ function bossDefeated(){
 
 /* ---- завершение игры ---- */
 function finishGame(reason){
+  stopTimer();
   state.phase = "end";
   state.finishReason = reason;
-  // "last3" — остаются трое, места по урону; "exhausted"/"wipe" — карта кончились или экипаж пал:
-  // места по нанесённому урону, затем по запасу HP (для выбывших HP = 0)
+  // "last3" — остаются трое, места по урону; "exhausted"/"wipe" — карты кончились или экипаж пал:
+  // места по нанесённому урону, затем по запасу HP
   const pool = (reason==="exhausted" || reason==="wipe")
     ? state.players
     : state.players.filter(p=>p.alive);
@@ -872,28 +934,23 @@ function finishGame(reason){
    ============================================================ */
 function renderResults(finalists){
   const medals = ["🥇","🥈","🥉"];
-  const subs = {
-    last3:"Остались трое — места по нанесённому урону.",
-    exhausted:"🃏 Колоды карт опустели! Места по нанесённому урону и запасу HP.",
-    wipe:"Экипаж пал, но история помнит героев. Места по нанесённому урону и HP."
-  };
-  $("results-sub").textContent = subs[state.finishReason] || "";
+  $("results-sub").textContent = "";
 
   const pod = $("podium");
   pod.innerHTML = "";
   finalists.slice(0,3).forEach((p,i)=>{
     const d = document.createElement("div");
     d.className = "card";
-    d.innerHTML = '<div class="medal">'+medals[i]+'</div><div class="p-nick">'+esc(p.name)+'</div>'+
-      '<div class="p-pts">+'+PRIZE[i]+' баллов · урон '+p.dmgDealt+' · HP '+Math.max(0,p.hp)+'</div>';
+    d.innerHTML = '<div class="medal">'+medals[i]+'</div><div style="font-size:40px;">'+p.avatar.emoji+'</div><div class="p-nick">'+esc(p.name)+'</div>'+
+      '<div class="p-pts">+'+PRIZE[i]+'</div>';
     pod.appendChild(d);
   });
   if(state.bossKiller!==null){
     const k = state.players[state.bossKiller];
     const d = document.createElement("div");
     d.className = "card";
-    d.innerHTML = '<div class="medal">💀</div><div class="p-nick">'+esc(k.name)+'</div>'+
-      '<div class="p-pts"><span class="badge-boss">ДОБИЛ БОССА</span><br>+'+BOSS_KILL_BONUS+' балла</div>';
+    d.innerHTML = '<div class="medal">💀</div><div style="font-size:40px;">'+k.avatar.emoji+'</div><div class="p-nick">'+esc(k.name)+'</div>'+
+      '<div class="p-pts"><span class="badge-boss">ДОБИЛ БОССА</span><br>+'+BOSS_KILL_BONUS+'</div>';
     pod.appendChild(d);
   }
 
@@ -905,7 +962,7 @@ function renderResults(finalists){
       : 'Выбыл (глава '+p.eliminatedIn+')'+(p.killedBy?'<br><span style="font-size:12px; color:var(--muted)">от '+esc(p.killedBy)+'</span>':'');
     html += "<tr class='"+(p.alive?"":"dead-row")+"'>"+
       "<td class='place'>"+(i+1)+"</td>"+
-      "<td class='name'>"+esc(p.name)+(state.bossKiller===p.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
+      "<td class='name'>"+p.avatar.emoji+" "+esc(p.name)+(state.bossKiller===p.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
       "<td><b>"+p.points+"</b></td><td>"+status+"</td>"+
       "<td>"+p.dmgBoss+"</td><td>"+Math.max(0,dmgPvp)+"</td><td>"+p.dmgDealt+"</td><td>"+p.dmgTaken+"</td>"+
       "<td>"+p.correct+" / "+p.answers+"</td></tr>";
@@ -952,7 +1009,9 @@ function buildSetup(){
   for(let i=0;i<10;i++){
     const slot = document.createElement("div");
     slot.className = "nick-slot";
-    slot.innerHTML = '<label>Игрок '+(i+1)+'</label><input id="nick-'+i+'" maxlength="14" placeholder="Игрок '+(i+1)+'">';
+    const av = AVATARS[i];
+    slot.innerHTML = '<span class="avatar" style="background:'+av.color+';" title="'+esc(av.name)+'">'+av.emoji+'</span>'+
+      '<input id="nick-'+i+'" maxlength="14" placeholder="Игрок '+(i+1)+'">';
     grid.appendChild(slot);
   }
 }
@@ -968,6 +1027,12 @@ $("start-btn").onclick = ()=>{
     seen[names[i]] = true;
   }
   newGame(names);
+  // сброс игрового экрана от прошлой партии (иначе сразу откроется Глава II)
+  $("boss-zone").classList.remove("hidden");
+  $("duel-zone").classList.add("hidden");
+  $("duel-zone").style.display = "none";
+  $("boss-emoji").textContent = "👹";
+  $("boss-name").textContent = "ТЁМНЫЙ ВЛАДЫКА";
   $("screen-setup").classList.add("hidden");
   $("screen-results").classList.add("hidden");
   $("screen-game").classList.remove("hidden");
@@ -977,7 +1042,6 @@ $("q-next").onclick = nextTurn;
 $("again-btn").onclick = ()=>{
   $("screen-results").classList.add("hidden");
   $("screen-setup").classList.remove("hidden");
-  window.scrollTo(0,0);
 };
 $("mute-btn").onclick = ()=>{
   muted = !muted;
