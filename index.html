@@ -93,7 +93,7 @@ h1,h2,h3,.serif{font-family:Georgia,'Palatino Linotype','Times New Roman',serif;
 /* ---------- Игровой экран ---------- */
 #screen-game{max-width:1280px; margin:0 auto; padding:18px 16px 80px;}
 #topbar{display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:14px; flex-wrap:wrap;}
-#chapter{font-size:32px; color:var(--gold); text-shadow:0 0 16px rgba(232,194,104,.4); letter-spacing:2px; flex:1; text-align:center;}
+#phase-label{font-size:16px; color:var(--silver); opacity:.55; letter-spacing:3px; flex:1; text-align:center; text-transform:uppercase;}
 #round-label{font-size:18px; color:var(--violet); font-weight:600;}
 #mute-btn{background:var(--panel); border:2px solid var(--edge); color:var(--silver); border-radius:12px; padding:9px 16px; cursor:pointer; font-size:16px;}
 #mute-btn:hover{border-color:var(--gold); color:var(--gold-bright);}
@@ -218,6 +218,14 @@ h1,h2,h3,.serif{font-family:Georgia,'Palatino Linotype','Times New Roman',serif;
   animation:megaPulse 1s infinite alternate;
 }
 @keyframes megaPulse{from{transform:scale(1);} to{transform:scale(1.06);}}
+.q-curse-label{
+  font-family:Georgia,serif; font-size:22px; font-weight:700; color:#c084fc;
+  text-shadow:0 0 14px rgba(168,85,247,.8); letter-spacing:1px; text-align:center; margin-top:10px;
+  border:1px dashed rgba(168,85,247,.6); border-radius:12px; padding:8px 14px;
+  margin-left:auto; margin-right:auto; display:inline-block; animation:cursePulse 1.4s infinite alternate;
+}
+@keyframes cursePulse{from{opacity:.75;} to{opacity:1;}}
+.q-curse-wrap{text-align:center;}
 .q-text{font-family:Georgia,serif; font-size:30px; line-height:1.45; margin:24px 6px; color:var(--silver); text-align:center;}
 .q-opts{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
 @media (max-width:680px){.q-opts{grid-template-columns:1fr;}}
@@ -240,6 +248,23 @@ h1,h2,h3,.serif{font-family:Georgia,'Palatino Linotype','Times New Roman',serif;
 .q-opt.wrong .letter{border-color:var(--ruby); color:#ff8a80;}
 .q-opt.disabled{pointer-events:none; opacity:.85;}
 .q-actions{margin-top:22px; text-align:center;}
+
+/* --- Дуэль: атакующий vs защищающийся --- */
+.duel-side.attacker{
+  border-color:var(--ruby);
+  background:linear-gradient(165deg,#2b1116 0%,#1c0b10 55%,#15080c 100%);
+  box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 0 26px rgba(212,63,63,.45);
+  width:345px; transform:scale(1.06); z-index:2;
+}
+.duel-side .role{display:flex; align-items:center; justify-content:center; gap:8px;}
+.duel-side.attacker .role{color:#ff8a80;}
+.duel-side.target .role{color:var(--violet);}
+.role-icon{font-size:24px; line-height:1;}
+
+/* --- Полупрозрачные узоры на фоне --- */
+#bg-decor{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;}
+#bg-decor span{position:absolute; opacity:.06; filter:grayscale(.35); user-select:none;}
+#screen-setup,#screen-game,#screen-results{position:relative; z-index:1;}
 
 /* ---------- Тост ---------- */
 #toast{
@@ -285,7 +310,7 @@ table.stats td.place{font-weight:800; font-family:Georgia,serif; color:var(--sil
 <!-- ================= ИГРОВОЙ ЭКРАН ================= -->
 <div id="screen-game" class="hidden">
   <div id="topbar">
-    <div id="chapter">ГЛАВА I · БИТВА С БОССОМ</div>
+    <div id="phase-label">Битва с боссом</div>
     <div id="round-label"></div>
     <button id="mute-btn" title="Звук">🔊 Звук</button>
   </div>
@@ -302,15 +327,15 @@ table.stats td.place{font-weight:800; font-family:Georgia,serif; color:var(--sil
 
     <!-- Дуэль (глава II) -->
     <div id="duel-zone" class="hidden" style="display:flex; gap:18px; align-items:stretch;">
-      <div class="card arena-card duel-side">
-        <div class="role">АТАКУЕТ</div>
+      <div class="card arena-card duel-side attacker" id="attacker-card">
+        <div class="role"><span class="role-icon">⚔️</span> АТАКУЕТ</div>
         <div class="duel-avatar" id="attacker-avatar">🗡️</div>
         <div class="who" id="attacker-name">—</div>
         <div class="hp-wrap small"><div class="hp-bar"><div class="hp-fill" id="attacker-hp-fill"></div><div class="hp-text" id="attacker-hp-text"></div></div></div>
       </div>
-      <div class="duel-arrow">⚔️</div>
-      <div class="card arena-card duel-side">
-        <div class="role">ЦЕЛЬ</div>
+      <div class="duel-arrow">💥</div>
+      <div class="card arena-card duel-side target" id="target-card">
+        <div class="role"><span class="role-icon">🛡️</span> ЗАЩИТА</div>
         <div class="duel-avatar" id="target-avatar">🎯</div>
         <div class="who" id="target-name">—</div>
         <div class="hp-wrap small"><div class="hp-bar"><div class="hp-fill" id="target-hp-fill"></div><div class="hp-text" id="target-hp-text"></div></div></div>
@@ -338,9 +363,11 @@ table.stats td.place{font-weight:800; font-family:Georgia,serif; color:var(--sil
       </div>
     </div>
     <div id="q-mega-label" class="q-mega-label hidden">🔥 МЕГАВОПРОС 🔥</div>
+    <div class="q-curse-wrap"><div id="q-curse-label" class="q-curse-label hidden">☠ ВОПРОС-ПРОКЛЯТИЕ · неверно — всем −50 HP, верно — жертве +100 HP</div></div>
     <div class="q-text" id="q-text"></div>
-    <div class="q-opts" id="q-opts"></div>
+    <div class="q-opts hidden" id="q-opts"></div>
     <div class="q-actions">
+      <button class="btn" id="q-show">Показать ответы ▶</button>
       <button class="btn hidden" id="q-next">Следующий ход ▶</button>
     </div>
   </div>
@@ -365,6 +392,27 @@ table.stats td.place{font-weight:800; font-family:Georgia,serif; color:var(--sil
   <div class="results-actions"><button class="btn btn-ruby btn-big" id="again-btn">⟲ Новая игра</button></div>
 </div>
 
+<div id="bg-decor" aria-hidden="true">
+  <span style="left:3%; top:6%; font-size:52px; transform:rotate(-18deg);">💀</span>
+  <span style="left:12%; top:34%; font-size:40px; transform:rotate(14deg);">⚔️</span>
+  <span style="left:6%; top:66%; font-size:46px; transform:rotate(-8deg);">🛡️</span>
+  <span style="left:15%; top:88%; font-size:38px; transform:rotate(22deg);">🧪</span>
+  <span style="left:30%; top:3%; font-size:34px;">⭐</span>
+  <span style="left:44%; top:92%; font-size:42px; transform:rotate(-14deg);">🗡️</span>
+  <span style="left:58%; top:5%; font-size:36px; transform:rotate(10deg);">🏹</span>
+  <span style="left:70%; top:88%; font-size:44px;">👑</span>
+  <span style="left:84%; top:12%; font-size:48px; transform:rotate(16deg);">🔮</span>
+  <span style="left:92%; top:40%; font-size:38px; transform:rotate(-12deg);">💀</span>
+  <span style="left:88%; top:70%; font-size:34px;">✨</span>
+  <span style="left:95%; top:86%; font-size:40px; transform:rotate(8deg);">🌙</span>
+  <span style="left:24%; top:70%; font-size:34px; transform:rotate(-22deg);">☠️</span>
+  <span style="left:36%; top:16%; font-size:32px;">📜</span>
+  <span style="left:64%; top:28%; font-size:36px; transform:rotate(12deg);">🕯️</span>
+  <span style="left:76%; top:54%; font-size:34px;">💎</span>
+  <span style="left:50%; top:60%; font-size:30px; transform:rotate(-10deg);">🪓</span>
+  <span style="left:8%; top:50%; font-size:32px;">⚜️</span>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -377,9 +425,12 @@ const BOSS_HP         = 1500;  // HP босса
 const DMG             = {1:50, 2:100, 3:150}; // урон по сложности ★/★★/★★★
 const MEGA_DMG        = 500;   // урон мегавопроса
 const MEGA_CHANCE     = 0.12;  // шанс, что следующий вопрос станет мега (один раз за игру)
+const CURSE_CHANCE    = 0.06;  // шанс вопроса-проклятия (один раз за игру)
 const ANSWER_TIME     = 15;    // секунд на ответ (у мегавопроса таймера нет)
-const BOSS_KILL_BONUS = 3;     // баллы за добивание босса
-const PRIZE           = [5, 3, 1]; // баллы за 1/2/3 место по итогам
+const CURSE_HURT      = 50;    // урон проклятия всем игрокам при неверном ответе
+const CURSE_HEAL      = 100;   // лечение жертвы при верном ответе на проклятие
+const BOSS_KILL_BONUS = 1;     // баллы за добивание босса
+const PRIZE           = [5, 3, 2]; // баллы за 1/2/3 место по итогам
 
 /* ============================================================
    АВАТАРКИ ИГРОКОВ (10 штук, распределяются рандомно)
@@ -543,7 +594,7 @@ function newGame(names){
     avatar:AVATARS[avOrder[i]],
     dmgBoss:0, dmgDealt:0, dmgTaken:0,
     correct:0, answers:0,
-    killedBy:null, eliminatedIn:null, points:0
+    killedBy:null, eliminatedIn:null, deathCause:null, points:0
   }));
   state = {
     phase:"boss",              // boss | pvp | end
@@ -555,6 +606,7 @@ function newGame(names){
     current:null,              // {attackerIdx, targetIdx|null, mega, answerIdx, q, answered}
     pools:TOPICS.map(t=>makePool(t.questions.length)),
     megaUsed:false,
+    curseUsed:false,
     finishReason:null
   };
   newRound();
@@ -627,7 +679,7 @@ function setHpBar(fillEl, textEl, hp, maxHp){
 function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
 function renderTopbar(){
-  $("chapter").textContent = state.phase==="boss" ? "ГЛАВА I · БИТВА С БОССОМ" : "ГЛАВА II · БИТВА ИГРОКОВ";
+  $("phase-label").textContent = state.phase==="boss" ? "Битва с боссом" : "Мордобой";
   $("round-label").textContent = "Круг " + state.round + " · в живых: " + alivePlayers().length;
 }
 
@@ -769,26 +821,30 @@ function pickTopic(topicIdx){
   const at = state.players[state.current.attackerIdx];
   const tg = state.current.targetIdx!==null ? state.players[state.current.targetIdx] : null;
 
-  // ---- мегавопрос: один раз за игру, без таймера ----
+  // ---- мегавопрос и вопрос-проклятие: по одному разу за игру ----
   const mega = !state.megaUsed && Math.random() < MEGA_CHANCE;
-  if(mega){ state.megaUsed = true; }
+  const curse = !mega && !state.curseUsed && Math.random() < CURSE_CHANCE;
+  if(mega) state.megaUsed = true;
+  if(curse) state.curseUsed = true;
   state.current.mega = mega;
+  state.current.curse = curse;
   state.current.answered = false;
   state.current.q = q;
 
   const dmgShown = mega ? MEGA_DMG : DMG[q.difficulty];
   $("q-topic").textContent = TOPICS[topicIdx].emoji + " " + TOPICS[topicIdx].name;
-  $("q-diff").innerHTML = mega
-    ? '<span style="color:#ff6b5e;">☠ МЕГА</span> <span class="dmg-note">урон '+MEGA_DMG+'</span>'
+  $("q-diff").innerHTML = (mega || curse)
+    ? '<span style="color:#ff6b5e;">☠</span> <span class="dmg-note">'+(mega?"мега "+MEGA_DMG:"проклятие")+'</span>'
     : "★".repeat(q.difficulty) + ' <span class="dmg-note">урон '+dmgShown+'</span>';
   $("q-mega-label").classList.toggle("hidden", !mega);
+  $("q-curse-label").classList.toggle("hidden", !curse);
   $("q-card").classList.toggle("mega", mega);
   $("q-for").innerHTML = state.phase==="boss"
     ? "Отвечает: <b>"+esc(at.name)+"</b>"
     : "<b>"+esc(at.name)+"</b> ⚔ <b>"+esc(tg.name)+"</b>";
   $("q-text").textContent = q.text;
 
-  // ---- варианты ответа в случайном порядке ----
+  // ---- варианты ответа в случайном порядке, скрыты до кнопки ----
   const variants = shuffle(q.options.map((text,origIdx)=>({text, correct:origIdx===q.answer})));
   state.current.answerIdx = variants.findIndex(v=>v.correct);
   const opts = $("q-opts");
@@ -801,10 +857,19 @@ function pickTopic(topicIdx){
     b.onclick = ()=>answer(i);
     opts.appendChild(b);
   });
+  opts.classList.add("hidden");
   $("q-next").classList.add("hidden");
+  $("q-show").classList.remove("hidden");
+  hideTimer();
   $("q-overlay").classList.add("show");
-  if(mega){ hideTimer(); } else { startTimer(); }
 }
+
+$("q-show").onclick = ()=>{
+  if(!state.current || state.current.answered) return;
+  $("q-opts").classList.remove("hidden");
+  $("q-show").classList.add("hidden");
+  if(!state.current.mega) startTimer();   // у мегавопроса таймера нет
+};
 
 function answer(chosen){
   if(!state.current || state.current.answered) return;
@@ -833,9 +898,35 @@ function onTimeUp(){
 
 function resolveCorrect(){
   const mega = state.current.mega;
+  const curse = state.current.curse;
   const dmg = mega ? MEGA_DMG : DMG[state.current.q.difficulty];
   const at = state.players[state.current.attackerIdx];
   at.answers++; at.correct++;
+
+  // ---- вопрос-проклятие: верно — жертва лечится ----
+  if(curse){
+    if(state.phase==="boss"){
+      const before = state.boss.hp;
+      state.boss.hp = Math.min(state.boss.maxHp, state.boss.hp + CURSE_HEAL);
+      const healed = state.boss.hp - before;
+      sfx.correct();
+      toast('<span class="t-good">✔ Верно!</span> проклятие снято — Босс восстанавливает <b>'+healed+'</b> HP');
+      floatDamage($("boss-zone"), "+"+healed, "dmg-green");
+      renderBossZone();
+    }else{
+      const tg = state.players[state.current.targetIdx];
+      const before = tg.hp;
+      tg.hp = Math.min(START_HP, tg.hp + CURSE_HEAL);
+      const healed = tg.hp - before;
+      sfx.correct();
+      toast('<span class="t-good">✔ Верно!</span> проклятие снято — '+esc(tg.name)+' восстанавливает <b>'+healed+'</b> HP');
+      floatDamage($("pcard-"+tg.id), "+"+healed, "dmg-green");
+      renderPlayers(); renderDuelZone();
+    }
+    $("q-next").classList.remove("hidden");
+    return;
+  }
+
   if(state.phase==="boss"){
     const d = Math.min(dmg, state.boss.hp);
     state.boss.hp -= dmg;
@@ -869,24 +960,44 @@ function resolveCorrect(){
 
 function resolveWrong(prefix){
   const mega = state.current.mega;
+  const curse = state.current.curse;
   const dmg = mega ? MEGA_DMG : DMG[state.current.q.difficulty];
   const at = state.players[state.current.attackerIdx];
   at.answers++;
+
+  // ---- вопрос-проклятие: неверно — урон ВСЕМ игрокам ----
+  if(curse){
+    sfx.wrong(); sfx.mega();
+    toast((prefix || '<span class="t-bad">✘ Неверно…</span>')+' проклятие обрушивается на ВСЕХ: <b>−'+CURSE_HURT+'</b> HP');
+    alivePlayers().forEach(p=>{
+      p.hp -= CURSE_HURT; p.dmgTaken += CURSE_HURT;
+      floatDamage($("pcard-"+p.id), "-"+CURSE_HURT, "dmg-red");
+      $("pcard-"+p.id).classList.add("shake");
+      setTimeout(()=>$("pcard-"+p.id)?.classList.remove("shake"), 550);
+      checkPlayerDead(p, "curse");
+    });
+    renderPlayers();
+    if(state.phase==="pvp") renderDuelZone();
+    $("q-next").classList.remove("hidden");
+    return;
+  }
+
   at.hp -= dmg; at.dmgTaken += dmg;
   sfx.wrong(); sfx.hit(); if(mega) sfx.mega();
   toast((prefix || '<span class="t-bad">✘ Неверно…</span>')+' '+esc(at.name)+' получает <b>'+dmg+'</b> урона');
   floatDamage($("pcard-"+at.id), "-"+dmg, "dmg-red");
   $("pcard-"+at.id).classList.add("shake");
   setTimeout(()=>$("pcard-"+at.id)?.classList.remove("shake"), 550);
-  checkPlayerDead(at, null);
+  checkPlayerDead(at, state.phase==="boss" ? "boss" : "own");
   renderPlayers();
   if(state.phase==="pvp") renderDuelZone();
   $("q-next").classList.remove("hidden");
 }
 
-function checkPlayerDead(p){
+function checkPlayerDead(p, cause){
   if(p.hp<=0 && p.alive){
     p.alive = false; p.hp = 0;
+    p.deathCause = cause;
     p.eliminatedIn = state.phase==="boss" ? "I" : "II";
     sfx.die();
     setTimeout(()=>toast('<span class="t-bad">☠ '+esc(p.name)+' выбывает!</span>'), 700);
@@ -958,8 +1069,12 @@ function renderResults(finalists){
   let html = "<tr><th>Место</th><th>Игрок</th><th>Очки</th><th>Статус</th><th>Урон боссу</th><th>Урон игрокам</th><th>Всего урона</th><th>Получено</th><th>Ответы</th></tr>";
   rows.forEach((p,i)=>{
     const dmgPvp = p.dmgDealt - p.dmgBoss;
-    const status = p.alive ? '<span style="color:var(--emerald)">Выжил</span>'
-      : 'Выбыл (глава '+p.eliminatedIn+')'+(p.killedBy?'<br><span style="font-size:12px; color:var(--muted)">от '+esc(p.killedBy)+'</span>':'');
+    let status;
+    if(p.alive) status = '<span style="color:var(--emerald)">Выжил</span>';
+    else if(p.deathCause==="curse") status = '<span style="color:#c084fc">Пал от проклятия</span>';
+    else if(p.deathCause==="boss") status = '<span style="color:#ff8a80">Убит БОССОМ</span>';
+    else if(p.deathCause==="own") status = '<span style="color:#ff8a80">Убит: своя ошибка</span>';
+    else status = '<span style="color:#ff8a80">Убит: '+esc(p.deathCause || "?")+'</span>';
     html += "<tr class='"+(p.alive?"":"dead-row")+"'>"+
       "<td class='place'>"+(i+1)+"</td>"+
       "<td class='name'>"+p.avatar.emoji+" "+esc(p.name)+(state.bossKiller===p.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
