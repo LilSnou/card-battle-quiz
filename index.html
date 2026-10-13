@@ -76,6 +76,34 @@ h1,h2,h3,.serif{font-family:'Tagesschrift','Georgia',serif;}
   border:2px solid var(--edge); box-shadow:inset 0 0 14px rgba(0,0,0,.5), 0 4px 10px rgba(0,0,0,.5);
   background:var(--panel-2);
 }
+/* --- Выбор числа игроков и имя босса --- */
+#count-row{display:flex; align-items:center; gap:20px; flex-wrap:wrap; justify-content:center;}
+#count-label{font-size:26px; color:var(--violet); letter-spacing:1px;}
+#count-btns{display:flex; gap:10px;}
+.count-btn{
+  width:60px; height:60px; border-radius:14px; cursor:pointer; font-size:27px; font-weight:700;
+  background:linear-gradient(180deg,#241a33,#140e1d); color:var(--silver);
+  border:2px solid var(--edge); transition:all .15s;
+}
+.count-btn:hover{border-color:var(--gold); color:var(--gold-bright);}
+.count-btn.sel{border-color:var(--gold); background:linear-gradient(180deg,#4a3a20,#2a2012); color:var(--gold-bright); box-shadow:0 0 16px rgba(232,194,104,.4);}
+#count-hp{font-size:21px; color:var(--muted);}
+#boss-name-input{
+  width:min(580px,92vw);
+  background:#140e1d; border:2px solid var(--edge); border-radius:15px;
+  padding:20px 18px; font-size:24px; font-weight:600; color:var(--gold-bright);
+  text-align:center; outline:none; box-shadow:inset 0 3px 8px rgba(0,0,0,.6);
+  font-family:inherit;
+}
+#boss-name-input::placeholder{color:#6b5f80; font-size:20px;}
+#boss-name-input:focus{border-color:var(--ruby); box-shadow:0 0 16px rgba(212,63,63,.4);}
+@media (max-height:940px){
+  #screen-setup{gap:30px; padding:20px 18px;}
+  .nickname-grid{gap:16px;}
+  .nick-slot input{padding:16px; font-size:22px;}
+  .avatar{width:64px; height:64px; font-size:34px;}
+  .count-btn{width:50px; height:50px; font-size:23px;}
+}
 .avatar-sm{flex:none; width:32px; height:32px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:18px; background:rgba(0,0,0,.45); border:1px solid var(--edge);}
 /* мрачные аватарки */
 .avatar,.avatar-sm,.duel-avatar{filter:brightness(.82) saturate(.85);}
@@ -110,12 +138,43 @@ h1,h2,h3,.serif{font-family:'Tagesschrift','Georgia',serif;}
 #arena{display:flex; justify-content:center; align-items:stretch; gap:22px; margin:10px 0 16px; flex-wrap:wrap;}
 .arena-card{width:380px; padding:18px 20px; text-align:center;}
 .shake{animation:shake .5s;}
+/* --- Анимации событий --- */
+@keyframes bossDie{
+  0%{transform:none; opacity:1; filter:none;}
+  20%{transform:scale(1.08) rotate(-3deg);}
+  40%{transform:scale(1.12) rotate(3deg); filter:brightness(1.7);}
+  60%{transform:scale(1.05) rotate(-2deg); filter:brightness(1.4) saturate(1.6);}
+  100%{transform:scale(.15) rotate(-16deg); opacity:0; filter:brightness(2.5);}
+}
+.boss-dying{animation:bossDie 1.4s forwards; pointer-events:none;}
+@keyframes stage2In{
+  0%{transform:scale(.5); opacity:0; filter:brightness(2);}
+  60%{transform:scale(1.07); opacity:1;}
+  100%{transform:scale(1); opacity:1; filter:none;}
+}
+.stage2-in{animation:stage2In .9s cubic-bezier(.2,.9,.3,1.15);}
+@keyframes gameStart{
+  0%{opacity:0; transform:scale(.96) translateY(18px); filter:brightness(2.2);}
+  100%{opacity:1; transform:none; filter:none;}
+}
+.game-start{animation:gameStart .8s ease-out;}
+.confetti{
+  position:fixed; top:-24px; z-index:400; border-radius:2px; pointer-events:none;
+  animation-name:confFall; animation-timing-function:linear; animation-fill-mode:forwards;
+}
+@keyframes confFall{
+  0%{transform:translateY(0) rotate(0deg); opacity:1;}
+  90%{opacity:.9;}
+  100%{transform:translateY(105vh) rotate(720deg); opacity:.15;}
+}
 @keyframes shake{
   0%,100%{transform:translateX(0);}
   15%{transform:translateX(-12px) rotate(-2deg);} 30%{transform:translateX(11px) rotate(2deg);}
   45%{transform:translateX(-9px);} 60%{transform:translateX(8px);} 80%{transform:translateX(-4px);}
 }
 .boss-emoji{font-size:78px; line-height:1; filter:brightness(.7) saturate(.85) drop-shadow(0 6px 10px rgba(0,0,0,.7));}
+#boss-zone{transition:border-color .25s, box-shadow .25s; cursor:default;}
+#boss-zone:hover{border-color:var(--ruby); box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 0 38px rgba(212,63,63,.65);}
 .boss-name{font-size:25px; margin:10px 0 4px; color:var(--ruby); text-shadow:0 0 12px rgba(212,63,63,.5); letter-spacing:1px;}
 .duel-side{width:320px;}
 .duel-side .who{font-size:23px; font-weight:700; color:var(--gold-bright); margin:6px 0; display:flex; align-items:center; justify-content:center; gap:10px;}
@@ -145,6 +204,7 @@ h1,h2,h3,.serif{font-family:'Tagesschrift','Georgia',serif;}
 #table-label{text-align:center; font-size:21px; color:var(--silver); margin:8px 0 14px;}
 #table-label b{color:var(--gold);}
 #topic-table{display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin-bottom:22px;}
+#topic-table.locked{pointer-events:none; opacity:.5; filter:grayscale(.6);}
 .topic-card{
   width:170px; height:210px; padding:12px 10px; cursor:pointer;
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center;
@@ -400,7 +460,13 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
 
 <!-- ================= ЭКРАН НАСТРОЙКИ ================= -->
 <div id="screen-setup">
+  <div id="count-row">
+    <span id="count-label">Игроков:</span>
+    <div id="count-btns"></div>
+    <span id="count-hp"></span>
+  </div>
   <div class="nickname-grid" id="nick-grid"></div>
+  <input id="boss-name-input" maxlength="20" placeholder="Имя босса (или пусть сам себя назовёт)">
   <button class="btn btn-ruby btn-big" id="start-btn">⚔ Начать битву</button>
 </div>
 
@@ -564,8 +630,9 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
 /* ============================================================
    НАСТРАИВАЕМЫЕ КОНСТАНТЫ (легко поменять баланс)
    ============================================================ */
-const START_HP        = 500;   // HP игрока
+let START_HP        = 500;   // HP игрока (зависит от числа игроков, задаётся в newGame)
 const BOSS_HP         = 1500;  // HP босса
+const hpForCount      = n => n>=11 ? 300 : n===10 ? 400 : 500; // HP игроков по числу участников
 const DMG             = {1:50, 2:100, 3:150}; // урон боссу по сложности ★/★★/★★★
 const DMG_SELF        = {1:100, 2:125, 3:150}; // урон самому игроку за неверный ответ против босса
 const DMG_PVP         = {1:100, 2:150, 3:200}; // урон игроку в Мордобое (быстрее второй этап)
@@ -579,6 +646,10 @@ const CURSE_HURT      = 50;    // урон проклятия всем игро�
 const CURSE_HEAL      = 100;   // лечение жертвы при верном ответе на проклятие
 const BOSS_KILL_BONUS = 1;     // баллы за добивание босса
 const PRIZE           = [5, 3, 2]; // баллы за 1/2/3 место по итогам
+const BOSS_DOUBLE_CHANCE = 0.05; // шанс, что босс удвоит урон неверно ответившему (независимо от каждого ответа)
+
+/* имена босса, если ведущий не ввёл своё */
+const BOSS_NAMES = ["Владыка тьмы", "Повелитель ужаса", "Лорд теней"];
 
 /* сектора барабана казино (только битва с боссом) */
 const CASINO = [
@@ -744,11 +815,11 @@ const TOPICS = [
 let state = null;
 let muted = false;
 
-function newGame(names){
-  const avOrder = shuffle(AVATARS.map((a,i)=>i)); // аватарки рандомно игрокам
+function newGame(names, bossName){
+  START_HP = hpForCount(names.length);           // HP зависит от числа игроков
   const players = names.map((n,i)=>({
     id:i, name:n, hp:START_HP, alive:true,
-    avatar:AVATARS[avOrder[i]],
+    avatar:AVATARS[Math.floor(Math.random()*AVATARS.length)], // аватарка рандомно (при 11-12 возможны повторы)
     dmgBoss:0, dmgDealt:0, dmgTaken:0,
     correct:0, answers:0,
     killedBy:null, eliminatedIn:null, deathCause:null, points:0, skipTurns:0
@@ -758,6 +829,7 @@ function newGame(names){
     round:1,
     players,
     boss:{hp:BOSS_HP, maxHp:BOSS_HP},
+    bossName,
     bossKiller:null,
     queue:[], queuePos:0,
     current:null,              // {attackerIdx, targetIdx|null, mega, answerIdx, q, answered}
@@ -812,6 +884,26 @@ function tone(freq, dur, type="sine", vol=0.15, delay=0){
     o.start(t); o.stop(t + dur + 0.05);
   }catch(e){}
 }
+/* шумовой всплеск (свист клинка, шелест карт, аплодисменты) */
+function noise(dur, vol=0.15, f0=1000, f1=3000, type="bandpass", delay=0){
+  if(muted) return;
+  try{
+    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    const t0 = audioCtx.currentTime + delay;
+    const len = Math.max(1, Math.floor(audioCtx.sampleRate*dur));
+    const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+    const d = buf.getChannelData(0);
+    for(let i=0;i<len;i++) d[i] = (Math.random()*2-1)*(1 - i/len);   // затухающий шум
+    const src = audioCtx.createBufferSource(); src.buffer = buf;
+    const flt = audioCtx.createBiquadFilter(); flt.type = type;
+    flt.frequency.setValueAtTime(f0, t0);
+    flt.frequency.exponentialRampToValueAtTime(Math.max(40,f1), t0 + dur);
+    const g = audioCtx.createGain(); g.gain.setValueAtTime(vol, t0);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    src.connect(flt); flt.connect(g); g.connect(audioCtx.destination);
+    src.start(t0); src.stop(t0 + dur + 0.05);
+  }catch(e){}
+}
 const sfx = {
   flip:()=>tone(660,.08,"triangle",.12),
   correct:()=>{tone(523,.12,"sine",.18); tone(784,.18,"sine",.18,.1);},
@@ -820,7 +912,21 @@ const sfx = {
   mega:()=>{[220,180,140,100].forEach((f,i)=>tone(f,.25,"sawtooth",.2,i*.09));},
   tick:()=>tone(880,.05,"square",.06),
   die:()=>{tone(300,.2,"sawtooth",.18); tone(180,.3,"sawtooth",.18,.15); tone(90,.5,"sawtooth",.18,.3);},
-  win:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.22,"sine",.2,i*.14));}
+  win:()=>{[523,659,784,1047].forEach((f,i)=>tone(f,.22,"sine",.2,i*.14));},
+  // ---- новые эффекты ----
+  hover:()=>noise(.09,.05,2600,900,"bandpass"),                                   // шелест карты при наведении
+  weapon:()=>{ noise(.5,.16,400,6500,"highpass"); tone(1200,.25,"triangle",.08); tone(1800,.2,"triangle",.06,.06); }, // обнажение оружия
+  gong:()=>{ tone(92,1.6,"sine",.25); tone(138,1.4,"sine",.18,.05); tone(46,1.8,"sine",.22,.02); }, // гонг мегавопроса
+  casino:()=>{ [1046,1318,1568].forEach((f,i)=>tone(f,.14,"triangle",.12,i*.09)); noise(.3,.05,4200,1800); }, // монетки казино
+  bossDie:()=>{ tone(70,1.2,"sawtooth",.25); tone(46,1.6,"sine",.3,.1); noise(1.0,.18,600,80,"lowpass"); [400,300,200,120].forEach((f,i)=>tone(f,.3,"sawtooth",.15,i*.15)); }, // гибель босса
+  deathOwn:()=>{ [440,330,262,196].forEach((f,i)=>tone(f,.22,"square",.12,i*.13)); },   // падение за свою ошибку
+  deathBoss:()=>{ tone(80,.7,"sawtooth",.25); noise(.6,.18,400,60,"lowpass"); tone(55,.9,"sine",.25,.08); }, // удар босса
+  deathKiller:()=>{ noise(.15,.2,3000,700,"bandpass"); tone(200,.4,"sawtooth",.18,.05); tone(90,.6,"square",.18,.15); }, // удар мечом
+  deathCurse:()=>{ [220,233,207].forEach((f,i)=>tone(f,.8,"sine",.12,i*.2)); noise(.8,.08,300,1500,"bandpass"); }, // проклятие
+  deathCasino:()=>{ [660,495,330,220].forEach((f,i)=>tone(f,.2,"triangle",.12,i*.1)); }, // падение монет
+  roar:()=>{ tone(65,.8,"sawtooth",.25); tone(87,.7,"sawtooth",.2,.05); noise(.7,.2,300,90,"lowpass"); }, // ярость босса
+  drums:()=>{ [0,.18,.36,.54,.72].forEach(d=>tone(95,.16,"sine",.28,d)); [0.09,.27,.45,.63].forEach(d=>tone(140,.1,"sine",.15,d)); }, // барабаны второго акта
+  applause:()=>{ for(let i=0;i<42;i++){ noise(.05,.06,1600+Math.random()*2600,800,"bandpass",Math.random()*2.2); } [523,659,784,1047].forEach((f,i)=>tone(f,.25,"sine",.14,.3+i*.15)); } // аплодисменты + фанфара
 };
 
 /* ============================================================
@@ -866,6 +972,7 @@ function renderTable(){
     div.className = "card topic-card ornate" + (left<=0 ? " empty" : "");
     div.innerHTML = '<div class="t-emoji">'+t.emoji+'</div><div class="t-name">'+esc(t.name)+'</div>';
     div.onclick = ()=>pickTopic(i);
+    div.onmouseenter = ()=>sfx.hover();   // тихий шелест карты
     wrap.appendChild(div);
   });
   const cur = state.players[state.current.attackerIdx];
@@ -981,7 +1088,7 @@ function nextTurn(){
 }
 
 function pickTopic(topicIdx){
-  if(!state.current) return;
+  if(!state.current || state.current.answered || state.transitioning) return;
   // ---- казино: вместо вопроса барабан (только битва с боссом, один раз за игру) ----
   if(state.phase==="boss" && !state.casinoUsed && Math.random() < CASINO_CHANCE){ startCasino(topicIdx); return; }
   const drawn = drawQuestion(topicIdx);
@@ -1010,6 +1117,7 @@ function pickTopic(topicIdx){
   $("q-mega-label").classList.toggle("hidden", !mega);
   $("q-curse-label").classList.toggle("hidden", !curse);
   $("q-card").classList.toggle("mega", mega);
+  if(mega) sfx.gong();   // глубокий гонг мегавопроса
   $("q-for").innerHTML = state.phase==="boss"
     ? "Отвечает: <b>"+esc(at.name)+"</b>"
     : "<b>"+esc(at.name)+"</b> <span class='tc-emoji'>⚔</span> <b>"+esc(tg.name)+"</b>";
@@ -1067,7 +1175,7 @@ function startCasino(topicIdx){
     wheel.appendChild(d);
   });
   $("casino-overlay").classList.add("show");
-  sfx.flip();
+  sfx.casino();   // звон монет
 }
 
 function spinCasino(){
@@ -1253,9 +1361,11 @@ function resolveCorrect(){
 function resolveWrong(prefix){
   const mega = state.current.mega;
   const curse = state.current.curse;
-  // урон, который получает сам игрок: против босса — DMG_SELF, в Мордобое — DMG_PVP
+  // урон, который получает сам игрок: против босса — DMG_SELF, в Мордобе — DMG_PVP
   const selfDmg = state.phase==="pvp" ? DMG_PVP[state.current.q.difficulty] : DMG_SELF[state.current.q.difficulty];
-  const dmg = mega ? MEGA_DMG : selfDmg;
+  // ---- ярость босса: с шансом 5% за каждый неправильный ответ он удваивает урон ----
+  const dbl = state.phase==="boss" && Math.random() < BOSS_DOUBLE_CHANCE;
+  const dmg = (mega ? MEGA_DMG : selfDmg) * (dbl ? 2 : 1);
   const at = state.players[state.current.attackerIdx];
   at.answers++;
 
@@ -1277,8 +1387,9 @@ function resolveWrong(prefix){
   }
 
   at.hp -= dmg; at.dmgTaken += dmg;
-  sfx.wrong(); sfx.hit(); if(mega) sfx.mega();
-  toast((prefix || '<span class="t-bad">✘ Неверно…</span>')+' '+esc(at.name)+' получает <b>'+dmg+'</b> урона');
+  sfx.wrong(); sfx.hit(); if(mega) sfx.mega(); if(dbl) sfx.roar();
+  toast((dbl ? '<span class="t-bad">👹 БОСС РАЗЪЯРЁН! </span>' : '')
+    + (prefix || '<span class="t-bad">✘ Неверно…</span>')+' '+esc(at.name)+' получает <b>'+dmg+'</b> урона');
   floatDamage($("pcard-"+at.id), "-"+dmg, "dmg-red");
   $("pcard-"+at.id).classList.add("shake");
   setTimeout(()=>$("pcard-"+at.id)?.classList.remove("shake"), 550);
@@ -1293,7 +1404,12 @@ function checkPlayerDead(p, cause){
     p.alive = false; p.hp = 0;
     p.deathCause = cause;
     p.eliminatedIn = state.phase==="boss" ? "I" : "II";
-    sfx.die();
+    // звук смерти зависит от того, кто убил
+    if(cause==="boss") sfx.deathBoss();           // добил БОСС
+    else if(cause==="curse") sfx.deathCurse();    // проклятие
+    else if(cause==="casino") sfx.deathCasino();  // казино
+    else if(cause==="own") sfx.deathOwn();        // собственная ошибка в Мордобое
+    else sfx.deathKiller();                       // убил другой игрок
     setTimeout(()=>toast('<span class="t-bad">☠ '+esc(p.name)+' выбывает!</span>'), 700);
   }
 }
@@ -1302,18 +1418,30 @@ function bossDefeated(){
   const killer = state.players[state.current.attackerIdx];
   state.bossKiller = killer.id;
   killer.points += BOSS_KILL_BONUS;
-  sfx.win();
-  showBanner("🏆", "БОСС ПОВЕРЖЕН!",
-    esc(killer.name)+" <b style='color:var(--gold)'>+"+BOSS_KILL_BONUS+"</b>",
-    ()=>{
-      state.phase = "pvp";
-      state.round = 1;
-      newRound();
-      $("boss-zone").classList.add("hidden");
-      $("duel-zone").classList.remove("hidden");
-      $("duel-zone").style.display = "flex";
-      nextTurn();
-    });
+  sfx.bossDie();                          // гибель босса: рёв и грохот
+  state.transitioning = true;             // на время анимации стол с темами заблокирован
+  const bz = $("boss-zone");
+  bz.classList.add("boss-dying");         // анимация распада босса
+  $("topic-table").classList.add("locked"); // стол тем затемняется на время анимации
+  setTimeout(()=>{
+    bz.classList.remove("boss-dying");
+    showBanner("🏆", state.bossName.toUpperCase()+" ПОВЕРЖЕН!",
+      esc(killer.name)+" <b style='color:var(--gold)'>+"+BOSS_KILL_BONUS+"</b>",
+      ()=>{
+        state.phase = "pvp";
+        state.round = 1;
+        state.transitioning = false;
+        $("topic-table").classList.remove("locked");
+        newRound();
+        $("boss-zone").classList.add("hidden");
+        $("duel-zone").classList.remove("hidden");
+        $("duel-zone").style.display = "flex";
+        sfx.drums();                      // барабаны второго акта
+        const dz = $("duel-zone");        // анимация выхода дуэли
+        dz.classList.remove("stage2-in"); void dz.offsetWidth; dz.classList.add("stage2-in");
+        nextTurn();
+      });
+  }, 1500);
 }
 
 /* ---- завершение игры ---- */
@@ -1329,6 +1457,8 @@ function finishGame(reason){
   const finalists = pool.slice().sort((a,b)=> b.dmgDealt-a.dmgDealt || b.hp-a.hp);
   finalists.slice(0, PRIZE.length).forEach((p,i)=>{ p.points += PRIZE[i]; });
   sfx.win();
+  sfx.applause();      // аплодисменты и фанфара
+  confetti();          // хлопушки с конфетти
   renderResults(finalists);
   $("screen-game").classList.add("hidden");
   $("screen-results").classList.remove("hidden");
@@ -1402,6 +1532,22 @@ function floatDamage(targetEl, text, cls){
   document.body.appendChild(el);
   setTimeout(()=>el.remove(), 1350);
 }
+/* конфетти-хлопушки на финале */
+function confetti(){
+  const colors = ["#e8c268","#d43f3f","#a78bfa","#4ade80","#f6dfa0","#ff8a80","#c4b2fd"];
+  for(let i=0;i<100;i++){
+    const el = document.createElement("div");
+    el.className = "confetti";
+    el.style.left = (Math.random()*100)+"vw";
+    el.style.background = colors[Math.floor(Math.random()*colors.length)];
+    el.style.animationDelay = (Math.random()*1.4)+"s";
+    el.style.animationDuration = (2.8+Math.random()*2.2)+"s";
+    el.style.width = (6+Math.random()*8)+"px";
+    el.style.height = (8+Math.random()*10)+"px";
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 6500);
+  }
+}
 function showBanner(emoji, title, text, onBtn){
   $("banner-emoji").textContent = emoji;
   $("banner-title").textContent = title;
@@ -1416,18 +1562,33 @@ function showBanner(emoji, title, text, onBtn){
 function buildSetup(){
   const grid = $("nick-grid");
   grid.innerHTML = "";
-  for(let i=0;i<10;i++){
+  for(let i=0;i<playerCount;i++){
     const slot = document.createElement("div");
     slot.className = "nick-slot";
-    const av = AVATARS[i];
+    const av = AVATARS[Math.floor(Math.random()*AVATARS.length)];
     slot.innerHTML = '<span class="avatar" style="background:'+av.color+';" title="'+esc(av.name)+'">'+av.emoji+'</span>'+
       '<input id="nick-'+i+'" maxlength="14" placeholder="Игрок '+(i+1)+'">';
     grid.appendChild(slot);
   }
 }
+/* ---- выбор числа игроков (8..12) ---- */
+let playerCount = 10;
+function buildCountBtns(){
+  const wrap = $("count-btns");
+  wrap.innerHTML = "";
+  [8,9,10,11,12].forEach(n=>{
+    const b = document.createElement("button");
+    b.className = "count-btn" + (n===playerCount ? " sel" : "");
+    b.textContent = n;
+    b.onclick = ()=>{ playerCount = n; buildCountBtns(); buildSetup(); updateHpHint(); };
+    wrap.appendChild(b);
+  });
+}
+function updateHpHint(){ $("count-hp").textContent = "по "+hpForCount(playerCount)+" HP"; }
+
 $("start-btn").onclick = ()=>{
   const names = [];
-  for(let i=0;i<10;i++){
+  for(let i=0;i<playerCount;i++){
     const v = $("nick-"+i).value.trim();
     names.push(v || "Игрок "+(i+1));
   }
@@ -1436,16 +1597,23 @@ $("start-btn").onclick = ()=>{
     if(seen[names[i]]){ let k=2; while(seen[names[i]+" ("+k+")"]) k++; names[i]=names[i]+" ("+k+")"; }
     seen[names[i]] = true;
   }
-  newGame(names);
-  // сброс игрового экрана от прошлой партии (иначе сразу откроется Глава II)
+  newGame(names, ($("boss-name-input").value.trim() || BOSS_NAMES[Math.floor(Math.random()*BOSS_NAMES.length)]));
+  // сброс игрового экрана от прошлой партии (иначе сразу откроется второй этап)
   $("boss-zone").classList.remove("hidden");
+  $("boss-zone").classList.remove("boss-dying");
+  $("topic-table").classList.remove("locked");
   $("duel-zone").classList.add("hidden");
+  $("duel-zone").classList.remove("stage2-in");
   $("duel-zone").style.display = "none";
   $("boss-emoji").textContent = "💀";
-  $("boss-name").textContent = "ТЁМНЫЙ ВЛАДЫКА";
+  $("boss-name").textContent = state.bossName;
   $("screen-setup").classList.add("hidden");
   $("screen-results").classList.add("hidden");
   $("screen-game").classList.remove("hidden");
+  // анимация и звук начала сражения (обнажение оружия)
+  const sg = $("screen-game");
+  sg.classList.remove("game-start"); void sg.offsetWidth; sg.classList.add("game-start");
+  sfx.weapon();
   nextTurn();
 };
 $("q-next").onclick = nextTurn;
@@ -1457,6 +1625,8 @@ $("mute-btn").onclick = ()=>{
   muted = !muted;
   $("mute-btn").textContent = muted ? "🔇 Звук" : "🔊 Звук";
 };
+buildCountBtns();
+updateHpHint();
 buildSetup();
 </script>
 </body>
