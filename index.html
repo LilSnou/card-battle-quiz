@@ -567,6 +567,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
 const START_HP        = 500;   // HP игрока
 const BOSS_HP         = 1500;  // HP босса
 const DMG             = {1:50, 2:100, 3:150}; // урон боссу по сложности ★/★★/★★★
+const DMG_SELF        = {1:100, 2:125, 3:150}; // урон самому игроку за неверный ответ против босса
 const DMG_PVP         = {1:100, 2:150, 3:200}; // урон игроку в Мордобое (быстрее второй этап)
 const MEGA_DMG        = 500;   // урон мегавопроса
 const MEGA_CHANCE     = 0.12;  // шанс, что следующий вопрос станет мега (один раз за игру)
@@ -582,13 +583,12 @@ const PRIZE           = [5, 3, 2]; // баллы за 1/2/3 место по ит
 /* сектора барабана казино (только битва с боссом) */
 const CASINO = [
   {icon:"💚", label:"+50 HP",      name:"ИСЦЕЛЕНИЕ +50"},
-  {icon:"👑", label:"крон −50 HP", name:"КРОН −50"},
+  {icon:"⏭️", label:"ход пропустит", name:"ПРОПУСК ХОДА"},
   {icon:"💀", label:"−100 HP",     name:"УРОН −100"},
   {icon:"⚔️", label:"боссу −100",  name:"УРОН БОССУ −100"},
   {icon:"🎯", label:"сопернику −50", name:"СОПЕРНИКУ −50"},
   {icon:"🕳️", label:"ничего",      name:"ПУСТО"}
 ];
-
 /* ============================================================
    АВАТАРКИ ИГРОКОВ (10 штук, распределяются рандомно)
    ============================================================ */
@@ -751,7 +751,7 @@ function newGame(names){
     avatar:AVATARS[avOrder[i]],
     dmgBoss:0, dmgDealt:0, dmgTaken:0,
     correct:0, answers:0,
-    killedBy:null, eliminatedIn:null, deathCause:null, points:0
+    killedBy:null, eliminatedIn:null, deathCause:null, points:0, skipTurns:0
   }));
   state = {
     phase:"boss",              // boss | pvp | end
@@ -946,17 +946,26 @@ function nextTurn(){
   if(alivePlayers().length===0){ finishGame("wipe"); return; }
   if(allDecksEmpty()){ finishGame("exhausted"); return; }   // вопросы закончились — финал!
 
-  // берём следующего живого игрока из очереди
+  // берём следующего живого игрока из очереди (пропускающие — пропускают)
   let idx = null;
-  while(state.queuePos < state.queue.length){
-    const cand = state.queue[state.queuePos];
-    state.queuePos++;
-    if(state.players[cand].alive){ idx = cand; break; }
-  }
-  if(idx===null){ // круг окончен — новый раунд
-    state.round++;
-    newRound();
-    idx = state.queue[0]; state.queuePos = 1;
+  while(idx === null){
+    while(state.queuePos < state.queue.length){
+      const cand = state.queue[state.queuePos];
+      state.queuePos++;
+      const p = state.players[cand];
+      if(!p.alive) continue;
+      if(p.skipTurns > 0){
+        p.skipTurns--;
+        sfx.wrong();
+        toast('<span class="t-gold">⏭ '+esc(p.name)+' пропускает ход</span>');
+        continue;
+      }
+      idx = cand; break;
+    }
+    if(idx === null){ // круг окончен — новый раунд
+      state.round++;
+      newRound();
+    }
   }
 
   if(state.phase==="pvp"){
@@ -995,7 +1004,9 @@ function pickTopic(topicIdx){
     : (state.phase==="pvp" ? DMG_PVP[q.difficulty] : DMG[q.difficulty]);
   $("q-diff").innerHTML = (mega || curse)
     ? '<span class="tc-emoji" style="color:#ff6b5e;">☠</span> <span class="dmg-note">'+(mega?"мега "+MEGA_DMG:"проклятие")+'</span>'
-    : "★".repeat(q.difficulty) + ' <span class="dmg-note">урон '+dmgShown+'</span>';
+    : "★".repeat(q.difficulty) + ' <span class="dmg-note">'
+      + (state.phase==="boss" ? "урон "+dmgShown+" · риск "+DMG_SELF[q.difficulty] : "урон "+dmgShown)
+      + '</span>';
   $("q-mega-label").classList.toggle("hidden", !mega);
   $("q-curse-label").classList.toggle("hidden", !curse);
   $("q-card").classList.toggle("mega", mega);
@@ -1089,12 +1100,19 @@ function applyCasino(idx, at){
       floatDamage($("pcard-"+at.id), "+"+h, "dmg-green");
       break;
     }
-    case 1: { // крон −50
-      at.hp -= 50; at.dmgTaken += 50;
-      sfx.wrong();
-      toast('<span class="t-bad">👑 Крон:</span> '+esc(at.name)+' теряет <b>50</b> HP');
-      floatDamage($("pcard-"+at.id), "-50", "dmg-red");
-      checkPlayerDead(at, "casino");
+    case 1: { // рандомный игрок пропускает следующий ход
+      const targets = alivePlayers();
+      if(targets.length){
+        const v = targets[Math.floor(Math.random()*targets.length)];
+        v.skipTurns = (v.skipTurns || 0) + 1;
+        sfx.wrong();
+        toast('<span class="t-bad">⏭ Казино:</span> <b>'+esc(v.name)+'</b> пропускает следующий ход');
+        floatDamage($("pcard-"+v.id), "Пропуск", "dmg-gold");
+        $("pcard-"+v.id).classList.add("shake");
+        setTimeout(()=>$("pcard-"+v.id)?.classList.remove("shake"), 550);
+      }else{
+        toast('🕳 Казино: пропускать некому…');
+      }
       break;
     }
     case 2: { // урон себе −100
@@ -1235,8 +1253,9 @@ function resolveCorrect(){
 function resolveWrong(prefix){
   const mega = state.current.mega;
   const curse = state.current.curse;
-  const dmg = mega ? MEGA_DMG
-    : (state.phase==="pvp" ? DMG_PVP[state.current.q.difficulty] : DMG[state.current.q.difficulty]);
+  // урон, который получает сам игрок: против босса — DMG_SELF, в Мордобое — DMG_PVP
+  const selfDmg = state.phase==="pvp" ? DMG_PVP[state.current.q.difficulty] : DMG_SELF[state.current.q.difficulty];
+  const dmg = mega ? MEGA_DMG : selfDmg;
   const at = state.players[state.current.attackerIdx];
   at.answers++;
 
