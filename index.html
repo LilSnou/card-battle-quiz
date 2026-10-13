@@ -97,12 +97,80 @@ h1,h2,h3,.serif{font-family:'Tagesschrift','Georgia',serif;}
 }
 #boss-name-input::placeholder{color:#6b5f80; font-size:20px;}
 #boss-name-input:focus{border-color:var(--ruby); box-shadow:0 0 16px rgba(212,63,63,.4);}
+/* ---------- Экран выбора режима игры ---------- */
+#screen-mode{
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:22px; padding:34px 18px;
+}
+#mode-title{font-size:54px; color:var(--gold); text-shadow:0 0 26px rgba(232,194,104,.5); text-align:center;}
+#mode-sub{font-size:21px; color:var(--violet); letter-spacing:3px; margin-bottom:16px;}
+#mode-btns{display:flex; gap:34px; flex-wrap:wrap; justify-content:center;}
+.mode-btn{
+  width:min(410px,92vw); padding:28px 26px; border-radius:20px; cursor:pointer;
+  background:linear-gradient(180deg,rgba(31,24,45,.94),rgba(15,11,24,.96));
+  border:2px solid var(--edge); color:var(--silver);
+  display:flex; flex-direction:column; align-items:center; gap:10px;
+  transition:border-color .2s, box-shadow .2s, transform .2s;
+  font-family:inherit;
+}
+.mode-btn:hover, .mode-btn:focus-visible{
+  border-color:var(--gold); transform:translateY(-4px);
+  box-shadow:0 12px 34px rgba(0,0,0,.55), 0 0 30px rgba(232,194,104,.35);
+}
+.mode-btn:active{transform:translateY(-1px);}
+.mode-ico{font-size:56px; filter:drop-shadow(0 6px 8px rgba(0,0,0,.7));}
+.mode-name{font-size:31px; font-weight:700; color:var(--gold-bright);}
+.mode-desc{
+  font-size:16.5px; line-height:1.5; color:var(--muted); min-height:72px;
+  opacity:0; transform:translateY(8px); transition:opacity .25s, transform .25s, color .25s;
+}
+.mode-btn:hover .mode-desc, .mode-btn:focus-visible .mode-desc{opacity:1; transform:none; color:var(--silver);}
+/* ---------- Слоты команд (командный режим) ---------- */
+.team-slot{
+  background:rgba(16,12,26,.85); border:2px solid var(--edge); border-radius:16px;
+  padding:16px; display:flex; flex-direction:column; gap:12px;
+}
+.team-slot .team-title{font-size:22px; font-weight:700; color:var(--violet); text-align:center; letter-spacing:1px;}
+.team-slot input.team-name{
+  width:100%; background:#1a1228; border:2px solid var(--edge); border-radius:13px;
+  padding:14px 12px; font-size:24px; font-weight:700; color:#c4b2fd;
+  text-align:center; outline:none; font-family:inherit;
+}
+.team-slot input.team-name::placeholder{color:#6b5f80; font-size:20px;}
+.team-slot input.team-name:focus{border-color:var(--violet); box-shadow:0 0 14px rgba(167,139,250,.45);}
+.team-inputs{display:flex; gap:12px;}
+.team-inputs input{
+  flex:1; min-width:0;
+  background:#140e1d; border:2px solid var(--edge); border-radius:13px;
+  padding:17px 12px; font-size:23px; font-weight:600; color:var(--gold-bright);
+  text-align:center; outline:none; box-shadow:inset 0 3px 8px rgba(0,0,0,.6);
+  font-family:inherit;
+}
+.team-inputs input::placeholder{color:#6b5f80; font-size:19px;}
+.team-inputs input:focus{border-color:var(--gold); box-shadow:0 0 14px rgba(232,194,104,.4);}
+/* ---------- Тема, запрещённая этому игроку: при наведении красная ---------- */
+.card.topic-card.forbidden{cursor:not-allowed;}
+.card.topic-card.forbidden:hover{
+  border-color:var(--ruby);
+  box-shadow:inset 0 0 20px rgba(212,63,63,.3), 0 0 32px rgba(212,63,63,.7);
+}
+.card.topic-card.forbidden:hover .t-name{color:#ff8a80;}
+/* ---------- Командная карточка в сетке ---------- */
+.team-card .p-head .avatar-sm{width:auto; min-width:32px; padding:0 5px; letter-spacing:-7px;}
+.team-card .p-sub{font-size:13px; color:var(--muted); margin:4px 0 5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+#attacker-avatar,#target-avatar{letter-spacing:-6px;}
 @media (max-height:940px){
   #screen-setup{gap:30px; padding:20px 18px;}
   .nickname-grid{gap:16px;}
   .nick-slot input{padding:16px; font-size:22px;}
   .avatar{width:64px; height:64px; font-size:34px;}
   .count-btn{width:50px; height:50px; font-size:23px;}
+  .team-slot{padding:12px; gap:9px;}
+  .team-slot input.team-name{padding:10px; font-size:20px;}
+  .team-inputs input{padding:12px 8px; font-size:19px;}
+  .mode-btn{padding:20px 20px;}
+  .mode-ico{font-size:44px;}
+  .mode-desc{min-height:64px; font-size:15.5px;}
 }
 .avatar-sm{flex:none; width:32px; height:32px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:18px; background:rgba(0,0,0,.45); border:1px solid var(--edge);}
 /* мрачные аватарки */
@@ -345,7 +413,7 @@ h1,h2,h3,.serif{font-family:'Tagesschrift','Georgia',serif;}
 /* --- Полупрозрачные узоры на фоне --- */
 #bg-decor{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;}
 #bg-decor span{position:absolute; opacity:.045; filter:grayscale(.5); user-select:none;}
-#screen-setup,#screen-game,#screen-results{position:relative; z-index:1;}
+#screen-mode,#screen-setup,#screen-game,#screen-results{position:relative; z-index:1;}
 
 /* --- Декоративная рамка карточек (фэнтези-орнамент) --- */
 .ornate{
@@ -458,8 +526,26 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
 </head>
 <body>
 
+<!-- ================= ЭКРАН ВЫБОРА РЕЖИМА ================= -->
+<div id="screen-mode">
+  <div id="mode-title">☠ ТЁМНЫЕ КАРТЫ</div>
+  <div id="mode-sub">ВЫБЕРИТЕ РЕЖИМ ИГРЫ</div>
+  <div id="mode-btns">
+    <button class="mode-btn" id="mode-solo">
+      <div class="mode-ico">🗡️</div>
+      <div class="mode-name">Одиночная игра</div>
+      <div class="mode-desc">Каждый сам за себя: 8–12 игроков сражаются с Боссом, а затем в Мордобое до последних трёх. Баллы — личные. 15 секунд на ответ.</div>
+    </button>
+    <button class="mode-btn" id="mode-team">
+      <div class="mode-ico">🛡️</div>
+      <div class="mode-name">Командная игра</div>
+      <div class="mode-desc">4–6 команд по 2 игрока. Общий запас HP, весь урон (кроме мегавопроса) вдвое выше, 20 секунд на ответ и более сложные вопросы. Баллы — команде.</div>
+    </button>
+  </div>
+</div>
+
 <!-- ================= ЭКРАН НАСТРОЙКИ ================= -->
-<div id="screen-setup">
+<div id="screen-setup" class="hidden">
   <div id="count-row">
     <span id="count-label">Игроков:</span>
     <div id="count-btns"></div>
@@ -526,7 +612,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       </div>
     </div>
     <div id="q-mega-label" class="q-mega-label hidden"><span class="tc-emoji">🔥</span> МЕГАВОПРОС <span class="tc-emoji">🔥</span></div>
-    <div class="q-curse-wrap"><div id="q-curse-label" class="q-curse-label hidden"><span class="tc-emoji">☠</span> ВОПРОС-ПРОКЛЯТИЕ · неверно — всем −50 HP, верно — жертве +100 HP</div></div>
+    <div class="q-curse-wrap"><div id="q-curse-label" class="q-curse-label hidden"><span class="tc-emoji">☠</span> ВОПРОС-ПРОКЛЯТИЕ · неверно — всем −100 HP, верно — жертве +100 HP</div></div>
     <div class="q-text" id="q-text"></div>
     <div class="q-opts hidden" id="q-opts"></div>
     <div class="q-actions">
@@ -642,8 +728,10 @@ const CURSE_CHANCE    = 0.06;  // шанс вопроса-проклятия (о
 const CASINO_CHANCE   = 0.07;  // шанс казино (только в битве с боссом, один раз за игру)
 const CASINO_SPIN_MS  = 6500;  // длительность вращения барабана казино
 const ANSWER_TIME     = 15;    // секунд на ответ (у мегавопроса таймера нет)
-const CURSE_HURT      = 50;    // урон проклятия всем игрокам при неверном ответе
+const ANSWER_TIME_TEAM= 20;    // секунд на ответ в командном режиме
+const CURSE_HURT      = 100;   // урон проклятия всем при неверном ответе
 const CURSE_HEAL      = 100;   // лечение жертвы при верном ответе на проклятие
+const TEAM_HARD_SHIFT = 0.65;  // шанс в командном режиме заменить ★ на следующую (более сложную) карту
 const BOSS_KILL_BONUS = 1;     // баллы за добивание босса
 const PRIZE           = [5, 3, 2]; // баллы за 1/2/3 место по итогам
 const BOSS_DOUBLE_CHANCE = 0.05; // шанс, что босс удвоит урон неверно ответившему (независимо от каждого ответа)
@@ -815,24 +903,56 @@ const TOPICS = [
 let state = null;
 let muted = false;
 
-function newGame(names, bossName){
-  START_HP = hpForCount(names.length);           // HP зависит от числа игроков
-  const players = names.map((n,i)=>({
-    id:i, name:n, hp:START_HP, alive:true,
+function mkPlayer(id, name, hp){
+  return {
+    id, name, hp, maxHp:hp, alive:true,
     avatar:AVATARS[Math.floor(Math.random()*AVATARS.length)], // аватарка рандомно (при 11-12 возможны повторы)
+    teamId:null,
     dmgBoss:0, dmgDealt:0, dmgTaken:0,
     correct:0, answers:0,
-    killedBy:null, eliminatedIn:null, deathCause:null, points:0, skipTurns:0
-  }));
+    killedBy:null, eliminatedIn:null, deathCause:null, points:0, skipTurns:0,
+    lastTopic:null
+  };
+}
+function startGame(cfg){
+  const mode = cfg.mode;
+  let players, teams = null;
+  if(mode === "team"){
+    // ---- командный режим: команды по 2 игрока, общий пул HP, урон ×2 ----
+    const total = cfg.teamDefs.length * 2;
+    START_HP = hpForCount(total);              // HP одного игрока (масштаб как в одиночной)
+    players = [];
+    teams = cfg.teamDefs.map((def, ti)=>{
+      const members = def.members.map(n=>{
+        const id = players.length;
+        players.push(mkPlayer(id, n, START_HP));
+        return id;
+      });
+      return {
+        id:ti, name:def.name, members,
+        hp:START_HP*2, maxHp:START_HP*2,        // общий пул команды = двум игрокам
+        alive:true, points:0,
+        dmgBoss:0, dmgDealt:0, dmgTaken:0,
+        killedBy:null, deathCause:null, eliminatedIn:null,
+        skipTurns:0, lastTopic:null, speakerTurn:0
+      };
+    });
+    teams.forEach(t=>t.members.forEach(pid=>{ players[pid].teamId = t.id; }));
+  }else{
+    // ---- одиночная: каждый игрок сам за себя ----
+    START_HP = hpForCount(cfg.names.length);   // HP зависит от числа игроков
+    players = cfg.names.map((n,i)=>mkPlayer(i, n, START_HP));
+  }
   state = {
-    phase:"boss",              // boss | pvp | end
+    mode,                    // solo | team
+    phase:"boss",            // boss | pvp | end
     round:1,
-    players,
+    players, teams,
     boss:{hp:BOSS_HP, maxHp:BOSS_HP},
-    bossName,
+    bossName: cfg.bossName,
     bossKiller:null,
     queue:[], queuePos:0,
-    current:null,              // {attackerIdx, targetIdx|null, mega, answerIdx, q, answered}
+    current:null,            // {attackerIdx, targetIdx|null, speakerId?, mega, answerIdx, q, answered}
     pools:TOPICS.map(t=>makePool(t.questions.length)),
     megaUsed:false,
     curseUsed:false,
@@ -841,6 +961,8 @@ function newGame(names, bossName){
   };
   newRound();
 }
+function newGame(names, bossName){ startGame({mode:"solo", names, bossName}); }         // одиночная игра
+function newTeamGame(teamDefs, bossName){ startGame({mode:"team", teamDefs, bossName}); } // командная игра
 
 function makePool(n){
   const arr = [...Array(n).keys()];
@@ -860,10 +982,22 @@ function shuffle(a){
   for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
   return a;
 }
-const alivePlayers = ()=>state.players.filter(p=>p.alive);
+/* ---- боевые единицы: в одиночной это игроки, в командной — команды ---- */
+const isTeamMode = ()=> state.mode === "team";
+function units(){ return isTeamMode() ? state.teams : state.players; }
+const aliveUnits = ()=> units().filter(u=>u.alive);
+const alivePlayers = ()=> aliveUnits();   // старое имя — теперь «живые боевые единицы»
+function curUnit(){ return units()[state.current.attackerIdx]; }
+function curTarget(){ return state.current && state.current.targetIdx!==null ? units()[state.current.targetIdx] : null; }
+function speaker(){ return state.players[state.current.speakerId!=null ? state.current.speakerId : state.current.attackerIdx]; }
+const teamMult = ()=> state.mode==="team" ? 2 : 1; // в командном режиме урон ×2 (мегавопрос и проклятие — исключения)
+const dmgBossFor = d => DMG[d]*teamMult();
+const dmgSelfFor = d => DMG_SELF[d]*teamMult();
+const dmgPvpFor  = d => DMG_PVP[d]*teamMult();
+const answerTime = ()=> state.mode==="team" ? ANSWER_TIME_TEAM : ANSWER_TIME;
 
 function newRound(){
-  state.queue = shuffle(alivePlayers().map(p=>p.id));
+  state.queue = shuffle(aliveUnits().map(u=>u.id));
   state.queuePos = 0;
 }
 
@@ -944,7 +1078,8 @@ function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g
 
 function renderTopbar(){
   $("phase-label").textContent = state.phase==="boss" ? "Битва с боссом" : "Мордобой";
-  $("round-label").textContent = "Круг " + state.round + " · в живых: " + alivePlayers().length;
+  $("round-label").textContent = "Круг " + state.round + " · "
+    + (isTeamMode() ? "команд в живых: " : "в живых: ") + aliveUnits().length;
 }
 
 function renderBossZone(){
@@ -953,40 +1088,68 @@ function renderBossZone(){
 
 function renderDuelZone(){
   if(!state.current || state.phase!=="pvp") return;
-  const at = state.players[state.current.attackerIdx];
-  const tg = state.players[state.current.targetIdx];
+  const at = curUnit(), tg = curTarget();
+  const face = u => isTeamMode() ? u.members.map(id=>state.players[id].avatar.emoji).join("") : u.avatar.emoji;
   $("attacker-name").textContent = at.name;
-  $("attacker-avatar").textContent = at.avatar.emoji;
-  setHpBar($("attacker-hp-fill"), $("attacker-hp-text"), at.hp, START_HP);
+  $("attacker-avatar").textContent = face(at);
+  setHpBar($("attacker-hp-fill"), $("attacker-hp-text"), at.hp, at.maxHp);
   $("target-name").textContent = tg.name;
-  $("target-avatar").textContent = tg.avatar.emoji;
-  setHpBar($("target-hp-fill"), $("target-hp-text"), tg.hp, START_HP);
+  $("target-avatar").textContent = face(tg);
+  setHpBar($("target-hp-fill"), $("target-hp-text"), tg.hp, tg.maxHp);
 }
 
 function renderTable(){
   const wrap = $("topic-table");
   wrap.innerHTML = "";
+  const unit = state.current ? curUnit() : null;
+  const nonEmpty = TOPICS.filter((t,i)=>state.pools[i].pos < state.pools[i].order.length).length;
   TOPICS.forEach((t,i)=>{
     const left = state.pools[i].order.length - state.pools[i].pos;
+    // эту тему единица уже брала на своём прошлом ходу — при наведении карточка загорается красным
+    const forbidden = left>0 && nonEmpty>1 && unit && unit.lastTopic===i;
     const div = document.createElement("div");
-    div.className = "card topic-card ornate" + (left<=0 ? " empty" : "");
+    div.className = "card topic-card ornate" + (left<=0 ? " empty" : "") + (forbidden ? " forbidden" : "");
     div.innerHTML = '<div class="t-emoji">'+t.emoji+'</div><div class="t-name">'+esc(t.name)+'</div>';
+    div.title = forbidden ? "Эту тему вы уже брали — выберите другую" : "";
     div.onclick = ()=>pickTopic(i);
     div.onmouseenter = ()=>sfx.hover();   // тихий шелест карты
     wrap.appendChild(div);
   });
-  const cur = state.players[state.current.attackerIdx];
+  if(!state.current) return;
+  const sp = speaker();
   if(state.phase==="pvp"){
-    const tg = state.players[state.current.targetIdx];
-    $("table-label").innerHTML = "<b>"+esc(cur.name)+"</b> <span class='tc-emoji'>⚔</span> <b>"+esc(tg.name)+"</b>";
+    const at = curUnit(), tg = curTarget();
+    $("table-label").innerHTML = "<b>"+esc(at.name)+"</b> <span class='tc-emoji'>⚔</span> <b>"+esc(tg.name)+"</b>"
+      + (isTeamMode() ? " <span class='tc-emoji'>·</span> отвечает <b>"+esc(sp.name)+"</b>" : "");
   }else{
-    $("table-label").innerHTML = "Ходит <b>"+esc(cur.name)+"</b>";
+    $("table-label").innerHTML = "Ходит <b>"+esc(sp.name)+"</b>"
+      + (isTeamMode() ? " <span class='tc-emoji'>·</span> <b>"+esc(curUnit().name)+"</b>" : "");
   }
 }
 
 function renderPlayers(){
   const grid = $("players-grid");
   grid.innerHTML = "";
+  if(isTeamMode()){
+    // ---- командная сетка: карточка команды = боевая единица (id = id команды) ----
+    state.teams.forEach(t=>{
+      const div = document.createElement("div");
+      const isCurrent = state.current && state.current.attackerIdx===t.id;
+      div.className = "card player-card team-card ornate" + (t.alive ? "" : " dead") + (isCurrent ? " active" : "");
+      const qPos = state.queue.indexOf(t.id);
+      const badge = (t.alive && !isCurrent && qPos>=state.queuePos) ? '<div class="p-queue">'+(qPos - state.queuePos + 1)+'</div>' : "";
+      const emojis = t.members.map(id=>state.players[id].avatar.emoji).join("");
+      const names = t.members.map(id=>state.players[id].name).join(" · ");
+      div.id = "pcard-"+t.id;
+      div.innerHTML = badge +
+        '<div class="p-head"><span class="avatar-sm" title="'+esc(names)+'">'+emojis+'</span><div class="p-name">'+esc(t.name)+'</div></div>'+
+        '<div class="p-sub">'+esc(names)+'</div>'+
+        '<div class="hp-wrap small"><div class="hp-bar"><div class="hp-fill"></div><div class="hp-text"></div></div></div>';
+      setHpBar(div.querySelector(".hp-fill"), div.querySelector(".hp-text"), t.hp, t.maxHp);
+      grid.appendChild(div);
+    });
+    return;
+  }
   state.players.forEach((p,i)=>{
     const div = document.createElement("div");
     div.className = "card player-card ornate" + (p.alive ? "" : " dead") + (state.current && state.current.attackerIdx===i ? " active" : "");
@@ -996,7 +1159,7 @@ function renderPlayers(){
     div.innerHTML = badge +
       '<div class="p-head"><span class="avatar-sm" title="'+esc(p.avatar.name)+'">'+p.avatar.emoji+'</span><div class="p-name">'+esc(p.name)+'</div></div>'+
       '<div class="hp-wrap small"><div class="hp-bar"><div class="hp-fill"></div><div class="hp-text"></div></div></div>';
-    setHpBar(div.querySelector(".hp-fill"), div.querySelector(".hp-text"), p.hp, START_HP);
+    setHpBar(div.querySelector(".hp-fill"), div.querySelector(".hp-text"), p.hp, p.maxHp);
     div.id = "pcard-"+i;
     grid.appendChild(div);
   });
@@ -1016,7 +1179,7 @@ function renderAll(){
 let timerId = null, timeLeft = 0;
 function startTimer(){
   stopTimer();
-  timeLeft = ANSWER_TIME;
+  timeLeft = answerTime();   // 15 сек в одиночной, 20 в командной
   $("q-timer").textContent = timeLeft;
   $("q-timer").classList.remove("low");
   $("q-timer").classList.remove("hidden");
@@ -1053,18 +1216,18 @@ function nextTurn(){
   if(alivePlayers().length===0){ finishGame("wipe"); return; }
   if(allDecksEmpty()){ finishGame("exhausted"); return; }   // вопросы закончились — финал!
 
-  // берём следующего живого игрока из очереди (пропускающие — пропускают)
+  // берём следующую живую единицу из очереди (пропускающие — пропускают)
   let idx = null;
   while(idx === null){
     while(state.queuePos < state.queue.length){
       const cand = state.queue[state.queuePos];
       state.queuePos++;
-      const p = state.players[cand];
-      if(!p.alive) continue;
-      if(p.skipTurns > 0){
-        p.skipTurns--;
+      const u = units()[cand];
+      if(!u.alive) continue;
+      if(u.skipTurns > 0){
+        u.skipTurns--;
         sfx.wrong();
-        toast('<span class="t-gold">⏭ '+esc(p.name)+' пропускает ход</span>');
+        toast('<span class="t-gold">⏭ '+esc(u.name)+' пропускает ход</span>');
         continue;
       }
       idx = cand; break;
@@ -1076,12 +1239,18 @@ function nextTurn(){
   }
 
   if(state.phase==="pvp"){
-    const targets = alivePlayers().filter(p=>p.id!==idx);
+    const targets = aliveUnits().filter(u=>u.id!==idx);
     if(targets.length===0){ finishGame("last3"); return; }
     const target = targets[Math.floor(Math.random()*targets.length)];
     state.current = {attackerIdx:idx, targetIdx:target.id, mega:false, answered:false};
   }else{
     state.current = {attackerIdx:idx, targetIdx:null, mega:false, answered:false};
+  }
+  if(isTeamMode()){
+    // за команду отвечает по очереди один из двух игроков
+    const team = state.teams[idx];
+    state.current.speakerId = team.members[team.speakerTurn % team.members.length];
+    team.speakerTurn++;
   }
   sfx.flip();
   renderAll();
@@ -1089,13 +1258,26 @@ function nextTurn(){
 
 function pickTopic(topicIdx){
   if(!state.current || state.current.answered || state.transitioning) return;
+  const unit = curUnit();
+  const sp = speaker();
+  // ---- одну и ту же тему дважды подряд брать нельзя (кроме последней оставшейся колоды) ----
+  const nonEmpty = TOPICS.filter((t,i)=>state.pools[i].pos < state.pools[i].order.length).length;
+  if(unit.lastTopic===topicIdx && nonEmpty>1){
+    toast('<span class="t-bad">⛔ '+esc(unit.name)+': эта тема уже была!</span> Выберите другую');
+    return;
+  }
   // ---- казино: вместо вопроса барабан (только битва с боссом, один раз за игру) ----
   if(state.phase==="boss" && !state.casinoUsed && Math.random() < CASINO_CHANCE){ startCasino(topicIdx); return; }
-  const drawn = drawQuestion(topicIdx);
+  let drawn = drawQuestion(topicIdx);
   if(!drawn){ toast("В этой колоде карты кончились!"); renderTable(); return; }
+  // ---- в командном режиме вопросы сложнее: ★ нередко уступает место следующей карте ----
+  if(isTeamMode() && drawn.q.difficulty===1 && Math.random() < TEAM_HARD_SHIFT){
+    const harder = drawQuestion(topicIdx);
+    if(harder) drawn = harder;
+  }
+  unit.lastTopic = topicIdx;   // следующий ход этой единицы — другая тема
   const q = drawn.q;
-  const at = state.players[state.current.attackerIdx];
-  const tg = state.current.targetIdx!==null ? state.players[state.current.targetIdx] : null;
+  const tg = curTarget();
 
   // ---- мегавопрос и вопрос-проклятие: по одному разу за игру ----
   const mega = !state.megaUsed && Math.random() < MEGA_CHANCE;
@@ -1108,19 +1290,20 @@ function pickTopic(topicIdx){
   state.current.q = q;
 
   const dmgShown = mega ? MEGA_DMG
-    : (state.phase==="pvp" ? DMG_PVP[q.difficulty] : DMG[q.difficulty]);
+    : (state.phase==="pvp" ? dmgPvpFor(q.difficulty) : dmgBossFor(q.difficulty));
   $("q-diff").innerHTML = (mega || curse)
     ? '<span class="tc-emoji" style="color:#ff6b5e;">☠</span> <span class="dmg-note">'+(mega?"мега "+MEGA_DMG:"проклятие")+'</span>'
     : "★".repeat(q.difficulty) + ' <span class="dmg-note">'
-      + (state.phase==="boss" ? "урон "+dmgShown+" · риск "+DMG_SELF[q.difficulty] : "урон "+dmgShown)
+      + (state.phase==="boss" ? "урон "+dmgShown+" · риск "+dmgSelfFor(q.difficulty) : "урон "+dmgShown)
       + '</span>';
   $("q-mega-label").classList.toggle("hidden", !mega);
   $("q-curse-label").classList.toggle("hidden", !curse);
   $("q-card").classList.toggle("mega", mega);
   if(mega) sfx.gong();   // глубокий гонг мегавопроса
   $("q-for").innerHTML = state.phase==="boss"
-    ? "Отвечает: <b>"+esc(at.name)+"</b>"
-    : "<b>"+esc(at.name)+"</b> <span class='tc-emoji'>⚔</span> <b>"+esc(tg.name)+"</b>";
+    ? "Отвечает: <b>"+esc(sp.name)+"</b>"+(isTeamMode() ? " <span class='tc-emoji'>·</span> <b>"+esc(unit.name)+"</b>" : "")
+    : "<b>"+esc(unit.name)+"</b> <span class='tc-emoji'>⚔</span> <b>"+esc(tg.name)+"</b>"
+      + (isTeamMode() ? " <span class='tc-emoji'>·</span> отвечает <b>"+esc(sp.name)+"</b>" : "");
   $("q-topic").innerHTML = '<span class="tc-emoji">'+TOPICS[topicIdx].emoji+'</span> '+esc(TOPICS[topicIdx].name);
   $("q-text").textContent = q.text;
 
@@ -1156,11 +1339,13 @@ $("q-show").onclick = ()=>{
    ============================================================ */
 let casinoRot = 0;
 function startCasino(topicIdx){
-  const at = state.players[state.current.attackerIdx];
+  const sp = speaker();
   state.current.answered = true;   // вопроса не будет — колода не тратится
   state.current.casino = true;
   state.casinoUsed = true;         // казино — один раз за игру
-  $("casino-for").innerHTML = "Крутит: <b>"+esc(at.name)+"</b> · <span class='tc-emoji'>"+TOPICS[topicIdx].emoji+"</span> "+esc(TOPICS[topicIdx].name);
+  $("casino-for").innerHTML = "Крутит: <b>"+esc(sp.name)+"</b>"
+    + (isTeamMode() ? " · "+esc(curUnit().name) : "")
+    + " · <span class='tc-emoji'>"+TOPICS[topicIdx].emoji+"</span> "+esc(TOPICS[topicIdx].name);
   $("casino-result").textContent = "";
   $("casino-next").classList.add("hidden");
   $("casino-spin").classList.remove("hidden");
@@ -1180,7 +1365,7 @@ function startCasino(topicIdx){
 
 function spinCasino(){
   if(!state.current) return;
-  const at = state.players[state.current.attackerIdx];
+  const at = curUnit();   // игрок (одиночная) или команда
   const idx = Math.floor(Math.random()*CASINO.length);
   $("casino-spin").classList.add("hidden");
   // стрелка сверху: доводим нужный сектор к 0 градусов (+9 медленных оборотов)
@@ -1201,15 +1386,15 @@ function applyCasino(idx, at){
   switch(idx){
     case 0: { // исцеление +50
       const before = at.hp;
-      at.hp = Math.min(START_HP, at.hp + 50);
+      at.hp = Math.min(at.maxHp, at.hp + 50);
       const h = at.hp - before;
       sfx.correct();
       toast('<span class="t-good">💚 Казино:</span> '+esc(at.name)+' лечится на <b>'+h+'</b> HP');
       floatDamage($("pcard-"+at.id), "+"+h, "dmg-green");
       break;
     }
-    case 1: { // рандомный игрок пропускает следующий ход
-      const targets = alivePlayers();
+    case 1: { // рандомная единица пропускает следующий ход
+      const targets = aliveUnits();
       if(targets.length){
         const v = targets[Math.floor(Math.random()*targets.length)];
         v.skipTurns = (v.skipTurns || 0) + 1;
@@ -1244,7 +1429,7 @@ function applyCasino(idx, at){
       break;
     }
     case 4: { // урон случайному сопернику −50
-      const others = alivePlayers().filter(p=>p.id!==at.id);
+      const others = aliveUnits().filter(u=>u.id!==at.id);
       if(others.length){
         const v = others[Math.floor(Math.random()*others.length)];
         v.hp -= 50; v.dmgTaken += 50;
@@ -1298,10 +1483,11 @@ function onTimeUp(){
 function resolveCorrect(){
   const mega = state.current.mega;
   const curse = state.current.curse;
-  const dmg = mega ? MEGA_DMG
-    : (state.phase==="pvp" ? DMG_PVP[state.current.q.difficulty] : DMG[state.current.q.difficulty]);
-  const at = state.players[state.current.attackerIdx];
-  at.answers++; at.correct++;
+  const dmg = mega ? MEGA_DMG     // мегавопрос не удваивается в командном режиме
+    : (state.phase==="pvp" ? dmgPvpFor(state.current.q.difficulty) : dmgBossFor(state.current.q.difficulty));
+  const sp = speaker();           // отвечающий игрок
+  const at = curUnit();           // боевая единица (игрок или команда)
+  sp.answers++; sp.correct++;
 
   // ---- вопрос-проклятие: верно — жертва лечится ----
   if(curse){
@@ -1314,9 +1500,9 @@ function resolveCorrect(){
       floatDamage($("boss-zone"), "+"+healed, "dmg-green");
       renderBossZone();
     }else{
-      const tg = state.players[state.current.targetIdx];
+      const tg = curTarget();
       const before = tg.hp;
-      tg.hp = Math.min(START_HP, tg.hp + CURSE_HEAL);
+      tg.hp = Math.min(tg.maxHp, tg.hp + CURSE_HEAL);
       const healed = tg.hp - before;
       sfx.correct();
       toast('<span class="t-good">✔ Верно!</span> проклятие снято — '+esc(tg.name)+' восстанавливает <b>'+healed+'</b> HP');
@@ -1340,7 +1526,7 @@ function resolveCorrect(){
     setTimeout(()=>$("boss-zone").classList.remove("shake"), 550);
     renderBossZone();
   }else{
-    const tg = state.players[state.current.targetIdx];
+    const tg = curTarget();
     const d = Math.min(dmg, tg.hp);
     tg.hp -= dmg; tg.dmgTaken += dmg;
     at.dmgDealt += d;
@@ -1361,24 +1547,25 @@ function resolveCorrect(){
 function resolveWrong(prefix){
   const mega = state.current.mega;
   const curse = state.current.curse;
-  // урон, который получает сам игрок: против босса — DMG_SELF, в Мордобе — DMG_PVP
-  const selfDmg = state.phase==="pvp" ? DMG_PVP[state.current.q.difficulty] : DMG_SELF[state.current.q.difficulty];
+  const sp = speaker();           // отвечающий игрок
+  const at = curUnit();           // боевая единица (игрок или команда)
+  // урон, который получает единица: против босса — DMG_SELF, в Мордобе — DMG_PVP (×2 в командах)
+  const selfDmg = state.phase==="pvp" ? dmgPvpFor(state.current.q.difficulty) : dmgSelfFor(state.current.q.difficulty);
   // ---- ярость босса: с шансом 5% за каждый неправильный ответ он удваивает урон ----
   const dbl = state.phase==="boss" && Math.random() < BOSS_DOUBLE_CHANCE;
   const dmg = (mega ? MEGA_DMG : selfDmg) * (dbl ? 2 : 1);
-  const at = state.players[state.current.attackerIdx];
-  at.answers++;
+  sp.answers++;
 
-  // ---- вопрос-проклятие: неверно — урон ВСЕМ игрокам ----
+  // ---- вопрос-проклятие: неверно — урон ВСЕМ единицам ----
   if(curse){
     sfx.wrong(); sfx.mega();
     toast((prefix || '<span class="t-bad">✘ Неверно…</span>')+' проклятие обрушивается на ВСЕХ: <b>−'+CURSE_HURT+'</b> HP');
-    alivePlayers().forEach(p=>{
-      p.hp -= CURSE_HURT; p.dmgTaken += CURSE_HURT;
-      floatDamage($("pcard-"+p.id), "-"+CURSE_HURT, "dmg-red");
-      $("pcard-"+p.id).classList.add("shake");
-      setTimeout(()=>$("pcard-"+p.id)?.classList.remove("shake"), 550);
-      checkPlayerDead(p, "curse");
+    aliveUnits().forEach(u=>{
+      u.hp -= CURSE_HURT; u.dmgTaken += CURSE_HURT;
+      floatDamage($("pcard-"+u.id), "-"+CURSE_HURT, "dmg-red");
+      $("pcard-"+u.id).classList.add("shake");
+      setTimeout(()=>$("pcard-"+u.id)?.classList.remove("shake"), 550);
+      checkPlayerDead(u, "curse");
     });
     renderPlayers();
     if(state.phase==="pvp") renderDuelZone();
@@ -1399,11 +1586,20 @@ function resolveWrong(prefix){
   $("q-next").classList.remove("hidden");
 }
 
-function checkPlayerDead(p, cause){
+function checkPlayerDead(p, cause){   // p — боевая единица: игрок или команда
   if(p.hp<=0 && p.alive){
     p.alive = false; p.hp = 0;
     p.deathCause = cause;
     p.eliminatedIn = state.phase==="boss" ? "I" : "II";
+    if(p.members){ // команда погибла целиком — выбывают оба игрока
+      p.members.forEach(pid=>{
+        const m = state.players[pid];
+        m.alive = false; m.hp = 0;
+        m.deathCause = cause;
+        m.eliminatedIn = p.eliminatedIn;
+        m.killedBy = p.killedBy;
+      });
+    }
     // звук смерти зависит от того, кто убил
     if(cause==="boss") sfx.deathBoss();           // добил БОСС
     else if(cause==="curse") sfx.deathCurse();    // проклятие
@@ -1415,7 +1611,7 @@ function checkPlayerDead(p, cause){
 }
 
 function bossDefeated(){
-  const killer = state.players[state.current.attackerIdx];
+  const killer = curUnit();   // игрок или команда, добившая босса
   state.bossKiller = killer.id;
   killer.points += BOSS_KILL_BONUS;
   sfx.bossDie();                          // гибель босса: рёв и грохот
@@ -1452,8 +1648,8 @@ function finishGame(reason){
   // "last3" — остаются трое, места по урону; "exhausted"/"wipe" — карты кончились или экипаж пал:
   // места по нанесённому урону, затем по запасу HP
   const pool = (reason==="exhausted" || reason==="wipe")
-    ? state.players
-    : state.players.filter(p=>p.alive);
+    ? units()
+    : aliveUnits();
   const finalists = pool.slice().sort((a,b)=> b.dmgDealt-a.dmgDealt || b.hp-a.hp);
   finalists.slice(0, PRIZE.length).forEach((p,i)=>{ p.points += PRIZE[i]; });
   sfx.win();
@@ -1469,44 +1665,68 @@ function finishGame(reason){
    ============================================================ */
 function renderResults(finalists){
   const medals = ["🥇","🥈","🥉"];
-  $("results-sub").textContent = "";
+  $("results-sub").textContent = isTeamMode() ? "Командный режим · баллы командам" : "";
+  const face = u => isTeamMode() ? u.members.map(id=>state.players[id].avatar.emoji).join("") : u.avatar.emoji;
 
   const pod = $("podium");
   pod.innerHTML = "";
   finalists.slice(0,3).forEach((p,i)=>{
     const d = document.createElement("div");
     d.className = "card ornate";
-    d.innerHTML = '<div class="medal">'+medals[i]+'</div><div style="font-size:40px;">'+p.avatar.emoji+'</div><div class="p-nick">'+esc(p.name)+'</div>'+
+    d.innerHTML = '<div class="medal">'+medals[i]+'</div><div style="font-size:40px;">'+face(p)+'</div><div class="p-nick">'+esc(p.name)+'</div>'+
       '<div class="p-pts">+'+PRIZE[i]+'</div>';
     pod.appendChild(d);
   });
   if(state.bossKiller!==null){
-    const k = state.players[state.bossKiller];
+    const k = units()[state.bossKiller];
     const d = document.createElement("div");
     d.className = "card ornate";
-    d.innerHTML = '<div class="medal">💀</div><div style="font-size:40px;">'+k.avatar.emoji+'</div><div class="p-nick">'+esc(k.name)+'</div>'+
+    d.innerHTML = '<div class="medal">💀</div><div style="font-size:40px;">'+face(k)+'</div><div class="p-nick">'+esc(k.name)+'</div>'+
       '<div class="p-pts"><span class="badge-boss">ДОБИЛ БОССА</span><br>+'+BOSS_KILL_BONUS+'</div>';
     pod.appendChild(d);
   }
 
-  const rows = state.players.slice().sort((a,b)=> b.points-a.points || b.dmgDealt-a.dmgDealt);
-  let html = "<tr><th>Место</th><th>Игрок</th><th>Очки</th><th>Статус</th><th>Урон боссу</th><th>Урон игрокам</th><th>Всего урона</th><th>Получено</th><th>Ответы</th></tr>";
-  rows.forEach((p,i)=>{
-    const dmgPvp = p.dmgDealt - p.dmgBoss;
-    let status;
-    if(p.alive) status = '<span style="color:var(--emerald)">Выжил</span>';
-    else if(p.deathCause==="curse") status = '<span style="color:#c084fc">Пал от проклятия</span>';
-    else if(p.deathCause==="casino") status = '<span style="color:var(--gold)">Убит: казино</span>';
-    else if(p.deathCause==="boss") status = '<span style="color:#ff8a80">Убит БОССОМ</span>';
-    else if(p.deathCause==="own") status = '<span style="color:#ff8a80">Убит: своя ошибка</span>';
-    else status = '<span style="color:#ff8a80">Убит: '+esc(p.deathCause || "?")+'</span>';
-    html += "<tr class='"+(p.alive?"":"dead-row")+"'>"+
-      "<td class='place'>"+(i+1)+"</td>"+
-      "<td class='name'>"+p.avatar.emoji+" "+esc(p.name)+(state.bossKiller===p.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
-      "<td><b>"+p.points+"</b></td><td>"+status+"</td>"+
-      "<td>"+p.dmgBoss+"</td><td>"+Math.max(0,dmgPvp)+"</td><td>"+p.dmgDealt+"</td><td>"+p.dmgTaken+"</td>"+
-      "<td>"+p.correct+" / "+p.answers+"</td></tr>";
-  });
+  const statusOf = p => {
+    if(p.alive) return '<span style="color:var(--emerald)">Выжил'+(isTeamMode()?"а":"")+'</span>';
+    if(p.deathCause==="curse") return '<span style="color:#c084fc">Пал'+(isTeamMode()?"а":"")+' от проклятия</span>';
+    if(p.deathCause==="casino") return '<span style="color:var(--gold)">Убит'+(isTeamMode()?"а":"")+': казино</span>';
+    if(p.deathCause==="boss") return '<span style="color:#ff8a80">Убит'+(isTeamMode()?"а":"")+' БОССОМ</span>';
+    if(p.deathCause==="own") return '<span style="color:#ff8a80">Убит'+(isTeamMode()?"а":"")+': своя ошибка</span>';
+    return '<span style="color:#ff8a80">Убит'+(isTeamMode()?"а":"")+': '+esc(p.deathCause || "?")+'</span>';
+  };
+
+  let html;
+  if(isTeamMode()){
+    // ---- командные итоги: баллы и статистика на команду ----
+    const rows = state.teams.slice().sort((a,b)=> b.points-a.points || b.dmgDealt-a.dmgDealt);
+    html = "<tr><th>Место</th><th>Команда</th><th>Очки</th><th>Статус</th><th>Урон боссу</th><th>Урон командам</th><th>Всего урона</th><th>Получено</th><th>Ответы</th></tr>";
+    rows.forEach((t,i)=>{
+      const members = t.members.map(id=>state.players[id]);
+      const emojis = members.map(m=>m.avatar.emoji).join("");
+      const nicks = members.map(m=>m.name).join(", ");
+      const correct = members.reduce((s,m)=>s+m.correct,0);
+      const answers = members.reduce((s,m)=>s+m.answers,0);
+      const dmgPvp = t.dmgDealt - t.dmgBoss;
+      html += "<tr class='"+(t.alive?"":"dead-row")+"'>"+
+        "<td class='place'>"+(i+1)+"</td>"+
+        "<td class='name'>"+emojis+" <b>"+esc(t.name)+"</b><br><small>"+esc(nicks)+"</small>"+(state.bossKiller===t.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
+        "<td><b>"+t.points+"</b></td><td>"+statusOf(t)+"</td>"+
+        "<td>"+t.dmgBoss+"</td><td>"+Math.max(0,dmgPvp)+"</td><td>"+t.dmgDealt+"</td><td>"+t.dmgTaken+"</td>"+
+        "<td>"+correct+" / "+answers+"</td></tr>";
+    });
+  }else{
+    const rows = state.players.slice().sort((a,b)=> b.points-a.points || b.dmgDealt-a.dmgDealt);
+    html = "<tr><th>Место</th><th>Игрок</th><th>Очки</th><th>Статус</th><th>Урон боссу</th><th>Урон игрокам</th><th>Всего урона</th><th>Получено</th><th>Ответы</th></tr>";
+    rows.forEach((p,i)=>{
+      const dmgPvp = p.dmgDealt - p.dmgBoss;
+      html += "<tr class='"+(p.alive?"":"dead-row")+"'>"+
+        "<td class='place'>"+(i+1)+"</td>"+
+        "<td class='name'>"+p.avatar.emoji+" "+esc(p.name)+(state.bossKiller===p.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
+        "<td><b>"+p.points+"</b></td><td>"+statusOf(p)+"</td>"+
+        "<td>"+p.dmgBoss+"</td><td>"+Math.max(0,dmgPvp)+"</td><td>"+p.dmgDealt+"</td><td>"+p.dmgTaken+"</td>"+
+        "<td>"+p.correct+" / "+p.answers+"</td></tr>";
+    });
+  }
   $("stats-table").innerHTML = html;
 }
 
@@ -1559,9 +1779,28 @@ function showBanner(emoji, title, text, onBtn){
 /* ============================================================
    СТАРТ / UI
    ============================================================ */
+let gameMode = "solo";   // solo | team
+let playerCount = 10;    // одиночная: число игроков (8..12)
+let teamCount = 5;       // командная: число команд (4..6)
+
 function buildSetup(){
   const grid = $("nick-grid");
   grid.innerHTML = "";
+  if(gameMode === "team"){
+    // ---- командный режим: слот команды = имя команды + два игрока ----
+    for(let t=0;t<teamCount;t++){
+      const slot = document.createElement("div");
+      slot.className = "team-slot";
+      slot.innerHTML =
+        '<input class="team-name" id="team-name-'+t+'" maxlength="16" placeholder="Команда '+(t+1)+'">'+
+        '<div class="team-inputs">'+
+        '<input id="nick-'+(2*t)+'" maxlength="14" placeholder="Игрок '+(2*t+1)+'">'+
+        '<input id="nick-'+(2*t+1)+'" maxlength="14" placeholder="Игрок '+(2*t+2)+'">'+
+        '</div>';
+      grid.appendChild(slot);
+    }
+    return;
+  }
   for(let i=0;i<playerCount;i++){
     const slot = document.createElement("div");
     slot.className = "nick-slot";
@@ -1571,34 +1810,70 @@ function buildSetup(){
     grid.appendChild(slot);
   }
 }
-/* ---- выбор числа игроков (8..12) ---- */
-let playerCount = 10;
+/* ---- выбор числа игроков (8..12) или команд (4..6) ---- */
 function buildCountBtns(){
   const wrap = $("count-btns");
   wrap.innerHTML = "";
-  [8,9,10,11,12].forEach(n=>{
+  const list = gameMode==="team" ? [4,5,6] : [8,9,10,11,12];
+  const cur = gameMode==="team" ? teamCount : playerCount;
+  $("count-label").textContent = gameMode==="team" ? "Команд:" : "Игроков:";
+  list.forEach(n=>{
     const b = document.createElement("button");
-    b.className = "count-btn" + (n===playerCount ? " sel" : "");
+    b.className = "count-btn" + (n===cur ? " sel" : "");
     b.textContent = n;
-    b.onclick = ()=>{ playerCount = n; buildCountBtns(); buildSetup(); updateHpHint(); };
+    b.onclick = ()=>{
+      if(gameMode==="team") teamCount = n; else playerCount = n;
+      buildCountBtns(); buildSetup(); updateHpHint();
+    };
     wrap.appendChild(b);
   });
 }
-function updateHpHint(){ $("count-hp").textContent = "по "+hpForCount(playerCount)+" HP"; }
+function updateHpHint(){
+  $("count-hp").textContent = gameMode==="team"
+    ? (teamCount*2)+" игроков · пул "+(hpForCount(teamCount*2)*2)+" HP на команду"
+    : "по "+hpForCount(playerCount)+" HP";
+}
+/* ---- экран выбора режима ---- */
+function showSetupScreen(){
+  $("screen-mode").classList.add("hidden");
+  $("screen-results").classList.add("hidden");
+  $("screen-setup").classList.remove("hidden");
+  buildCountBtns(); updateHpHint(); buildSetup();
+}
+$("mode-solo").onclick = ()=>{ gameMode = "solo"; showSetupScreen(); };
+$("mode-team").onclick = ()=>{ gameMode = "team"; showSetupScreen(); };
 
 $("start-btn").onclick = ()=>{
-  const names = [];
-  for(let i=0;i<playerCount;i++){
-    const v = $("nick-"+i).value.trim();
-    names.push(v || "Игрок "+(i+1));
+  const bossName = $("boss-name-input").value.trim() || BOSS_NAMES[Math.floor(Math.random()*BOSS_NAMES.length)];
+  if(gameMode === "team"){
+    const defs = [];
+    for(let t=0;t<teamCount;t++){
+      defs.push({
+        name: $("team-name-"+t).value.trim() || "Команда "+(t+1),
+        members: [ $("nick-"+(2*t)).value.trim() || "Игрок "+(2*t+1),
+                   $("nick-"+(2*t+1)).value.trim() || "Игрок "+(2*t+2) ]
+      });
+    }
+    const seen = {};
+    defs.forEach(d=>d.members.forEach((m,i)=>{
+      if(seen[m]){ let k=2; while(seen[m+" ("+k+")"]) k++; m = m+" ("+k+")"; seen[m]=true; d.members[i]=m; }
+      else seen[m]=true;
+    }));
+    newTeamGame(defs, bossName);
+  }else{
+    const names = [];
+    for(let i=0;i<playerCount;i++){
+      names.push($("nick-"+i).value.trim() || "Игрок "+(i+1));
+    }
+    const seen = {};
+    for(let i=0;i<names.length;i++){
+      if(seen[names[i]]){ let k=2; while(seen[names[i]+" ("+k+")"]) k++; names[i]=names[i]+" ("+k+")"; }
+      seen[names[i]] = true;
+    }
+    newGame(names, bossName);
   }
-  const seen = {};
-  for(let i=0;i<names.length;i++){
-    if(seen[names[i]]){ let k=2; while(seen[names[i]+" ("+k+")"]) k++; names[i]=names[i]+" ("+k+")"; }
-    seen[names[i]] = true;
-  }
-  newGame(names, ($("boss-name-input").value.trim() || BOSS_NAMES[Math.floor(Math.random()*BOSS_NAMES.length)]));
   // сброс игрового экрана от прошлой партии (иначе сразу откроется второй этап)
+  $("screen-mode").classList.add("hidden");
   $("boss-zone").classList.remove("hidden");
   $("boss-zone").classList.remove("boss-dying");
   $("topic-table").classList.remove("locked");
@@ -1618,8 +1893,10 @@ $("start-btn").onclick = ()=>{
 };
 $("q-next").onclick = nextTurn;
 $("again-btn").onclick = ()=>{
+  // назад — в меню выбора режима
   $("screen-results").classList.add("hidden");
-  $("screen-setup").classList.remove("hidden");
+  $("screen-setup").classList.add("hidden");
+  $("screen-mode").classList.remove("hidden");
 };
 $("mute-btn").onclick = ()=>{
   muted = !muted;
