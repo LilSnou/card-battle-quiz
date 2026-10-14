@@ -188,6 +188,7 @@ html[data-theme="fantasy"]  #fantasy-scene{display:block;}
 #halloween-scene .flame{animation:flick .38s steps(2,end) infinite alternate;}
 @keyframes flick{from{fill:#ffb020; opacity:.75;} to{fill:#ff7a00; opacity:1;}}
 #halloween-scene .pump-glow{animation:glowFlick .55s ease-in-out infinite alternate;}
+#halloween-scene .ground-svg{overflow:visible;}   /* крупные засохшие деревья растут выше полосы земли */
 @keyframes glowFlick{from{opacity:.25;} to{opacity:.6;}}
 
 /* --- Новый год: сугробы, ёлка с гирляндой, сани в небе --- */
@@ -1125,46 +1126,56 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <radialGradient id="pglow"><stop offset="0%" stop-color="rgba(255,150,30,.9)"/><stop offset="100%" stop-color="rgba(255,120,0,0)"/></radialGradient>
     </defs>
     <path fill="#0d0612" d="M0 300 L0 214 C240 184 430 236 700 208 C960 184 1190 230 1440 202 L1440 300 Z"/>
-    <!-- два чёрных засохших дерева между тыквами -->
-    <!-- дерево с чёрным дуплом -->
-    <g class="dead-tree" transform="translate(430,215)" fill="#050308">
-      <path stroke="none" d="M-19 0 C-15 -36 -21 -64 -15 -96 C-11 -118 -16 -138 -10 -160 C-7 -172 -4 -180 -3 -192 L5 -190 C7 -176 8 -164 7 -148 C5 -128 12 -110 10 -90 C8 -66 16 -40 14 -16 L20 0 Z"/>
+    <!-- два огромных чёрных засохших дерева между тыквами (почти в три раза выше прежних) -->
+    <!-- дерево с чёрным дуплом: наклонённый ствол со сломанной макушкой -->
+    <g class="dead-tree" transform="translate(430,215) scale(2.8)" fill="#050308">
+      <path stroke="none" d="M-24 4 C-14 -8 -20 -24 -16 -44 C-24 -62 -18 -84 -22 -104 C-26 -124 -18 -144 -22 -164 L-16 -186 L-8 -170 L-2 -192 L4 -168 L10 -184 L14 -160 C18 -138 12 -118 16 -98 C20 -78 14 -60 18 -42 C22 -24 16 -10 22 4 Z"/>
+      <!-- сухие ветви-когти с крючками на концах -->
       <g fill="none" stroke="#050308" stroke-linecap="round">
-        <path d="M-9 -132 C-30 -144 -46 -162 -52 -186" stroke-width="6"/>
-        <path d="M-52 -186 C-57 -196 -66 -200 -76 -201" stroke-width="3.5"/>
-        <path d="M-40 -164 C-48 -172 -58 -175 -68 -174" stroke-width="3"/>
-        <path d="M3 -158 C22 -168 36 -182 43 -197" stroke-width="6"/>
-        <path d="M43 -197 C49 -205 58 -207 66 -206" stroke-width="3.5"/>
-        <path d="M28 -180 C36 -187 46 -189 55 -187" stroke-width="3"/>
-        <path d="M8 -104 C26 -110 40 -122 48 -140" stroke-width="5"/>
-        <path d="M48 -140 C55 -151 65 -155 75 -155" stroke-width="3"/>
-        <path d="M-12 -84 C-30 -92 -42 -104 -47 -122" stroke-width="4.5"/>
-        <path d="M-47 -122 C-52 -133 -61 -138 -71 -138" stroke-width="3"/>
+        <path d="M-18 -112 C-40 -124 -56 -144 -60 -168" stroke-width="6"/>
+        <path d="M-60 -168 C-63 -180 -72 -187 -84 -188" stroke-width="4"/>
+        <path d="M-56 -160 C-66 -166 -76 -166 -86 -162" stroke-width="3"/>
+        <path d="M-60 -168 C-66 -160 -70 -152 -68 -142" stroke-width="3"/>
+        <path d="M10 -140 C30 -152 44 -170 48 -190" stroke-width="6"/>
+        <path d="M48 -190 C51 -200 60 -206 71 -206" stroke-width="4"/>
+        <path d="M46 -186 C56 -188 64 -194 68 -202" stroke-width="3"/>
+        <path d="M48 -190 C46 -180 48 -172 54 -166" stroke-width="3"/>
+        <path d="M14 -96 C34 -104 48 -118 56 -136" stroke-width="5"/>
+        <path d="M56 -136 C61 -146 71 -151 81 -150" stroke-width="3"/>
+        <path d="M-20 -70 C-38 -78 -50 -92 -54 -110" stroke-width="4.5"/>
+        <path d="M-54 -110 C-57 -120 -66 -126 -76 -126" stroke-width="3"/>
+        <path d="M-14 -150 C-30 -164 -38 -180 -38 -196" stroke-width="4"/>
+        <path d="M-38 -196 C-38 -204 -44 -210 -52 -212" stroke-width="3"/>
       </g>
       <!-- чёрное дупло: чёрный обод, вглуби — тёмная полость -->
       <ellipse class="tree-hollow" cx="-3" cy="-92" rx="11" ry="16" fill="#000" stroke="none"/>
       <ellipse cx="-3" cy="-90" rx="7.5" ry="11.5" fill="#191233" stroke="none"/>
     </g>
-    <!-- дерево с жуткой улыбкой -->
-    <g class="dead-tree" transform="translate(1000,204)" fill="#050308">
-      <path stroke="none" d="M-20 0 C-18 -30 -24 -52 -18 -72 C-28 -84 -26 -112 -14 -120 C-16 -142 -10 -160 -6 -186 L4 -184 C6 -164 8 -148 8 -130 C18 -122 24 -104 18 -88 C28 -78 26 -56 16 -46 C20 -30 18 -14 20 0 Z"/>
+    <!-- дерево с жуткой улыбкой: S-образный ствол, ветви свисают вниз и загибаются крючками -->
+    <g class="dead-tree" transform="translate(1000,204) scale(2.8)" fill="#050308">
+      <path stroke="none" d="M-24 4 C-28 -14 -20 -30 -25 -48 C-30 -68 -21 -86 -26 -106 C-31 -126 -22 -144 -27 -162 L-19 -180 L-13 -164 L-7 -184 L-1 -162 L5 -176 L9 -156 C13 -136 7 -118 11 -100 C15 -82 10 -66 15 -48 C17 -32 11 -16 15 4 Z"/>
       <g fill="none" stroke="#050308" stroke-linecap="round">
-        <path d="M8 -126 C28 -138 42 -156 48 -178" stroke-width="6"/>
-        <path d="M48 -178 C53 -187 62 -191 71 -192" stroke-width="3.5"/>
-        <path d="M36 -156 C44 -164 53 -167 62 -166" stroke-width="3"/>
-        <path d="M-4 -152 C-22 -162 -35 -176 -42 -187" stroke-width="6"/>
-        <path d="M-42 -187 C-48 -194 -56 -197 -64 -197" stroke-width="3.5"/>
-        <path d="M-8 -100 C-25 -106 -37 -118 -44 -134" stroke-width="4.5"/>
-        <path d="M-44 -134 C-50 -144 -59 -148 -68 -148" stroke-width="3"/>
-        <path d="M-4 -70 C14 -76 27 -87 33 -102" stroke-width="4"/>
-        <path d="M33 -102 C39 -112 48 -116 57 -116" stroke-width="2.5"/>
+        <path d="M-20 -100 C-42 -110 -58 -104 -70 -88" stroke-width="6"/>
+        <path d="M-70 -88 C-78 -78 -88 -76 -97 -80" stroke-width="3.5"/>
+        <path d="M-70 -88 C-76 -96 -84 -100 -93 -100" stroke-width="3"/>
+        <path d="M10 -130 C32 -138 50 -132 62 -116" stroke-width="5.5"/>
+        <path d="M62 -116 C70 -106 80 -104 89 -108" stroke-width="3.5"/>
+        <path d="M62 -116 C68 -124 77 -127 86 -126" stroke-width="3"/>
+        <path d="M-24 -140 C-44 -152 -56 -170 -58 -190" stroke-width="5"/>
+        <path d="M-58 -190 C-59 -199 -66 -205 -75 -207" stroke-width="3.5"/>
+        <path d="M-58 -190 C-66 -187 -73 -188 -80 -192" stroke-width="3"/>
+        <path d="M4 -168 C24 -180 36 -194 40 -208" stroke-width="5"/>
+        <path d="M40 -208 C43 -215 51 -218 59 -217" stroke-width="3.5"/>
+        <path d="M40 -208 C47 -205 54 -206 60 -210" stroke-width="3"/>
       </g>
-      <!-- жуткая улыбка: серповидная пасть с зубами -->
-      <path class="tree-smile" stroke="none" fill="#dccf96" d="M-13 -82 C-6 -62 6 -62 13 -82 C8 -72 4 -69 0 -69 C-4 -69 -9 -72 -13 -82 Z"/>
-      <g stroke="none" fill="#dccf96">
-        <path d="M-10 -68 L-7 -55 L-4 -68 Z"/>
-        <path d="M-3 -66 L0 -52 L3 -66 Z"/>
-        <path d="M4 -67 L7 -56 L10 -67 Z"/>
+      <!-- жуткая улыбка: глубокая пасть на сучке, зубы-зазубрины вырезаны стволом -->
+      <path class="tree-smile" stroke="none" fill="#dccf96" d="M-17 -86 Q-4 -48 9 -86 Q-4 -76 -17 -86 Z"/>
+      <g class="smile-teeth" stroke="none" fill="#050308">
+        <path d="M-14 -84 L-11 -69 L-8 -84 Z"/>
+        <path d="M-7 -83.5 L-4 -69 L-1 -83.5 Z"/>
+        <path d="M0 -84 L3 -69 L6 -84 Z"/>
+        <path d="M-10.5 -66 L-7.5 -77 L-4.5 -66 Z"/>
+        <path d="M-3.5 -65 L-0.5 -76 L2.5 -65 Z"/>
       </g>
     </g>
     <g transform="translate(160,158)">
