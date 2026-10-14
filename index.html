@@ -664,14 +664,14 @@ html[data-theme="notebook"] [style*="--pencil"]{
   position:relative;
 }
 .overlay.show .q-card{transform:none;}
-/* ---- бой (Босс и Мордобой): интерфейс боя крупнее обычного (×1.5) — плашки, карточки, текст ----
+/* ---- бой (Босс и Мордобой): интерфейс боя крупнее обычного (×1.3) — плашки, карточки, текст ----
    zoom пересчитывает раскладку (как смена базового размера), поэтому ничего не ломается;
    vw/vh-ограничения карточек при этом ужимаются под масштаб, чтобы не вылезать за экран */
-html[data-battle="1"] #screen-game{zoom:1.5;}                                  /* игровая сцена ×1.5 */
-html[data-battle="1"] .q-card{width:min(1200px,64vw); max-height:63vh;}        /* карточка вопроса */
-html[data-battle="1"] #diff-overlay .card{width:min(640px,63vw) !important;}    /* выбор сложности (ширина инлайном) */
-html[data-battle="1"] #casino-overlay .card{width:min(780px,64vw) !important;}  /* колесо фортуны (ширина инлайном) */
-html[data-battle="1"] #banner-overlay .card{max-width:64vw;}                    /* баннеры круга — не шире экрана */
+html[data-battle="1"] #screen-game{zoom:1.3;}                                  /* игровая сцена ×1.3 */
+html[data-battle="1"] .q-card{width:min(1200px,75vw); max-height:73vh;}        /* карточка вопроса */
+html[data-battle="1"] #diff-overlay .card{width:min(640px,73vw) !important;}    /* выбор сложности (ширина инлайном) */
+html[data-battle="1"] #casino-overlay .card{width:min(780px,74vw) !important;}  /* колесо фортуны (ширина инлайном) */
+html[data-battle="1"] #banner-overlay .card{max-width:74vw;}                    /* баннеры круга — не шире экрана */
 .q-card.mega{
   border-color:var(--ruby);
   box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 0 44px rgba(212,63,63,.65);
@@ -1735,6 +1735,8 @@ const MEGA_DMG        = 400;   // урон мегавопроса (наноси�
 const MEGA_CHANCE     = 0.12;  // шанс, что следующий вопрос станет мега (один раз за игру)
 const CURSE_CHANCE    = 0.06;  // шанс вопроса-проклятия (один раз за игру)
 const CASINO_CHANCE   = 0.07;  // шанс казино (только в битве с боссом, один раз за игру)
+const SPECIAL_HOLD    = 3;     // столько первых вопросов игры — точно без особых событий (мега/проклятье/казино)
+const SPECIAL_RAMP    = 6;     // и столько ещё — шанс особых плавно растёт от половины базового до полного
 const CASINO_SPIN_MS  = 6500;  // длительность вращения барабана казино
 const ANSWER_TIME     = 15;    // секунд на ответ (у мегавопроса таймера нет)
 const ANSWER_TIME_TEAM= 20;    // секунд на ответ в командном режиме
@@ -2013,7 +2015,7 @@ function mkPlayer(id, name, hp){
   };
 }
 function startGame(cfg){
-  document.documentElement.setAttribute("data-battle","1");   // бою — масштаб ×1.5 (плашки, карточки, текст)
+  document.documentElement.setAttribute("data-battle","1");   // бою — масштаб ×1.3 (плашки, карточки, текст)
   const mode = cfg.mode;
   let players, teams = null;
   if(mode === "team"){
@@ -2057,6 +2059,7 @@ function startGame(cfg){
     megaUsed:false,
     curseUsed:false,
     casinoUsed:false,
+    qCount:0,               // сколько вопросов уже показано (в начале игры особые события не выпадают)
     pendingTopic:null,       // тема выбрана, ждёт выбора сложности
     round2Done:false,        // удар босса по всем в конце II круга уже был
     round3Done:false,        // зачистка III круга уже была
@@ -2409,6 +2412,14 @@ function nextTurn(){
   renderAll();
 }
 
+/* ---- особые события не сыплются в начале игры: первые SPECIAL_HOLD вопросов — честные,
+   затем шанс каждого события плавно дорастает от половины базового до полного ---- */
+function specialChance(base){
+  if(state.qCount < SPECIAL_HOLD) return 0;
+  const k = state.qCount - SPECIAL_HOLD;
+  return base * (k >= SPECIAL_RAMP ? 1 : 0.5 + 0.5*k/SPECIAL_RAMP);
+}
+
 /* ---- ход: ведущий выбирает тему, игрок — сложность, потом вопрос ---- */
 function pickTopic(topicIdx){
   if(!state.current || state.current.answered || state.transitioning || state.pendingTopic!=null) return;
@@ -2420,7 +2431,7 @@ function pickTopic(topicIdx){
     return;
   }
   // ---- казино: вместо вопроса барабан (только битва с боссом, один раз за игру) ----
-  if(state.phase==="boss" && state.mode!=="quick" && !state.casinoUsed && Math.random() < CASINO_CHANCE){ startCasino(topicIdx); return; }
+  if(state.phase==="boss" && state.mode!=="quick" && !state.casinoUsed && Math.random() < specialChance(CASINO_CHANCE)){ startCasino(topicIdx); return; }
   // ---- сначала игрок выбирает сложность ----
   showDiff(topicIdx);
 }
@@ -2478,10 +2489,12 @@ function setupQuestion(topicIdx, drawn){
   const unit = curUnit();
   unit.lastTopic = topicIdx;   // следующий ход этой единицы — другая тема
   const q = drawn.q;
-  // ---- мегавопрос и вопрос-проклятие: по одному разу за игру (в быстрой игре их нет) ----
+  // ---- мегавопрос и вопрос-проклятие: по одному разу за игру (в быстрой игре их нет;
+  //      и в начале игры не выпадают — шанс «дорастает» до полного) ----
   const noSpecial = state.mode==="quick";
-  const mega = !noSpecial && !state.megaUsed && Math.random() < MEGA_CHANCE;
-  const curse = !noSpecial && !mega && !state.curseUsed && Math.random() < CURSE_CHANCE;
+  const mega = !noSpecial && !state.megaUsed && Math.random() < specialChance(MEGA_CHANCE);
+  const curse = !noSpecial && !mega && !state.curseUsed && Math.random() < specialChance(CURSE_CHANCE);
+  state.qCount++;                  // вопрос показан — шансы особых событий растут с каждым следующим
   if(mega) state.megaUsed = true;
   if(curse) state.curseUsed = true;
   const cur = state.current;
