@@ -90,6 +90,45 @@ html[data-theme="japan"] body{
 }
 html[data-theme="japan"] .card{background:linear-gradient(165deg,#361c28 0%,#27141d 55%,#1c0d14 100%);}
 
+html[data-theme="stars"]{
+  --bg:#060b1c; --panel:#101a36; --panel-2:#182648; --edge:#4a6bb5;
+  --gold:#ffe9a8; --gold-bright:#fff8dd; --ruby:#ff7a9c; --ruby-dark:#8f2b48;
+  --violet:#9fb8ff; --muted:#8fa2c8; --silver:#e6edff; --emerald:#7fe0d2;
+}
+html[data-theme="stars"] body{
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(70,110,220,.22), transparent 55%),
+    radial-gradient(ellipse at 80% 100%, rgba(150,80,220,.16), transparent 55%),
+    radial-gradient(ellipse at 50% 45%, #0d1730 0%, #060b1c 78%),
+    linear-gradient(160deg,#0a1226,#060b1c);
+}
+html[data-theme="stars"] .card{background:linear-gradient(165deg,#182648 0%,#101a36 55%,#0a1122 100%);}
+/* мерцающие звёзды — мелкие точки, только в теме «Звёздное небо» */
+#star-field{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; display:none;}
+html[data-theme="stars"] #star-field{display:block;}
+#star-field i{position:absolute; background:#fff; border-radius:50%; animation:twinkle ease-in-out infinite alternate;}
+#star-field i.big{box-shadow:0 0 6px 1px rgba(255,255,255,.85);}
+@keyframes twinkle{from{opacity:.12;} to{opacity:1;}}
+
+/* ---------- Сакура в теме «Япония»: большое дерево и сыплющиеся лепестки ---------- */
+#sakura-scene{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; display:none;}
+html[data-theme="japan"] #sakura-scene{display:block;}
+#sakura-tree{position:absolute; left:-60px; bottom:-40px; height:min(92vh,860px); opacity:.92;}
+#petals{position:absolute; inset:0;}
+#petals i{
+  position:absolute; top:-8vh;
+  background:radial-gradient(circle at 30% 30%, #ffe4ec, #ff9fb8);
+  border-radius:80% 0 80% 0; opacity:.85;
+  animation-name:fall; animation-timing-function:linear; animation-iteration-count:infinite;
+}
+@keyframes fall{
+  0%  {transform:translate(0,-8vh) rotate(0deg);}
+  25% {transform:translate(26px,26vh) rotate(90deg);}
+  50% {transform:translate(-18px,54vh) rotate(190deg);}
+  75% {transform:translate(22px,82vh) rotate(280deg);}
+  100%{transform:translate(-6px,114vh) rotate(380deg);}
+}
+
 /* ---------- Общая карта ---------- */
 .card{
   background:linear-gradient(165deg,#241a33 0%,#1a1226 55%,#140e1d 100%);
@@ -704,17 +743,17 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
   <div id="mode-btns">
     <button class="mode-btn" id="mode-solo">
       <div class="mode-ico">🗡️</div>
-      <div class="mode-name">Одиночная игра</div>
+      <div class="mode-name">Классика</div>
       <div class="mode-desc">Каждый сам за себя: 8–12 игроков сражаются с Боссом, а затем в Мордобое до последних трёх. Баллы — личные. 15 секунд на ответ.</div>
     </button>
     <button class="mode-btn" id="mode-quick">
       <div class="mode-ico">⚡</div>
-      <div class="mode-name">Быстрая игра</div>
+      <div class="mode-name">Быстрый и мёртвый</div>
       <div class="mode-desc">Короткий бой без сюрпризов: 8–12 игроков, у каждого 250 HP, у Босса 750. Без способностей, казино, мегавопросов и проклятий; Босс не бьёт по кругам и не устраивает зачистку. Мордобой — обычный.</div>
     </button>
     <button class="mode-btn" id="mode-team">
       <div class="mode-ico">🛡️</div>
-      <div class="mode-name">Командная игра</div>
+      <div class="mode-name">Война гильдий</div>
       <div class="mode-desc">4–6 команд по 2 игрока. Общий запас HP, весь урон (кроме мегавопроса) вдвое выше, 20 секунд на ответ и более сложные вопросы. Баллы — команде.</div>
     </button>
   </div>
@@ -871,6 +910,45 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
   <div class="results-actions"><button class="btn btn-ruby btn-big" id="again-btn">⟲ Новая игра</button></div>
 </div>
 
+<!-- звёздное небо (тема «Звёздное небо») -->
+<div id="star-field" aria-hidden="true"></div>
+
+<!-- сакура в теме «Япония»: дерево + сыплющиеся лепестки -->
+<div id="sakura-scene" aria-hidden="true">
+  <svg id="sakura-tree" viewBox="0 0 700 900">
+    <!-- ствол и ветви -->
+    <g stroke="#2b1420" fill="none" stroke-linecap="round">
+      <path d="M185 900 C196 770 172 668 222 566" stroke-width="50"/>
+      <path d="M222 566 C262 506 250 462 302 414" stroke-width="30"/>
+      <path d="M222 566 C182 524 152 502 118 462" stroke-width="22"/>
+      <path d="M302 414 C344 372 386 384 436 352" stroke-width="15"/>
+      <path d="M302 414 C282 352 302 320 334 280" stroke-width="12"/>
+      <path d="M118 462 C90 430 80 400 68 358" stroke-width="10"/>
+      <path d="M436 352 C476 332 524 344 566 312" stroke-width="9"/>
+      <path d="M334 280 C356 246 392 236 424 210" stroke-width="8"/>
+    </g>
+    <!-- крона из цветущих облаков -->
+    <g fill="#f4b4cc" opacity=".92">
+      <circle cx="302" cy="384" r="126"/>
+      <circle cx="472" cy="322" r="98"/>
+      <circle cx="128" cy="392" r="88"/>
+      <circle cx="368" cy="238" r="92"/>
+      <circle cx="572" cy="302" r="62"/>
+      <circle cx="62" cy="330" r="48"/>
+      <circle cx="432" cy="200" r="52"/>
+    </g>
+    <g fill="#ffd9e4" opacity=".75">
+      <circle cx="266" cy="330" r="58"/>
+      <circle cx="452" cy="268" r="46"/>
+      <circle cx="150" cy="338" r="36"/>
+      <circle cx="384" cy="196" r="40"/>
+      <circle cx="546" cy="262" r="28"/>
+      <circle cx="96" cy="292" r="24"/>
+    </g>
+  </svg>
+  <div id="petals"></div>
+</div>
+
 <div id="bg-decor" aria-hidden="true">
   <!-- по краям -->
   <span style="left:3%; top:6%; font-size:52px; transform:rotate(-18deg);">💀</span>
@@ -971,12 +1049,12 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <p>Игра заканчивается, когда остаётся <b>3</b> живых: места по нанесённому урону, призы <b>5 / 3 / 2 балла</b>. Если Босс уничтожил всех — на итогах красное «ПОРАЖЕНИЕ», баллов не получает никто. Если вопросы закончились раньше — итоги по урону и запасу HP.</p>
       <h3>🗺 Три режима</h3>
       <ul>
-        <li><b>🗡 Одиночная игра</b> — 8–12 игроков, каждый сам за себя: 500/400/300 HP по числу участников, Босс — 1500 HP.</li>
-        <li><b>⚡ Быстрая игра</b> — короткий бой без сюрпризов: у всех по 250 HP, у Босса 750 HP. Никаких способностей, казино, мегавопросов и проклятий; Босс не бьёт по кругам и не устраивает зачистку. Мордобой — обычный.</li>
-        <li><b>🛡 Командная игра</b> — 4–6 команд по 2 игрока: общий запас HP (вдвое больше), весь урон ×2 (кроме мегавопроса и проклятия), 20 секунд на ответ, баллы — команде. Очки говорят по очереди.</li>
+        <li><b>🗡 Классика</b> (одиночная) — 8–12 игроков, каждый сам за себя: 500/400/300 HP по числу участников, Босс — 1500 HP.</li>
+        <li><b>⚡ Быстрый и мёртвый</b> (быстрая) — короткий бой без сюрпризов: у всех по 250 HP, у Босса 750 HP. Никаких способностей, казино, мегавопросов и проклятий; Босс не бьёт по кругам и не устраивает зачистку. Мордобой — обычный.</li>
+        <li><b>🛡 Война гильдий</b> (командная) — 4–6 гильдий по 2 игрока: общий запас HP (вдвое больше), весь урон ×2 (кроме мегавопроса и проклятия), 20 секунд на ответ, баллы — гильдии. Очки говорят по очереди.</li>
       </ul>
       <h3>⋯ Меню и оформление</h3>
-      <p>В правом верхнем углу главного меню — значок <b>⋯</b>: там <b>Настройки</b> (звук), эти <b>Правила</b> и <b>Поменять оформление</b>: Тёмная фэнтези, Хеллоуин, Новый год или Япония. Выбор сохраняется.</p>
+      <p>В правом верхнем углу главного меню — значок <b>⋯</b>: там <b>Настройки</b> (звук), эти <b>Правила</b> и <b>Поменять оформление</b>: Тёмная фэнтези, Хеллоуин, Новый год, Япония или Звёздное небо. Выбор сохраняется.</p>
     </div>
     <button class="btn btn-ruby" data-close>✕ Понятно</button>
   </div>
@@ -1037,7 +1115,7 @@ const CASINO = [
   {icon:"🕳️", label:"ничего",      name:"ПУСТО"}
 ];
 /* ============================================================
-   АВАТАРКИ ИГРОКОВ (10 штук, распределяются рандомно)
+   АВАТАРКИ ИГРОКОВ (базовые + по теме оформления, распределяются рандомно)
    ============================================================ */
 const AVATARS = [
   {emoji:"🧛", name:"Вампир",  color:"#4c0519"},
@@ -1049,8 +1127,56 @@ const AVATARS = [
   {emoji:"🐍", name:"Змея",    color:"#14532d"},
   {emoji:"🗿", name:"Статуя",  color:"#44403c"},
   {emoji:"🩸", name:"Кровь",   color:"#450a0a"},
-  {emoji:"🧟", name:"Зомби",   color:"#1a2e1a"}
+  {emoji:"🧟", name:"Зомби",   color:"#1a2e1a"},
+  // новые — для тёмной фэнтези
+  {emoji:"🧙", name:"Колдун",  color:"#3b0764"},
+  {emoji:"😈", name:"Бес",     color:"#701a75"},
+  {emoji:"🗡️", name:"Мечник",  color:"#374151"},
+  {emoji:"🦅", name:"Орёл",    color:"#422006"},
+  {emoji:"🪦", name:"Гробница", color:"#3f3f46"},
+  {emoji:"🧌", name:"Тролль",  color:"#164e63"}
 ];
+/* дополнительные аватарки по теме оформления (добавляются к базовым) */
+const THEME_AVATARS = {
+  halloween:[
+    {emoji:"🧙‍♀️", name:"Ведьма",    color:"#4c1d95"},
+    {emoji:"🐈‍⬛", name:"Чёрный кот", color:"#1c1917"},
+    {emoji:"💀",  name:"Череп",     color:"#292524"},
+    {emoji:"🍬",  name:"Лакомство", color:"#7c2d12"},
+    {emoji:"🕸️", name:"Паутина",   color:"#27272a"},
+    {emoji:"👹",  name:"Огр",       color:"#7f1d1d"}
+  ],
+  newyear:[
+    {emoji:"🎅", name:"Дед Мороз", color:"#7f1d1d"},
+    {emoji:"🦌", name:"Олень",     color:"#78350f"},
+    {emoji:"⛄", name:"Снеговик",  color:"#1e3a8a"},
+    {emoji:"🎁", name:"Подарок",   color:"#166534"},
+    {emoji:"🧣", name:"Шарф",      color:"#991b1b"},
+    {emoji:"🕯️", name:"Свеча",     color:"#713f12"}
+  ],
+  japan:[
+    {emoji:"🥷", name:"Ниндзя",   color:"#1f2937"},
+    {emoji:"🦊", name:"Кицуне",  color:"#9a3412"},
+    {emoji:"👺", name:"Они",      color:"#7f1d1d"},
+    {emoji:"🐉", name:"Дракон",  color:"#14532d"},
+    {emoji:"🎎", name:"Куклы",    color:"#831843"},
+    {emoji:"🏮", name:"Фонарик",  color:"#7c2d12"}
+  ],
+  stars:[
+    {emoji:"👽",  name:"Пришелец",      color:"#14532d"},
+    {emoji:"🛸",  name:"Тарелка",       color:"#1e3a8a"},
+    {emoji:"🪐",  name:"Планета",       color:"#312e81"},
+    {emoji:"🌙",  name:"Луна",          color:"#1e293b"},
+    {emoji:"☄️", name:"Метеор",        color:"#374151"},
+    {emoji:"🌠", name:"Падшая звезда", color:"#1e1b4b"}
+  ]
+};
+/* случайная аватарка: базовые + набор текущего оформления */
+function randomAvatar(){
+  const t = document.documentElement.getAttribute("data-theme") || "fantasy";
+  const pool = AVATARS.concat(THEME_AVATARS[t] || []);
+  return pool[Math.floor(Math.random()*pool.length)];
+}
 
 /* ============================================================
    ТЕМЫ И ВОПРОСЫ (тестовые — потом заменим на свои)
@@ -1217,7 +1343,7 @@ function mkPlayer(id, name, hp){
   const col = NAME_COLORS[Math.floor(Math.random()*NAME_COLORS.length)];
   return {
     id, name, hp, maxHp:hp, alive:true,
-    avatar:AVATARS[Math.floor(Math.random()*AVATARS.length)], // аватарка рандомно (при 11-12 возможны повторы)
+    avatar:randomAvatar(),                      // аватарка рандомно (из базовых + темы оформления)
     color:col.base, grad:nameGrad(col),   // рандомный цвет ника
     teamId:null,
     dmgBoss:0, dmgDealt:0, dmgTaken:0,
@@ -2648,7 +2774,7 @@ function buildSetup(){
   for(let i=0;i<playerCount;i++){
     const slot = document.createElement("div");
     slot.className = "nick-slot";
-    const av = AVATARS[Math.floor(Math.random()*AVATARS.length)];
+    const av = randomAvatar();
     slot.innerHTML = '<span class="avatar" style="background:'+av.color+';" title="'+esc(av.name)+'">'+av.emoji+'</span>'+
       '<input id="nick-'+i+'" maxlength="14" placeholder="Игрок '+(i+1)+'">';
     grid.appendChild(slot);
@@ -2797,6 +2923,10 @@ const THEMES = {
   japan:{
     name:"Япония",
     decor:["🌸","⛩️","🎎","🎏","🏯","🍥","🍣","🏵️","🀄","🎴"]
+  },
+  stars:{
+    name:"Звёздное небо",
+    decor:["⭐","✨","🌙","🌟","☄️","🪐"]
   }
 };
 const DECOR_FANTASY = $("bg-decor").innerHTML;   // статичный «родной» декор сохраняем для возврата
@@ -2818,7 +2948,37 @@ function applyTheme(id){
   document.documentElement.setAttribute("data-theme", id);
   store.set("cbq-theme", id);
   buildDecor(id);
+  buildSakura(id === "japan");   // падающие лепестки — только для Японии
   document.querySelectorAll("#theme-grid .theme-btn").forEach(b=>b.classList.toggle("active", b.dataset.t===id));
+}
+/* звёздное поле для темы «Звёздное небо» — строится один раз, мерцает через CSS */
+function buildStars(){
+  const f = $("star-field");
+  if(f.childElementCount) return;
+  let html = "";
+  for(let i=0;i<150;i++){
+    const s = 1 + Math.round(Math.random()*2);
+    html += '<i class="'+(i%22===0 ? "big" : "")+'" style="left:'+(Math.random()*100).toFixed(1)+'%; top:'+(Math.random()*100).toFixed(1)
+      + '%; width:'+s+'px; height:'+s+'px; animation-duration:'+(1.8+Math.random()*3.5).toFixed(1)
+      + 's; animation-delay:'+(-Math.random()*5).toFixed(1)+'s;"></i>';
+  }
+  f.innerHTML = html;
+}
+/* сыплющиеся лепестки сакуры — только когда включена тема «Япония» */
+function buildSakura(on){
+  const box = $("petals");
+  box.innerHTML = "";
+  if(!on) return;
+  for(let i=0;i<28;i++){
+    const p = document.createElement("i");
+    const w = 8 + Math.round(Math.random()*7);
+    p.style.left = (Math.random()*104-2).toFixed(1)+"%";
+    p.style.width = w+"px";
+    p.style.height = Math.round(w*0.78)+"px";
+    p.style.animationDuration = (8+Math.random()*9).toFixed(1)+"s";
+    p.style.animationDelay = (-Math.random()*14).toFixed(1)+"s";   // минус — лепестки уже летят в воздухе
+    box.appendChild(p);
+  }
 }
 function buildThemeGrid(){
   const grid = $("theme-grid");
@@ -2827,7 +2987,7 @@ function buildThemeGrid(){
     const b = document.createElement("button");
     b.className = "theme-btn";
     b.dataset.t = id;
-    b.innerHTML = '<span class="theme-ico">'+(id==="fantasy" ? "🗡️" : id==="halloween" ? "🎃" : id==="newyear" ? "🎄" : "🌸")+'</span>'
+    b.innerHTML = '<span class="theme-ico">'+(id==="fantasy" ? "🗡️" : id==="halloween" ? "🎃" : id==="newyear" ? "🎄" : id==="japan" ? "🌸" : "🌟")+'</span>'
       + '<span class="theme-name">'+THEMES[id].name+'</span><span class="theme-check">✔ выбрано</span>';
     b.onclick = ()=>{ applyTheme(id); sfx.flip(); };
     grid.appendChild(b);
@@ -2837,6 +2997,7 @@ function buildThemeGrid(){
 buildCountBtns();
 updateHpHint();
 buildSetup();
+buildStars();                                 // мерцающие звёзды ждут своей темы
 buildThemeGrid();
 applyTheme(store.get("cbq-theme") || "fantasy");   // вернуть сохранённое оформление
 setMuted(store.get("cbq-muted") === "1");          // вернуть сохранённый звук
