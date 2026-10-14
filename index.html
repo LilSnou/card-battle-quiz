@@ -45,6 +45,51 @@ body{
 h1,h2,h3,.serif{font-family:'Tagesschrift','Georgia',serif;}
 .hidden{display:none !important;}
 
+/* ---------- Темы оформления (переключаются атрибутом на <html>) ---------- */
+html[data-theme="halloween"]{
+  --bg:#120a16; --panel:#221330; --panel-2:#2e1c40; --edge:#7a3f9e;
+  --gold:#ff9d45; --gold-bright:#ffc98c; --ruby:#c026d3; --ruby-dark:#6d1a85;
+  --violet:#c084fc; --muted:#a88cc0; --silver:#eadff0;
+  --g-gold:linear-gradient(180deg,#fff0d8 0%,#ffc98c 16%,#ff9d45 38%,#9a4a12 54%,#ffb266 70%,#8a3c0e 100%);
+}
+html[data-theme="halloween"] body{
+  background:
+    radial-gradient(ellipse at 18% -10%, rgba(192,38,211,.20), transparent 55%),
+    radial-gradient(ellipse at 85% 115%, rgba(255,120,20,.16), transparent 55%),
+    radial-gradient(ellipse at 50% 45%, #1d1026 0%, #120a16 75%),
+    linear-gradient(160deg,#180d1f,#120a16);
+}
+html[data-theme="halloween"] .card{background:linear-gradient(165deg,#2e1c40 0%,#221330 55%,#190c22 100%);}
+
+html[data-theme="newyear"]{
+  --bg:#0a1424; --panel:#152844; --panel-2:#1e3a60; --edge:#5b8fce;
+  --gold:#ffd98c; --gold-bright:#fff3d0; --ruby:#ff6b6b; --ruby-dark:#99313c;
+  --violet:#8fd0ff; --muted:#94b0cd; --silver:#e8f2fb; --emerald:#6fe3b2;
+}
+html[data-theme="newyear"] body{
+  background:
+    radial-gradient(ellipse at 18% -10%, rgba(80,160,255,.20), transparent 55%),
+    radial-gradient(ellipse at 85% 115%, rgba(255,215,140,.14), transparent 55%),
+    radial-gradient(ellipse at 50% 45%, #13263f 0%, #0a1424 75%),
+    linear-gradient(160deg,#0e1e35,#0a1424);
+}
+html[data-theme="newyear"] .card{background:linear-gradient(165deg,#1e3a60 0%,#152844 55%,#0d1b2e 100%);}
+
+html[data-theme="japan"]{
+  --bg:#170c12; --panel:#27141d; --panel-2:#361c28; --edge:#b04a62;
+  --gold:#ffb3c1; --gold-bright:#ffdde4; --ruby:#e03a5a; --ruby-dark:#8f2036;
+  --violet:#ff9fb2; --muted:#bb9aa8; --silver:#f4e5ea; --emerald:#7fd6a8;
+  --g-gold:linear-gradient(180deg,#fff0f4 0%,#ffdde4 16%,#ffb3c1 38%,#a04358 54%,#ffcdd7 70%,#8f3448 100%);
+}
+html[data-theme="japan"] body{
+  background:
+    radial-gradient(ellipse at 18% -10%, rgba(255,140,170,.20), transparent 55%),
+    radial-gradient(ellipse at 85% 115%, rgba(200,40,70,.16), transparent 55%),
+    radial-gradient(ellipse at 50% 45%, #241119 0%, #170c12 75%),
+    linear-gradient(160deg,#1e1017,#170c12);
+}
+html[data-theme="japan"] .card{background:linear-gradient(165deg,#361c28 0%,#27141d 55%,#1c0d14 100%);}
+
 /* ---------- Общая карта ---------- */
 .card{
   background:linear-gradient(165deg,#241a33 0%,#1a1226 55%,#140e1d 100%);
@@ -325,6 +370,60 @@ h1,h2,h3,.serif{font-family:'Tagesschrift','Georgia',serif;}
 .p-damage-pop{position:fixed; z-index:30; font-weight:800; font-size:26px; pointer-events:none; text-shadow:0 2px 4px #000; animation:floatUp 1.3s forwards;}
 @keyframes floatUp{0%{opacity:0; transform:translateY(6px) scale(.7);} 15%{opacity:1; transform:translateY(0) scale(1.15);} 100%{opacity:0; transform:translateY(-52px) scale(1);}}
 .dmg-red{color:#ff5347;} .dmg-green{color:#5ce06b;} .dmg-gold{color:var(--gold);}
+
+/* ---------- Меню «⋯» на главном экране ---------- */
+#menu-corner{position:absolute; top:24px; right:28px; z-index:60; display:flex; flex-direction:column; align-items:flex-end;}
+#dots-btn{
+  width:54px; height:54px; border-radius:50%; cursor:pointer;
+  background:var(--panel); border:2px solid var(--edge); color:var(--silver);
+  font-size:30px; line-height:1;
+  transition:transform .15s, border-color .15s, box-shadow .15s, color .15s;
+}
+#dots-btn:hover{border-color:var(--gold); color:var(--gold-bright); box-shadow:0 0 18px rgba(232,194,104,.4); transform:scale(1.06);}
+#dots-menu{margin-top:12px; padding:10px; display:flex; flex-direction:column; gap:8px; min-width:270px;}
+#dots-menu button{
+  cursor:pointer; text-align:left; font-size:18px; color:var(--silver);
+  background:linear-gradient(165deg,var(--panel-2),var(--panel));
+  border:2px solid var(--edge); border-radius:11px; padding:12px 15px;
+  transition:transform .12s, border-color .15s, box-shadow .15s, color .15s;
+}
+#dots-menu button:hover{border-color:var(--gold); color:var(--gold-bright); transform:translateX(3px); box-shadow:0 0 14px rgba(232,194,104,.3);}
+@media (max-width:680px){#menu-corner{top:12px; right:12px;} #dots-btn{width:46px; height:46px; font-size:25px;}}
+
+/* ---------- Модальные окна меню (настройки / правила / оформление) ---------- */
+.modal-card{width:min(660px,96vw); max-height:88vh; overflow:auto; padding:28px 34px 30px;}
+#rules-card{width:min(880px,96vw);}
+.modal-title{
+  font-family:'Tagesschrift','Georgia',serif; font-size:30px; text-align:center;
+  color:var(--gold-bright); letter-spacing:2px; margin-bottom:18px;
+  text-shadow:0 0 14px rgba(232,194,104,.35);
+}
+.modal-card > .btn{display:block; margin:16px auto 0;}
+.set-row{
+  display:flex; justify-content:space-between; align-items:center; gap:18px;
+  background:linear-gradient(165deg,var(--panel-2),var(--panel));
+  border:2px solid var(--edge); border-radius:12px; padding:16px 20px;
+  margin-bottom:12px; font-size:20px;
+}
+.set-note{font-size:14px; color:var(--muted); margin:0 2px 6px;}
+.rules-body{max-height:60vh; overflow:auto; padding:2px 12px 4px 4px; font-size:17px; line-height:1.55;}
+.rules-body h3{color:var(--gold-bright); font-size:21px; margin:16px 0 8px; letter-spacing:1px;}
+.rules-body p{margin:6px 0 8px; color:var(--silver);}
+.rules-body ul,.rules-body ol{margin:6px 0 8px 24px; display:flex; flex-direction:column; gap:6px;}
+.rules-body b{color:var(--gold);}
+#theme-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:6px;}
+@media (max-width:680px){#theme-grid{grid-template-columns:1fr;}}
+.theme-btn{
+  cursor:pointer; border:2px solid var(--edge); border-radius:14px; padding:18px 14px;
+  background:linear-gradient(165deg,var(--panel-2),var(--panel)); color:var(--silver);
+  display:flex; flex-direction:column; align-items:center; gap:8px; font-size:19px;
+  transition:transform .12s, border-color .15s, box-shadow .15s;
+}
+.theme-btn:hover{transform:translateY(-3px); border-color:var(--gold); box-shadow:0 0 18px rgba(232,194,104,.35);}
+.theme-btn.active{border-color:var(--gold); box-shadow:0 0 18px rgba(232,194,104,.55);}
+.theme-btn .theme-ico{font-size:38px;}
+.theme-btn .theme-check{opacity:0; color:var(--emerald); font-size:16px;}
+.theme-btn.active .theme-check{opacity:1;}
 
 /* ---------- Модалка вопроса ---------- */
 .overlay{
@@ -608,11 +707,24 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <div class="mode-name">Одиночная игра</div>
       <div class="mode-desc">Каждый сам за себя: 8–12 игроков сражаются с Боссом, а затем в Мордобое до последних трёх. Баллы — личные. 15 секунд на ответ.</div>
     </button>
+    <button class="mode-btn" id="mode-quick">
+      <div class="mode-ico">⚡</div>
+      <div class="mode-name">Быстрая игра</div>
+      <div class="mode-desc">Короткий бой без сюрпризов: 8–12 игроков, у каждого 250 HP, у Босса 750. Без способностей, казино, мегавопросов и проклятий; Босс не бьёт по кругам и не устраивает зачистку. Мордобой — обычный.</div>
+    </button>
     <button class="mode-btn" id="mode-team">
       <div class="mode-ico">🛡️</div>
       <div class="mode-name">Командная игра</div>
       <div class="mode-desc">4–6 команд по 2 игрока. Общий запас HP, весь урон (кроме мегавопроса) вдвое выше, 20 секунд на ответ и более сложные вопросы. Баллы — команде.</div>
     </button>
+  </div>
+  <div id="menu-corner">
+    <button id="dots-btn" title="Меню">⋯</button>
+    <div id="dots-menu" class="card hidden">
+      <button id="dm-settings">⚙️ Настройки</button>
+      <button id="dm-rules">📜 Правила</button>
+      <button id="dm-theme">🎨 Поменять оформление</button>
+    </div>
   </div>
 </div>
 
@@ -809,6 +921,77 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
   <span style="left:4%; top:28%; font-size:26px; transform:rotate(18deg);">🕸️</span>
 </div>
 
+<!-- ================= НАСТРОЙКИ ================= -->
+<div id="settings-overlay" class="overlay">
+  <div class="card ornate modal-card" id="settings-card">
+    <div class="modal-title">⚙️ Настройки</div>
+    <div class="set-row">
+      <span>🔊 Звук</span>
+      <button class="btn" id="set-sound">Вкл</button>
+    </div>
+    <div class="set-note">Переключатель общий: действует во всей игре и запоминается.</div>
+    <button class="btn btn-ruby" data-close>✕ Закрыть</button>
+  </div>
+</div>
+
+<!-- ================= ПРАВИЛА ================= -->
+<div id="rules-overlay" class="overlay">
+  <div class="card ornate modal-card" id="rules-card">
+    <div class="modal-title">📜 Правила</div>
+    <div class="rules-body">
+      <h3>🎲 Суть игры</h3>
+      <p>Игра идёт в три акта: <b>Битва с Боссом</b> → <b>Мордобой</b> → <b>Итоги</b>. Игроки отвечают на вопросы по очереди. Ведущий (или сам ноутбук) ведёт игру: показывает вопрос, варианты ответов скрыты, пока ведущий не нажмёт «Показать ответы» — тогда идёт таймер.</p>
+      <h3>⚔️ Акт I. Битва с Боссом</h3>
+      <ol>
+        <li>Очередной игрок выбирает <b>тему</b> из пяти карточек на столе (одну и ту же тему дважды подряд брать нельзя).</li>
+        <li>Потом — <b>сложность</b>: ★, ★★ или ★★★. На кнопке сразу видно: сколько БОСС потеряет при верном ответе и сколько получит игрок при неверном. <b>Одну и ту же сложность дважды подряд брать нельзя</b>.</li>
+        <li>Вопрос появляется на экране. Игрок думает вслух, затем ведущий жмёт <b>«Показать ответы»</b> — с этого момента идёт таймер (15 секунд; в командной игре 20).</li>
+        <li><b>Верно</b> → Босс теряет урон: 50 / 100 / 150 (по сложности). <b>Неверно</b> → игрок сам теряет: 100 / 125 / 150.</li>
+        <li>Кто <b>добил Босса</b> — получает +1 балл. Все выжившие переходят к Мордобою.</li>
+      </ol>
+      <h3>👹 Особые события (обычный и командный режимы)</h3>
+      <ul>
+        <li><b>🔥 Мегавопрос</b> (один раз за игру): вместо обычного вопроса — на кону 400 HP: Босс теряет 400 при верном, игрок сам получает 400 при неверном. Таймера нет.</li>
+        <li><b>☠ Вопрос-проклятие</b> (один раз за игру): верно — жертва (Босс или цель) восстанавливает +100; неверно — проклятие обрушивается сразу на ВСЕХ живых: −100 каждому.</li>
+        <li><b>👹 Ярость Босса</b>: с шансом 5% за каждый неправильный ответ Босс <b>удваивает</b> урон ошибшемуся (слышен рёв, всплывает «БОСС РАЗЪЯРЁН»).</li>
+        <li><b>🎰 Казино</b> (один раз за игру, только против Босса): вместо вопроса — колесо фортуны: исцеление, урон, пропуск хода, удар по Боссу или по случайному сопернику…</li>
+        <li><b>⚡ Серия</b>: пять верных ответов подряд — с шансом 5% Босс вместе с пятым ударом получает ещё +300 урона. Считаются только обычные вопросы.</li>
+        <li><b>🔥 Конец II круга</b>: если Босс ещё цел, он обрушивает удар по всем живым: −50 каждому (пулу каждой команды −100).</li>
+        <li><b>👑 Конец III круга</b>: зачистка — Босс забирает 2–4 самых слабых игроков (при уже погибших — 1–2 самых низких по HP; в командах — одну команду).</li>
+        <li><b>💎 Способности</b> (только в обычном и командном режимах, одна каждого типа за игру): 🔀 <b>Замена</b> — заменить вопрос на другой; ⚡ <b>Азарт</b> — урон ×2, но при ошибке сам получаешь 200; 🎴 <b>Передача</b> — отдать вопрос случайному сопернику и пропустить ход (только против Босса). Работают до нажатия «Показать ответы» и не работают на мега/проклятии.</li>
+      </ul>
+      <h3>🛡 Акт II. Мордобой</h3>
+      <p>Дуэли идут <b>в два шага</b>, вопрос задаётся <b>обоим</b> участникам:</p>
+      <ul>
+        <li><b>Атакующий</b> (красная рамка) отвечает <b>первым</b>.</li>
+        <li>Если он <b>верен</b> — защитнику задаётся новый вопрос: защитник ответил верно → получает всего <b>50</b> урона; ошибся → <b>полный урон</b> по сложности.</li>
+        <li>Если атакующий <b>промахнулся</b> — урон пока не наносится, вопрос переходит защитнику (тот же вопрос): защитник верен → атакующий получает <b>урон + 50</b>; оба промахнулись → <b>оба</b> получают урон по вопросу.</li>
+        <li>Урон в Мордобое по сложности вопроса: <b>100 / 150 / 200</b>.</li>
+      </ul>
+      <p>Игра заканчивается, когда остаётся <b>3</b> живых: места по нанесённому урону, призы <b>5 / 3 / 2 балла</b>. Если Босс уничтожил всех — на итогах красное «ПОРАЖЕНИЕ», баллов не получает никто. Если вопросы закончились раньше — итоги по урону и запасу HP.</p>
+      <h3>🗺 Три режима</h3>
+      <ul>
+        <li><b>🗡 Одиночная игра</b> — 8–12 игроков, каждый сам за себя: 500/400/300 HP по числу участников, Босс — 1500 HP.</li>
+        <li><b>⚡ Быстрая игра</b> — короткий бой без сюрпризов: у всех по 250 HP, у Босса 750 HP. Никаких способностей, казино, мегавопросов и проклятий; Босс не бьёт по кругам и не устраивает зачистку. Мордобой — обычный.</li>
+        <li><b>🛡 Командная игра</b> — 4–6 команд по 2 игрока: общий запас HP (вдвое больше), весь урон ×2 (кроме мегавопроса и проклятия), 20 секунд на ответ, баллы — команде. Очки говорят по очереди.</li>
+      </ul>
+      <h3>⋯ Меню и оформление</h3>
+      <p>В правом верхнем углу главного меню — значок <b>⋯</b>: там <b>Настройки</b> (звук), эти <b>Правила</b> и <b>Поменять оформление</b>: Тёмная фэнтези, Хеллоуин, Новый год или Япония. Выбор сохраняется.</p>
+    </div>
+    <button class="btn btn-ruby" data-close>✕ Понятно</button>
+  </div>
+</div>
+
+<!-- ================= ОФОРМЛЕНИЕ ================= -->
+<div id="theme-overlay" class="overlay">
+  <div class="card ornate modal-card" id="theme-card">
+    <div class="modal-title">🎨 Оформление</div>
+    <div id="theme-grid"></div>
+    <div class="set-note">Оформление меняется сразу везде и запоминается.</div>
+    <button class="btn btn-ruby" data-close>✕ Готово</button>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -819,6 +1002,8 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
 let START_HP        = 500;   // HP игрока (зависит от числа игроков, задаётся в newGame)
 const BOSS_HP         = 1500;  // HP босса
 const hpForCount      = n => n>=11 ? 300 : n===10 ? 400 : 500; // HP игроков по числу участников
+const QUICK_HP        = 250;   // быстрая игра: HP каждого игрока
+const QUICK_BOSS_HP   = 750;   // быстрая игра: HP босса
 const DMG             = {1:50, 2:100, 3:150}; // урон боссу по сложности ★/★★/★★★
 const DMG_SELF        = {1:100, 2:125, 3:150}; // урон самому игроку за неверный ответ против босса
 const DMG_PVP         = {1:100, 2:150, 3:200}; // урон игроку в Мордобое (быстрее второй этап)
@@ -1067,16 +1252,17 @@ function startGame(cfg){
     });
     teams.forEach(t=>t.members.forEach(pid=>{ players[pid].teamId = t.id; }));
   }else{
-    // ---- одиночная: каждый игрок сам за себя ----
-    START_HP = hpForCount(cfg.names.length);   // HP зависит от числа игроков
+    // ---- одиночная или быстрая: каждый игрок сам за себя ----
+    START_HP = mode==="quick" ? QUICK_HP : hpForCount(cfg.names.length);
     players = cfg.names.map((n,i)=>mkPlayer(i, n, START_HP));
   }
+  const bossHp = mode==="quick" ? QUICK_BOSS_HP : BOSS_HP;
   state = {
-    mode,                    // solo | team
+    mode,                    // solo | quick | team
     phase:"boss",            // boss | pvp | end
     round:1,
     players, teams,
-    boss:{hp:BOSS_HP, maxHp:BOSS_HP},
+    boss:{hp:bossHp, maxHp:bossHp},
     bossName: cfg.bossName,
     bossKiller:null,
     queue:[], queuePos:0,
@@ -1093,6 +1279,7 @@ function startGame(cfg){
   newRound();
 }
 function newGame(names, bossName){ startGame({mode:"solo", names, bossName}); }         // одиночная игра
+function newQuickGame(names, bossName){ startGame({mode:"quick", names, bossName}); }   // быстрая игра (без сюрпризов)
 function newTeamGame(teamDefs, bossName){ startGame({mode:"team", teamDefs, bossName}); } // командная игра
 
 function makePool(n){
@@ -1403,13 +1590,13 @@ function nextTurn(){
     if(idx === null){ // круг окончен — новый раунд
       state.round++;
       newRound();
-      // ---- конец II круга: босс бьёт по всем живым (−50 / −100 командам) ----
-      if(state.phase==="boss" && state.round===3 && !state.round2Done){
+      // ---- конец II круга: босс бьёт по всем живым (−50 / −100 командам) — в быстрой игре нет ----
+      if(state.phase==="boss" && state.mode!=="quick" && state.round===3 && !state.round2Done){
         state.round2Done = true;
         if(bossRound2Strike()) return;   // баннер — ход продолжится по кнопке
       }
-      // ---- конец III круга: если босс ещё цел, он проводит зачистку ----
-      if(state.phase==="boss" && state.round===4 && !state.round3Done){
+      // ---- конец III круга: если босс ещё цел, он проводит зачистку — в быстрой игре нет ----
+      if(state.phase==="boss" && state.mode!=="quick" && state.round===4 && !state.round3Done){
         state.round3Done = true;
         if(bossMassacre()) return;   // всплыл баннер — ход продолжится по кнопке
       }
@@ -1445,7 +1632,7 @@ function pickTopic(topicIdx){
     return;
   }
   // ---- казино: вместо вопроса барабан (только битва с боссом, один раз за игру) ----
-  if(state.phase==="boss" && !state.casinoUsed && Math.random() < CASINO_CHANCE){ startCasino(topicIdx); return; }
+  if(state.phase==="boss" && state.mode!=="quick" && !state.casinoUsed && Math.random() < CASINO_CHANCE){ startCasino(topicIdx); return; }
   // ---- сначала игрок выбирает сложность ----
   showDiff(topicIdx);
 }
@@ -1503,9 +1690,10 @@ function setupQuestion(topicIdx, drawn){
   const unit = curUnit();
   unit.lastTopic = topicIdx;   // следующий ход этой единицы — другая тема
   const q = drawn.q;
-  // ---- мегавопрос и вопрос-проклятие: по одному разу за игру ----
-  const mega = !state.megaUsed && Math.random() < MEGA_CHANCE;
-  const curse = !mega && !state.curseUsed && Math.random() < CURSE_CHANCE;
+  // ---- мегавопрос и вопрос-проклятие: по одному разу за игру (в быстрой игре их нет) ----
+  const noSpecial = state.mode==="quick";
+  const mega = !noSpecial && !state.megaUsed && Math.random() < MEGA_CHANCE;
+  const curse = !noSpecial && !mega && !state.curseUsed && Math.random() < CURSE_CHANCE;
   if(mega) state.megaUsed = true;
   if(curse) state.curseUsed = true;
   const cur = state.current;
@@ -1591,6 +1779,8 @@ function buildOptions(){
 
 /* ---- три способности: показываются вместе с вопросом, раз за игру ---- */
 function renderAbilities(){
+  if(state && state.mode==="quick"){ $("ab-row").classList.add("hidden"); return; }   // в быстрой игре способностей нет
+  $("ab-row").classList.remove("hidden");
   const cur = state.current;
   const sp = cur ? speaker() : null;
   const shown = $("q-overlay").classList.contains("show");
@@ -2036,8 +2226,8 @@ function resolveCorrect(){
     floatDamage($("boss-zone"), "-"+dmg, mega ? "dmg-red" : "dmg-green");
     $("boss-zone").classList.add("shake");
     setTimeout(()=>$("boss-zone").classList.remove("shake"), 550);
-    // ---- серия из 5 верных подряд: с шансом 5% босс получает ещё +300 вместе с этим ударом ----
-    if(normalQ && sp.streak % 5 === 0 && sp.streak > 0 && Math.random() < STREAK_BONUS_CHANCE){
+    // ---- серия из 5 верных подряд: с шансом 5% босс получает ещё +300 вместе с этим ударом (в быстрой игре нет) ----
+    if(state.mode!=="quick" && normalQ && sp.streak % 5 === 0 && sp.streak > 0 && Math.random() < STREAK_BONUS_CHANCE){
       const ex = Math.min(STREAK_BONUS_DMG, state.boss.hp);
       state.boss.hp -= ex;
       at.dmgBoss += ex; at.dmgDealt += ex;
@@ -2433,7 +2623,7 @@ function showBanner(emoji, title, text, onBtn){
 /* ============================================================
    СТАРТ / UI
    ============================================================ */
-let gameMode = "solo";   // solo | team
+let gameMode = "solo";   // solo | quick | team
 let playerCount = 10;    // одиночная: число игроков (8..12)
 let teamCount = 5;       // командная: число команд (4..6)
 
@@ -2485,6 +2675,7 @@ function buildCountBtns(){
 function updateHpHint(){
   $("count-hp").textContent = gameMode==="team"
     ? (teamCount*2)+" игроков · пул "+(hpForCount(teamCount*2)*2)+" HP на команду"
+    : gameMode==="quick" ? "по "+QUICK_HP+" HP · босс "+QUICK_BOSS_HP+" HP"
     : "по "+hpForCount(playerCount)+" HP";
 }
 /* ---- экран выбора режима ---- */
@@ -2495,6 +2686,7 @@ function showSetupScreen(){
   buildCountBtns(); updateHpHint(); buildSetup();
 }
 $("mode-solo").onclick = ()=>{ gameMode = "solo"; showSetupScreen(); };
+$("mode-quick").onclick = ()=>{ gameMode = "quick"; showSetupScreen(); };
 $("mode-team").onclick = ()=>{ gameMode = "team"; showSetupScreen(); };
 
 $("start-btn").onclick = ()=>{
@@ -2524,13 +2716,15 @@ $("start-btn").onclick = ()=>{
       if(seen[names[i]]){ let k=2; while(seen[names[i]+" ("+k+")"]) k++; names[i]=names[i]+" ("+k+")"; }
       seen[names[i]] = true;
     }
-    newGame(names, bossName);
+    if(gameMode==="quick") newQuickGame(names, bossName);
+    else newGame(names, bossName);
   }
   // сброс игрового экрана от прошлой партии (иначе сразу откроется второй этап)
   $("screen-mode").classList.add("hidden");
   $("diff-overlay").classList.remove("show");
   $("q-overlay").classList.remove("show");
   $("banner-overlay").classList.remove("show");
+  $("ab-row").classList.remove("hidden");   // кнопки способностей вернутся в обычной игре
   $("boss-zone").classList.remove("hidden");
   $("boss-zone").classList.remove("boss-dying");
   $("topic-table").classList.remove("locked");
@@ -2555,13 +2749,98 @@ $("again-btn").onclick = ()=>{
   $("screen-setup").classList.add("hidden");
   $("screen-mode").classList.remove("hidden");
 };
-$("mute-btn").onclick = ()=>{
-  muted = !muted;
-  $("mute-btn").textContent = muted ? "🔇 Звук" : "🔊 Звук";
+/* ============================================================
+   МЕНЮ «⋯», НАСТРОЙКИ, ПРАВИЛА, ОФОРМЛЕНИЕ
+   ============================================================ */
+const store = {   // localStorage может быть недоступен (например, строгий офлайн-браузер) — не роняем игру
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
 };
+
+// ---- звук: единый переключатель (кнопка в игре + настройки), запоминается ----
+function setMuted(v){
+  muted = v;
+  $("mute-btn").textContent = muted ? "🔇 Звук" : "🔊 Звук";
+  $("set-sound").textContent = muted ? "Выкл" : "Вкл";
+  store.set("cbq-muted", muted ? "1" : "0");
+}
+$("mute-btn").onclick = ()=> setMuted(!muted);
+$("set-sound").onclick = ()=> setMuted(!muted);
+
+// ---- меню «⋯» на главном экране ----
+$("dots-btn").onclick = (e)=>{ e.stopPropagation(); $("dots-menu").classList.toggle("hidden"); sfx.flip(); };
+document.addEventListener("click", (e)=>{   // клик мимо меню — закрывает его
+  const m = $("dots-menu");
+  if(!m.classList.contains("hidden") && !m.contains(e.target) && e.target !== $("dots-btn")) m.classList.add("hidden");
+});
+$("dm-settings").onclick = ()=>{ $("dots-menu").classList.add("hidden"); $("settings-overlay").classList.add("show"); };
+$("dm-rules").onclick   = ()=>{ $("dots-menu").classList.add("hidden"); $("rules-overlay").classList.add("show"); };
+$("dm-theme").onclick   = ()=>{ $("dots-menu").classList.add("hidden"); $("theme-overlay").classList.add("show"); };
+document.querySelectorAll("[data-close]").forEach(b=>{
+  b.onclick = ()=> b.closest(".overlay").classList.remove("show");
+});
+
+// ---- темы оформления ----
+const THEMES = {
+  fantasy:{
+    name:"Тёмная фэнтези",
+    decor:["💀","⚔️","🛡️","🧪","⭐","🗡️","🏹","👑","🔮","🌙","☠️","📜","🕯️","💎","🪓","⚜️","🦇","🕸️","🎃","🧛","🩸","🐺","🪶"]
+  },
+  halloween:{
+    name:"Хеллоуин",
+    decor:["🎃","👻","🦇","🕸️","🕷️","💀","☠️","🌙","🍬","🧙"]
+  },
+  newyear:{
+    name:"Новый год",
+    decor:["🎄","⛄","🎁","❄️","🔔","🦌","⭐","🥂","🧣","☃️"]
+  },
+  japan:{
+    name:"Япония",
+    decor:["🌸","⛩️","🎎","🎏","🏯","🍥","🍣","🏵️","🀄","🎴"]
+  }
+};
+const DECOR_FANTASY = $("bg-decor").innerHTML;   // статичный «родной» декор сохраняем для возврата
+function buildDecor(id){
+  const box = $("bg-decor");
+  if(id === "fantasy"){ box.innerHTML = DECOR_FANTASY; return; }
+  const set = THEMES[id].decor;
+  let html = "";
+  for(let i=0;i<46;i++){
+    const rot = Math.round(Math.random()*40-20);
+    html += '<span style="left:'+(Math.random()*96+2).toFixed(1)+'%; top:'+(Math.random()*93+3).toFixed(1)+'%; font-size:'
+      + (26+Math.round(Math.random()*28))+'px;' + (rot ? ' transform:rotate('+rot+'deg);' : '') + '">'
+      + set[Math.floor(Math.random()*set.length)] + '</span>';
+  }
+  box.innerHTML = html;
+}
+function applyTheme(id){
+  if(!THEMES[id]) id = "fantasy";
+  document.documentElement.setAttribute("data-theme", id);
+  store.set("cbq-theme", id);
+  buildDecor(id);
+  document.querySelectorAll("#theme-grid .theme-btn").forEach(b=>b.classList.toggle("active", b.dataset.t===id));
+}
+function buildThemeGrid(){
+  const grid = $("theme-grid");
+  grid.innerHTML = "";
+  Object.keys(THEMES).forEach(id=>{
+    const b = document.createElement("button");
+    b.className = "theme-btn";
+    b.dataset.t = id;
+    b.innerHTML = '<span class="theme-ico">'+(id==="fantasy" ? "🗡️" : id==="halloween" ? "🎃" : id==="newyear" ? "🎄" : "🌸")+'</span>'
+      + '<span class="theme-name">'+THEMES[id].name+'</span><span class="theme-check">✔ выбрано</span>';
+    b.onclick = ()=>{ applyTheme(id); sfx.flip(); };
+    grid.appendChild(b);
+  });
+}
+
 buildCountBtns();
 updateHpHint();
 buildSetup();
+buildThemeGrid();
+applyTheme(store.get("cbq-theme") || "fantasy");   // вернуть сохранённое оформление
+setMuted(store.get("cbq-muted") === "1");          // вернуть сохранённый звук
+
 </script>
 </body>
 </html>
