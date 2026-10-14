@@ -328,15 +328,16 @@ h1,h2,h3,.serif{font-family:'Tagesschrift','Georgia',serif;}
 
 /* ---------- Модалка вопроса ---------- */
 .overlay{
-  position:fixed; inset:0; background:rgba(5,3,8,.78); backdrop-filter:blur(3px);
+  position:fixed; inset:0; background:rgba(5,3,8,.84);   /* без backdrop-filter — он сильно тормозит анимации под модалкой */
   display:flex; align-items:center; justify-content:center; z-index:100; padding:14px;
-  opacity:0; pointer-events:none; transition:opacity .25s;
+  opacity:0; pointer-events:none; transition:opacity .22s;
 }
 .overlay.show{opacity:1; pointer-events:auto;}
 .q-card{
-  width:min(1000px, 97vw); max-height:94vh; overflow:auto; padding:30px 42px 36px;
+  width:min(1200px, 98vw); max-height:96vh; overflow:auto; padding:36px 54px 44px;
   border-color:var(--gold);
-  transform:rotateY(80deg) scale(.8); transition:transform .35s;
+  transform:translateY(18px) scale(.96); transition:transform .3s ease-out;  /* плоский 2D-переход вместо rotateY */
+  will-change:transform;
   position:relative;
 }
 .overlay.show .q-card{transform:none;}
@@ -345,7 +346,8 @@ h1,h2,h3,.serif{font-family:'Tagesschrift','Georgia',serif;}
   box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 0 44px rgba(212,63,63,.65);
   animation:megaGlow 1.2s infinite alternate;
 }
-@keyframes megaGlow{from{box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 0 26px rgba(212,63,63,.5);} to{box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 0 56px rgba(212,63,63,.85);}}
+/* пульсация мега-карты через filter (GPU), а не через box-shadow — заметно легче */
+@keyframes megaGlow{from{filter:brightness(1);} to{filter:brightness(1.13);}}
 .q-head{display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid var(--edge); padding-bottom:14px;}
 .q-topic{font-family:'Tagesschrift','Georgia',serif; font-weight:700; font-size:24px; color:var(--violet);}
 .q-for{font-size:19px; color:var(--silver); margin-top:5px; text-align:left;}
@@ -379,8 +381,8 @@ h1,h2,h3,.serif{font-family:'Tagesschrift','Georgia',serif;}
 @keyframes cursePulse{from{opacity:.75;} to{opacity:1;}}
 .q-curse-wrap{text-align:center;}
 .q-text{
-  font-family:'Tagesschrift','Georgia',serif; font-size:30px; line-height:1.45; color:var(--silver); text-align:center;
-  margin:24px 6px; padding:26px 30px;
+  font-family:'Tagesschrift','Georgia',serif; font-size:34px; line-height:1.45; color:var(--silver); text-align:center;
+  margin:26px 6px; padding:30px 34px;
   background:rgba(0,0,0,.42);
   border:1px solid rgba(232,194,104,.32);
   border-radius:14px;
@@ -390,9 +392,9 @@ h1,h2,h3,.serif{font-family:'Tagesschrift','Georgia',serif;}
 .q-opts{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
 @media (max-width:680px){.q-opts{grid-template-columns:1fr;}}
 .q-opt{
-  cursor:pointer; text-align:left; font-size:20px; font-weight:600; color:var(--silver);
+  cursor:pointer; text-align:left; font-size:22px; font-weight:600; color:var(--silver);
   background:linear-gradient(165deg,#241a33,#171021);
-  border:2px solid var(--edge); border-radius:14px; padding:18px 16px;
+  border:2px solid var(--edge); border-radius:14px; padding:20px 18px;
   display:flex; gap:13px; align-items:center;
   transition:transform .1s, border-color .15s, box-shadow .15s;
 }
@@ -510,7 +512,11 @@ table.stats th,table.stats td.place,#table-label,#table-label b,
   background-position:130% 0,0 0;
   animation:metalShine 5.5s linear infinite;
 }
-@keyframes metalShine{from{background-position:130% 0,0 0;} to{background-position:-130% 0,0 0;}}
+/* блик идёт волной часть цикла, остальное время фон статичен — меньше перерисовок, вид одинаково «металлический» */
+@keyframes metalShine{
+  0%, 68%{background-position:130% 0,0 0;}
+  94%, 100%{background-position:-130% 0,0 0;}
+}
 /* золото */
 .topic-card .t-name,.p-name,.duel-side .who,.q-for,.q-for b,.q-diff,#results-title,
 .podium .p-nick,table.stats th,#casino-result,#banner-title{background-image:var(--shine),var(--g-gold);}
@@ -816,7 +822,7 @@ const hpForCount      = n => n>=11 ? 300 : n===10 ? 400 : 500; // HP игрок�
 const DMG             = {1:50, 2:100, 3:150}; // урон боссу по сложности ★/★★/★★★
 const DMG_SELF        = {1:100, 2:125, 3:150}; // урон самому игроку за неверный ответ против босса
 const DMG_PVP         = {1:100, 2:150, 3:200}; // урон игроку в Мордобое (быстрее второй этап)
-const MEGA_DMG        = 500;   // урон мегавопроса
+const MEGA_DMG        = 400;   // урон мегавопроса (наносимый и получаемый)
 const MEGA_CHANCE     = 0.12;  // шанс, что следующий вопрос станет мега (один раз за игру)
 const CURSE_CHANCE    = 0.06;  // шанс вопроса-проклятия (один раз за игру)
 const CASINO_CHANCE   = 0.07;  // шанс казино (только в битве с боссом, один раз за игру)
@@ -1080,6 +1086,7 @@ function startGame(cfg){
     curseUsed:false,
     casinoUsed:false,
     pendingTopic:null,       // тема выбрана, ждёт выбора сложности
+    round2Done:false,        // удар босса по всем в конце II круга уже был
     round3Done:false,        // зачистка III круга уже была
     finishReason:null
   };
@@ -1396,6 +1403,11 @@ function nextTurn(){
     if(idx === null){ // круг окончен — новый раунд
       state.round++;
       newRound();
+      // ---- конец II круга: босс бьёт по всем живым (−50 / −100 командам) ----
+      if(state.phase==="boss" && state.round===3 && !state.round2Done){
+        state.round2Done = true;
+        if(bossRound2Strike()) return;   // баннер — ход продолжится по кнопке
+      }
       // ---- конец III круга: если босс ещё цел, он проводит зачистку ----
       if(state.phase==="boss" && state.round===4 && !state.round3Done){
         state.round3Done = true;
@@ -1408,9 +1420,9 @@ function nextTurn(){
     const targets = aliveUnits().filter(u=>u.id!==idx);
     if(targets.length===0){ finishGame("last3"); return; }
     const target = targets[Math.floor(Math.random()*targets.length)];
-    state.current = {attackerIdx:idx, targetIdx:target.id, mega:false, answered:false};
+    state.current = {attackerIdx:idx, targetIdx:target.id, mega:false, answered:false, revealed:false};
   }else{
-    state.current = {attackerIdx:idx, targetIdx:null, mega:false, answered:false};
+    state.current = {attackerIdx:idx, targetIdx:null, mega:false, answered:false, revealed:false};
   }
   if(isTeamMode()){
     // за команду отвечает по очереди один из двух игроков
@@ -1573,6 +1585,7 @@ function buildOptions(){
   opts.classList.add("hidden");
   $("q-next").classList.add("hidden");
   $("q-show").classList.remove("hidden");
+  cur.revealed = false;   // ответы ещё не показаны → способности разрешены
   hideTimer();
 }
 
@@ -1581,29 +1594,38 @@ function renderAbilities(){
   const cur = state.current;
   const sp = cur ? speaker() : null;
   const shown = $("q-overlay").classList.contains("show");
-  const canAct = !!(cur && shown && !cur.answered && sp && sp.ab);
+  // способности работают только на обычном вопросе и только до «Показать ответы»
+  const special = !!(cur && (cur.mega || cur.curse));
+  const revealed = !!(cur && cur.revealed);
+  const canAct = !!(cur && shown && !cur.answered && !special && !revealed && sp && sp.ab);
   const isDef = !!(cur && cur.step==="defend");
   const bossPhase = state.phase==="boss";
   const set = (id, ok, why)=>{ const b = $(id); b.disabled = !ok; b.title = why || ""; };
-  // 🔀 Замена — другой вопрос (любая фаза, кроме уже отвеченного)
+  // общая причина блокировки для всех трёх
+  const commonWhy = !sp || !sp.ab
+    ? ""
+    : revealed ? "Ответы уже показаны — способности недоступны"
+    : cur && cur.mega ? "На мегавопросе способности недоступны"
+    : cur && cur.curse ? "На вопросе-проклятии способности недоступны"
+    : "";
+  // 🔀 Замена — другой вопрос (обычный, до показа ответов)
   set("ab-swap", canAct && sp.ab.swap,
-      sp && !sp.ab.swap ? "Способность уже использована" : "Поменять этот вопрос на другой");
+      sp && !sp.ab.swap ? "Способность уже использована" : (commonWhy || "Поменять этот вопрос на другой"));
   // ⚡ Азарт — урон ×2, но при ошибке сам получаешь 200
-  const boostWhy = !sp || !sp.ab.boost ? "Способность уже использована"
-    : cur && cur.curse ? "На вопросе-проклятии не работает"
+  const boostWhy = sp && !sp.ab.boost ? "Способность уже использована"
     : isDef ? "Только для атакующего"
-    : "Урон ×2 этого вопроса · при ошибке сам получишь "+ABILITY_FLAT_RISK;
-  set("ab-boost", canAct && sp.ab.boost && !cur.curse && !isDef, boostWhy);
+    : (commonWhy || "Урон ×2 этого вопроса · при ошибке сам получишь "+ABILITY_FLAT_RISK);
+  set("ab-boost", canAct && sp.ab.boost && !isDef, boostWhy);
   // 🎴 Передача — отдать вопрос другому и пропустить ход (только битва с боссом)
-  const giveWhy = !sp || !sp.ab.give ? "Способность уже использована"
+  const giveWhy = sp && !sp.ab.give ? "Способность уже использована"
     : !bossPhase ? "Только в битве с боссом"
-    : "Отдать вопрос случайному сопернику и пропустить свой ход";
+    : (commonWhy || "Отдать вопрос случайному сопернику и пропустить свой ход");
   set("ab-give", canAct && sp.ab.give && bossPhase, giveWhy);
 }
 
 function useSwap(){
   const cur = state.current;
-  if(!cur || cur.answered || !$("q-overlay").classList.contains("show")) return;
+  if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || !$("q-overlay").classList.contains("show")) return;
   const sp = speaker();
   if(!sp || !sp.ab.swap) return;
   const d = cur.q.difficulty;
@@ -1631,7 +1653,7 @@ function useSwap(){
 
 function useBoost(){
   const cur = state.current;
-  if(!cur || cur.answered || !$("q-overlay").classList.contains("show")) return;
+  if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || !$("q-overlay").classList.contains("show")) return;
   const sp = speaker();
   if(!sp || !sp.ab.boost || cur.curse || cur.step==="defend") return;
   sp.ab.boost = false;
@@ -1645,7 +1667,7 @@ function useBoost(){
 
 function useGive(){
   const cur = state.current;
-  if(!cur || cur.answered || !$("q-overlay").classList.contains("show")) return;
+  if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || !$("q-overlay").classList.contains("show")) return;
   const sp = speaker();
   if(!sp || !sp.ab.give || state.phase!=="boss") return;
   const others = aliveUnits().filter(u=>u.id!==cur.attackerIdx);
@@ -1671,6 +1693,8 @@ $("q-show").onclick = ()=>{
   if(!state.current || state.current.answered) return;
   $("q-opts").classList.remove("hidden");
   $("q-show").classList.add("hidden");
+  state.current.revealed = true;   // ответы показаны → способности отключаются
+  renderAbilities();
   // у мегавопроса таймера нет, но защитник отвечает на новый вопрос — таймер идёт
   if(!state.current.mega || state.current.step==="defend") startTimer();
 };
@@ -1833,7 +1857,7 @@ function duelAttack(chosen, correct, prefix){
   const sp = speaker();               // атакующий игрок
   const at = curUnit(), tg = curTarget();
   sp.answers++;
-  if(correct){ sp.correct++; sp.streak = (sp.streak||0)+1; } else sp.streak = 0;
+  if(correct){ sp.correct++; if(!cur.mega) sp.streak = (sp.streak||0)+1; } else sp.streak = 0;   // мегавопрос серию не считает
   cur.attackCorrect = correct;
   if(chosen!=null) markAnswered(chosen, correct);   // отметки (следом варианты пересоберутся под защитника)
   // азарт провалился: атакующий сразу теряет 200 себе
@@ -1970,7 +1994,9 @@ function resolveCorrect(){
   const sp = speaker();           // отвечающий игрок
   const at = curUnit();           // боевая единица (игрок или команда)
   sp.answers++; sp.correct++;
-  sp.streak = (sp.streak||0)+1;   // серия верных ответов подряд
+  // серия верных засчитывает ТОЛЬКО обычные вопросы (мега и проклятие не увеличивают серию и не сбрасывают её)
+  const normalQ = !mega && !curse;
+  if(normalQ) sp.streak = (sp.streak||0)+1;
 
   // ---- вопрос-проклятие: верно — жертва лечится ----
   if(curse){
@@ -2011,7 +2037,7 @@ function resolveCorrect(){
     $("boss-zone").classList.add("shake");
     setTimeout(()=>$("boss-zone").classList.remove("shake"), 550);
     // ---- серия из 5 верных подряд: с шансом 5% босс получает ещё +300 вместе с этим ударом ----
-    if(sp.streak % 5 === 0 && sp.streak > 0 && Math.random() < STREAK_BONUS_CHANCE){
+    if(normalQ && sp.streak % 5 === 0 && sp.streak > 0 && Math.random() < STREAK_BONUS_CHANCE){
       const ex = Math.min(STREAK_BONUS_DMG, state.boss.hp);
       state.boss.hp -= ex;
       at.dmgBoss += ex; at.dmgDealt += ex;
@@ -2117,6 +2143,29 @@ function checkPlayerDead(p, cause){   // p — боевая единица: иг
     else sfx.deathKiller();                       // убил другой игрок
     setTimeout(()=>toast('<span class="t-bad">☠ '+esc(p.name)+' выбывает!</span>'), 700);
   }
+}
+
+/* ---- конец II круга: босс обрушивает удар по всем живым: −50 каждому игроку, −100 пулу команды ---- */
+function bossRound2Strike(){
+  const alive = aliveUnits();
+  if(alive.length===0) return false;
+  const dmg = 50 * teamMult();   // в командах общий пул получает двойной урон (×2)
+  sfx.roar();
+  alive.forEach(u=>{
+    u.hp -= dmg;
+    u.dmgTaken += dmg;
+    floatDamage($("pcard-"+u.id), "-"+dmg, "dmg-red");
+    const el = $("pcard-"+u.id);
+    el?.classList.add("shake");
+    setTimeout(()=>el?.classList.remove("shake"), 550);
+    checkPlayerDead(u, "boss");
+  });
+  renderPlayers();
+  showBanner("🔥", "КОНЕЦ II КРУГА",
+    "Босс обрушил удар по всем живым: <b style='color:#ff8a80'>−"+dmg+" HP</b>"
+      + (isTeamMode() ? " пулу каждой команды" : " каждому игроку"),
+    ()=>{ nextTurn(); });
+  return true;
 }
 
 /* ---- конец III круга: босс жатит самых слабых ---- */
@@ -2251,13 +2300,15 @@ function renderResults(finalists, defeat){
     }
   }
 
-  const statusOf = p => {
-    if(p.alive) return '<span style="color:var(--emerald)">Выжил'+(isTeamMode()?"а":"")+'</span>';
-    if(p.deathCause==="curse") return '<span style="color:#c084fc">Пал'+(isTeamMode()?"а":"")+' от проклятия</span>';
-    if(p.deathCause==="casino") return '<span style="color:var(--gold)">Убит'+(isTeamMode()?"а":"")+': казино</span>';
-    if(p.deathCause==="boss") return '<span style="color:#ff8a80">Убит'+(isTeamMode()?"а":"")+' БОССОМ</span>';
-    if(p.deathCause==="own") return '<span style="color:#ff8a80">Убит'+(isTeamMode()?"а":"")+': своя ошибка</span>';
-    return '<span style="color:#ff8a80">Убит'+(isTeamMode()?"а":"")+': '+esc(p.deathCause || "?")+'</span>';
+  /* fem=true — женский род («Убита») для строк-команд; в таблицах игроков — всегда «Выжил/Убит» */
+  const statusOf = (p, fem) => {
+    const a = fem ? "а" : "";
+    if(p.alive) return '<span style="color:var(--emerald)">Выжил'+a+'</span>';
+    if(p.deathCause==="curse") return '<span style="color:#c084fc">Пал'+a+' от проклятия</span>';
+    if(p.deathCause==="casino") return '<span style="color:var(--gold)">Убит'+a+': казино</span>';
+    if(p.deathCause==="boss") return '<span style="color:#ff8a80">Убит'+a+' БОССОМ</span>';
+    if(p.deathCause==="own") return '<span style="color:#ff8a80">Убит'+a+': своя ошибка</span>';
+    return '<span style="color:#ff8a80">Убит'+a+': '+esc(p.deathCause || "?")+'</span>';
   };
 
   let html;
@@ -2275,7 +2326,7 @@ function renderResults(finalists, defeat){
       html += "<tr class='"+(t.alive?"":"dead-row")+"'>"+
         "<td class='place'>"+(i+1)+"</td>"+
         "<td class='name'>"+emojis+" <b>"+esc(t.name)+"</b><br><small>"+nicks+"</small>"+(state.bossKiller===t.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
-        "<td><b>"+t.points+"</b></td><td>"+statusOf(t)+"</td>"+
+        "<td><b>"+t.points+"</b></td><td>"+statusOf(t, true)+"</td>"+
         "<td>"+t.dmgBoss+"</td><td>"+Math.max(0,dmgPvp)+"</td><td>"+t.dmgDealt+"</td><td>"+t.dmgTaken+"</td>"+
         "<td>"+correct+" / "+answers+"</td></tr>";
     });
@@ -2287,7 +2338,7 @@ function renderResults(finalists, defeat){
       html += "<tr class='"+(p.alive?"":"dead-row")+"'>"+
         "<td class='place'>"+(i+1)+"</td>"+
         "<td class='name' style='color:"+p.color+"'>"+p.avatar.emoji+" "+esc(p.name)+(state.bossKiller===p.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
-        "<td><b>"+p.points+"</b></td><td>"+statusOf(p)+"</td>"+
+        "<td><b>"+p.points+"</b></td><td>"+statusOf(p, false)+"</td>"+
         "<td>"+p.dmgBoss+"</td><td>"+Math.max(0,dmgPvp)+"</td><td>"+p.dmgDealt+"</td><td>"+p.dmgTaken+"</td>"+
         "<td>"+p.correct+" / "+p.answers+"</td></tr>";
     });
@@ -2306,7 +2357,7 @@ function renderResults(finalists, defeat){
       ph += "<tr class='"+(p.alive?"":"dead-row")+"'>"+
         "<td class='name' style='color:"+p.color+"'>"+p.avatar.emoji+" "+esc(p.name)+"</td>"+
         "<td>"+esc(state.teams[p.teamId].name)+"</td>"+
-        "<td>"+statusOf(p)+"</td>"+
+        "<td>"+statusOf(p, false)+"</td>"+
         "<td>"+p.dmgBoss+"</td><td>"+p.dmgDealt+"</td><td>"+p.dmgTaken+"</td>"+
         "<td>"+p.correct+" / "+p.answers+"</td></tr>";
     });
