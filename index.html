@@ -102,7 +102,17 @@ h1,h2,h3,.serif{font-family:'Tagesschrift','Georgia',serif;}
   min-height:100vh; display:flex; flex-direction:column;
   align-items:center; justify-content:center; gap:22px; padding:34px 18px;
 }
-#mode-title{font-size:54px; color:var(--gold); text-shadow:0 0 26px rgba(232,194,104,.5); text-align:center;}
+#mode-title{
+  font-size:clamp(56px,8vw,86px); color:var(--gold); text-align:center; letter-spacing:2px;
+  text-shadow:0 0 26px rgba(232,194,104,.5);
+  transition:transform .4s cubic-bezier(.2,.8,.3,1.25), color .4s, text-shadow .4s;
+  cursor:default;
+}
+#mode-title:hover{
+  color:var(--violet);
+  transform:translateY(-14px) scale(1.06);
+  text-shadow:0 0 34px rgba(167,139,250,.9), 0 0 74px rgba(167,139,250,.55);
+}
 #mode-sub{font-size:21px; color:var(--violet); letter-spacing:3px; margin-bottom:16px;}
 #mode-btns{display:flex; gap:34px; flex-wrap:wrap; justify-content:center;}
 .mode-btn{
@@ -327,6 +337,7 @@ h1,h2,h3,.serif{font-family:'Tagesschrift','Georgia',serif;}
   width:min(1000px, 97vw); max-height:94vh; overflow:auto; padding:30px 42px 36px;
   border-color:var(--gold);
   transform:rotateY(80deg) scale(.8); transition:transform .35s;
+  position:relative;
 }
 .overlay.show .q-card{transform:none;}
 .q-card.mega{
@@ -398,6 +409,52 @@ h1,h2,h3,.serif{font-family:'Tagesschrift','Georgia',serif;}
 .q-opt.disabled{pointer-events:none; opacity:.85;}
 .q-actions{margin-top:22px; text-align:center;}
 
+/* --- Способности: 3 зелёные кнопки в углу окна с вопросом --- */
+.ab-row{position:absolute; left:16px; bottom:14px; display:flex; gap:8px; z-index:5;}
+.ab-btn{
+  cursor:pointer; font-family:'Tagesschrift','Georgia',serif; font-weight:700; font-size:14px; letter-spacing:.5px;
+  padding:9px 13px; border-radius:11px; color:#dcffe9;
+  background:linear-gradient(180deg,#1d5c38,#123c25);
+  border:2px solid var(--emerald); border-radius:11px;
+  box-shadow:0 0 10px rgba(74,222,128,.25), 0 5px 10px rgba(0,0,0,.5);
+  transition:transform .1s, box-shadow .15s, filter .15s, opacity .15s;
+}
+.ab-btn:hover:not(:disabled){filter:brightness(1.25); box-shadow:0 0 20px rgba(74,222,128,.6); transform:translateY(-2px);}
+.ab-btn:active:not(:disabled){transform:translateY(1px);}
+.ab-btn:disabled{opacity:.32; cursor:not-allowed; filter:grayscale(.75); box-shadow:none;}
+@media (max-width:920px){.ab-row{position:static; justify-content:center; margin-top:16px;}}
+
+/* --- Выбор сложности вопроса --- */
+#diff-title{font-size:25px; color:var(--violet); letter-spacing:4px; margin:20px 0 4px; text-align:center;}
+#diff-btns{display:flex; justify-content:center; gap:18px; margin:18px 0 6px; flex-wrap:wrap;}
+.diff-btn{
+  cursor:pointer; width:180px; padding:22px 12px 16px; border-radius:16px; font-family:inherit;
+  background:linear-gradient(180deg,#241a33,#140e1d); border:2px solid var(--edge);
+  color:var(--gold-bright); display:flex; flex-direction:column; gap:7px; align-items:center;
+  transition:transform .12s, border-color .15s, box-shadow .15s, opacity .15s;
+}
+.diff-btn .d-stars{font-size:38px; color:var(--gold); text-shadow:0 0 14px rgba(232,194,104,.55); letter-spacing:3px;}
+.diff-btn .d-note{font-size:14.5px; color:var(--muted); font-weight:600;}
+.diff-btn:hover:not(:disabled){border-color:var(--gold); transform:translateY(-5px); box-shadow:0 0 24px rgba(232,194,104,.45);}
+.diff-btn:disabled{opacity:.3; cursor:not-allowed;}
+.diff-btn:disabled .d-stars{color:#8a6a6a; text-shadow:none;}
+
+/* --- Поражение: мишура падает и сгорает в огне --- */
+#results-title.defeat{
+  color:#ff4d4d;
+}
+.confetti-fire{animation-name:defeatFall; animation-timing-function:ease-in; animation-fill-mode:forwards;}
+@keyframes defeatFall{
+  0%{transform:translateY(0) rotate(0deg); opacity:1;}
+  40%{transform:translateY(38vh) rotate(320deg); opacity:1;}
+  55%{background-color:#ff7a1a; box-shadow:0 0 14px #ff5a00; transform:translateY(46vh) rotate(390deg) scale(1.2);}
+  68%{background-color:#ffc93c; box-shadow:0 0 22px #ff3c00; transform:translateY(54vh) rotate(440deg) scale(.95);}
+  82%{background-color:#ff9d3c; box-shadow:0 0 26px #ff2200; transform:translateY(62vh) rotate(490deg) scale(.7); opacity:.92;}
+  100%{transform:translateY(72vh) rotate(560deg) scale(.05); opacity:0; filter:blur(5px);}
+}
+#players-title{text-align:center; font-size:31px; color:var(--violet); margin:34px 0 14px; letter-spacing:2px;}
+#players-title.hidden, #players-wrap.hidden{display:none !important;}
+
 /* --- Дуэль: атакующий vs защищающийся --- */
 .duel-side.attacker{
   border-color:var(--ruby);
@@ -405,9 +462,16 @@ h1,h2,h3,.serif{font-family:'Tagesschrift','Georgia',serif;}
   box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 0 26px rgba(212,63,63,.45);
   width:345px; transform:scale(1.06); z-index:2;
 }
+/* защищающийся: рамка такого же размера, но зелёная */
+.duel-side.target{
+  border-color:var(--emerald);
+  background:linear-gradient(165deg,#0f2a1b 0%,#0b1f14 55%,#08160e 100%);
+  box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 0 26px rgba(74,222,128,.45);
+  width:345px; transform:scale(1.06); z-index:2;
+}
 .duel-side .role{display:flex; align-items:center; justify-content:center; gap:8px;}
 .duel-side.attacker .role{color:#ff8a80;}
-.duel-side.target .role{color:var(--violet);}
+.duel-side.target .role{color:#86efac;}
 .role-icon{font-size:24px; line-height:1;}
 
 /* --- Полупрозрачные узоры на фоне --- */
@@ -453,9 +517,11 @@ table.stats th,table.stats td.place,#table-label,#table-label b,
 /* серебро */
 .q-text,.q-timer,.podium .p-pts,table.stats td.place,#table-label,.q-for{background-image:var(--shine),var(--g-silver);}
 /* фиолет */
-.q-topic,.q-curse-label,.duel-side.target .role,#phase-label,#round-label{background-image:var(--shine),var(--g-violet);}
+.q-topic,.q-curse-label,#phase-label,#round-label{background-image:var(--shine),var(--g-violet);}
 /* рубин */
 .q-mega-label,.boss-name,.duel-side.attacker .role{background-image:var(--shine),var(--g-ruby);}
+/* изумруд (щит защитника) */
+.duel-side.target .role{background-image:var(--shine),var(--g-emerald);}
 /* эмодзи/символы внутри металлического текста остаются обычными */
 .tc-emoji,.role .role-icon,.q-diff .dmg-note{-webkit-text-fill-color:initial;}
 
@@ -528,7 +594,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
 
 <!-- ================= ЭКРАН ВЫБОРА РЕЖИМА ================= -->
 <div id="screen-mode">
-  <div id="mode-title">☠ ТЁМНЫЕ КАРТЫ</div>
+  <div id="mode-title">Тёмные знания</div>
   <div id="mode-sub">ВЫБЕРИТЕ РЕЖИМ ИГРЫ</div>
   <div id="mode-btns">
     <button class="mode-btn" id="mode-solo">
@@ -619,6 +685,32 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <button class="btn" id="q-show">Показать ответы ▶</button>
       <button class="btn hidden" id="q-next">Следующий ход ▶</button>
     </div>
+    <div class="ab-row" id="ab-row">
+      <button class="ab-btn" id="ab-swap" title=""><span class="tc-emoji">🔀</span> Замена</button>
+      <button class="ab-btn" id="ab-boost" title=""><span class="tc-emoji">⚡</span> Азарт</button>
+      <button class="ab-btn" id="ab-give" title=""><span class="tc-emoji">🎴</span> Передача</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= МОДАЛКА ВЫБОРА СЛОЖНОСТИ ================= -->
+<div class="overlay" id="diff-overlay">
+  <div class="card q-card ornate" style="text-align:center; width:min(640px,95vw);">
+    <div class="q-topic" id="diff-topic">Тема</div>
+    <div class="q-for" id="diff-for" style="text-align:center;">—</div>
+    <div id="diff-title">ВЫБЕРИТЕ СЛОЖНОСТЬ</div>
+    <div id="diff-btns">
+      <button class="diff-btn" id="diff-1" data-d="1">
+        <span class="d-stars">★</span><span class="d-note"></span>
+      </button>
+      <button class="diff-btn" id="diff-2" data-d="2">
+        <span class="d-stars">★★</span><span class="d-note"></span>
+      </button>
+      <button class="diff-btn" id="diff-3" data-d="3">
+        <span class="d-stars">★★★</span><span class="d-note"></span>
+      </button>
+    </div>
+    <div style="font-size:14px; color:var(--muted);">Одну и ту же сложность дважды подряд выбирать нельзя</div>
   </div>
 </div>
 
@@ -656,6 +748,8 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
   <div id="results-sub"></div>
   <div class="podium" id="podium"></div>
   <div class="table-wrap"><table class="stats" id="stats-table"></table></div>
+  <div id="players-title" class="hidden">ИГРОКИ</div>
+  <div class="table-wrap hidden" id="players-wrap"><table class="stats" id="players-table"></table></div>
   <div class="results-actions"><button class="btn btn-ruby btn-big" id="again-btn">⟲ Новая игра</button></div>
 </div>
 
@@ -735,6 +829,9 @@ const TEAM_HARD_SHIFT = 0.65;  // шанс в командном режиме з
 const BOSS_KILL_BONUS = 1;     // баллы за добивание босса
 const PRIZE           = [5, 3, 2]; // баллы за 1/2/3 место по итогам
 const BOSS_DOUBLE_CHANCE = 0.05; // шанс, что босс удвоит урон неверно ответившему (независимо от каждого ответа)
+const STREAK_BONUS_CHANCE = 0.05; // шанс: серия из 5 верных подряд наносит боссу ещё +300 вместе с пятым ударом
+const STREAK_BONUS_DMG    = 300;  // размер бонуса серии
+const ABILITY_FLAT_RISK   = 200;  // урон себе при провале способности «Азарт»
 
 /* имена босса, если ведущий не ввёл своё */
 const BOSS_NAMES = ["Владыка тьмы", "Повелитель ужаса", "Лорд теней"];
@@ -903,15 +1000,40 @@ const TOPICS = [
 let state = null;
 let muted = false;
 
+/* ---- рандомный металлический цвет для ника каждого игрока ---- */
+const NAME_COLORS = [
+  {base:"#ff8a8a", light:"#ffd6d6", dark:"#a33a3a"},
+  {base:"#8ab4ff", light:"#dbe8ff", dark:"#3a5aa3"},
+  {base:"#7dffb0", light:"#dcffec", dark:"#2a8a55"},
+  {base:"#ffd166", light:"#fff2cf", dark:"#a37a1e"},
+  {base:"#c48bff", light:"#eeddff", dark:"#6b3fa0"},
+  {base:"#7de3ff", light:"#dcf7ff", dark:"#2a7a96"},
+  {base:"#ff9de2", light:"#ffe4f6", dark:"#a33f86"},
+  {base:"#b8ff6b", light:"#eaffd6", dark:"#5f8a2a"},
+  {base:"#ffa07a", light:"#ffe6db", dark:"#a34f2a"},
+  {base:"#e0e0ff", light:"#ffffff", dark:"#6b6ba3"},
+  {base:"#9df5e0", light:"#e0fff8", dark:"#2a8a75"},
+  {base:"#ffcf8a", light:"#fff0dc", dark:"#a3742a"}
+];
+function nameGrad(c){
+  // вертикальный металлический градиент оттенка игрока (бегущий блик остаётся)
+  return "linear-gradient(180deg,#ffffff 0%,"+c.light+" 18%,"+c.base+" 42%,"+c.dark+" 56%,"+c.light+" 72%,"+c.dark+" 100%)";
+}
+/* металлический ник игрока: свой оттенок, шрифт/стиль/блик — как у всех */
+const pb = p => '<b style="background-image:var(--shine),'+p.grad+'">'+esc(p.name)+'</b>';
+
 function mkPlayer(id, name, hp){
+  const col = NAME_COLORS[Math.floor(Math.random()*NAME_COLORS.length)];
   return {
     id, name, hp, maxHp:hp, alive:true,
     avatar:AVATARS[Math.floor(Math.random()*AVATARS.length)], // аватарка рандомно (при 11-12 возможны повторы)
+    color:col.base, grad:nameGrad(col),   // рандомный цвет ника
     teamId:null,
     dmgBoss:0, dmgDealt:0, dmgTaken:0,
     correct:0, answers:0,
     killedBy:null, eliminatedIn:null, deathCause:null, points:0, skipTurns:0,
-    lastTopic:null
+    lastTopic:null, lastDiff:null, streak:0,  // последняя сложность / серия верных ответов
+    ab:{swap:true, boost:true, give:true}     // 3 способности: один раз за игру каждая
   };
 }
 function startGame(cfg){
@@ -952,11 +1074,13 @@ function startGame(cfg){
     bossName: cfg.bossName,
     bossKiller:null,
     queue:[], queuePos:0,
-    current:null,            // {attackerIdx, targetIdx|null, speakerId?, mega, answerIdx, q, answered}
+    current:null,            // {attackerIdx, targetIdx|null, speakerId?, mega, answerIdx, q, answered, step}
     pools:TOPICS.map(t=>makePool(t.questions.length)),
     megaUsed:false,
     curseUsed:false,
     casinoUsed:false,
+    pendingTopic:null,       // тема выбрана, ждёт выбора сложности
+    round3Done:false,        // зачистка III круга уже была
     finishReason:null
   };
   newRound();
@@ -968,11 +1092,36 @@ function makePool(n){
   const arr = [...Array(n).keys()];
   return {order:shuffle(arr), pos:0};
 }
-function drawQuestion(topicIdx){
+function drawQuestion(topicIdx, diff){
   const pool = state.pools[topicIdx];
   if(pool.pos >= pool.order.length) return null;   // колода пуста
-  const qIdx = pool.order[pool.pos++];
-  return {q:TOPICS[topicIdx].questions[qIdx], topicIdx};
+  if(diff==null){                                  // любая доступная карта
+    const qIdx = pool.order[pool.pos++];
+    return {q:TOPICS[topicIdx].questions[qIdx], topicIdx};
+  }
+  // карта нужной сложности (выбор игрока): берём ближайшую, убираем из колоды
+  for(let i=pool.pos;i<pool.order.length;i++){
+    const q = TOPICS[topicIdx].questions[pool.order[i]];
+    if(q.difficulty===diff){
+      const qIdx = pool.order[i];
+      pool.order.splice(i,1);
+      return {q, topicIdx};
+    }
+  }
+  return null;   // нужной сложности не осталось
+}
+function poolHas(topicIdx, diff){
+  const pool = state.pools[topicIdx];
+  for(let i=pool.pos;i<pool.order.length;i++){
+    if(TOPICS[topicIdx].questions[pool.order[i]].difficulty===diff) return true;
+  }
+  return false;
+}
+/* случайная карта нужной сложности из любой колоды (для «Замены») */
+function drawAnywhere(diff){
+  const order = shuffle(TOPICS.map((t,i)=>i));
+  for(const i of order){ const dr = drawQuestion(i, diff); if(dr) return dr; }
+  return null;
 }
 function allDecksEmpty(){
   return TOPICS.every((t,i)=> state.pools[i].pos >= state.pools[i].order.length);
@@ -989,7 +1138,12 @@ const aliveUnits = ()=> units().filter(u=>u.alive);
 const alivePlayers = ()=> aliveUnits();   // старое имя — теперь «живые боевые единицы»
 function curUnit(){ return units()[state.current.attackerIdx]; }
 function curTarget(){ return state.current && state.current.targetIdx!==null ? units()[state.current.targetIdx] : null; }
-function speaker(){ return state.players[state.current.speakerId!=null ? state.current.speakerId : state.current.attackerIdx]; }
+function speaker(){
+  const cur = state.current;
+  // второй шаг Мордобоя: на вопрос отвечает защитник
+  if(cur.step==="defend" && cur.defenderSpeakerId!=null) return state.players[cur.defenderSpeakerId];
+  return state.players[cur.speakerId!=null ? cur.speakerId : cur.attackerIdx];
+}
 const teamMult = ()=> state.mode==="team" ? 2 : 1; // в командном режиме урон ×2 (мегавопрос и проклятие — исключения)
 const dmgBossFor = d => DMG[d]*teamMult();
 const dmgSelfFor = d => DMG_SELF[d]*teamMult();
@@ -1060,7 +1214,8 @@ const sfx = {
   deathCasino:()=>{ [660,495,330,220].forEach((f,i)=>tone(f,.2,"triangle",.12,i*.1)); }, // падение монет
   roar:()=>{ tone(65,.8,"sawtooth",.25); tone(87,.7,"sawtooth",.2,.05); noise(.7,.2,300,90,"lowpass"); }, // ярость босса
   drums:()=>{ [0,.18,.36,.54,.72].forEach(d=>tone(95,.16,"sine",.28,d)); [0.09,.27,.45,.63].forEach(d=>tone(140,.1,"sine",.15,d)); }, // барабаны второго акта
-  applause:()=>{ for(let i=0;i<42;i++){ noise(.05,.06,1600+Math.random()*2600,800,"bandpass",Math.random()*2.2); } [523,659,784,1047].forEach((f,i)=>tone(f,.25,"sine",.14,.3+i*.15)); } // аплодисменты + фанфара
+  applause:()=>{ for(let i=0;i<42;i++){ noise(.05,.06,1600+Math.random()*2600,800,"bandpass",Math.random()*2.2); } [523,659,784,1047].forEach((f,i)=>tone(f,.25,"sine",.14,.3+i*.15)); }, // аплодисменты + фанфара
+  flame:()=>{ noise(1.2,.22,250,1400,"lowpass"); tone(70,1.0,"sine",.18); tone(52,1.2,"sine",.14,.1); for(let i=0;i<14;i++){ noise(.06,.08,2400+Math.random()*3000,1200,"highpass",i*.07+Math.random()*.05); } } // мишура сгорает в огне
 };
 
 /* ============================================================
@@ -1091,9 +1246,12 @@ function renderDuelZone(){
   const at = curUnit(), tg = curTarget();
   const face = u => isTeamMode() ? u.members.map(id=>state.players[id].avatar.emoji).join("") : u.avatar.emoji;
   $("attacker-name").textContent = at.name;
+  $("target-name").textContent = tg.name;
+  // цвет ника игрока (команды остаются золотыми)
+  $("attacker-name").style.backgroundImage = isTeamMode() ? "" : "var(--shine),"+at.grad;
+  $("target-name").style.backgroundImage = isTeamMode() ? "" : "var(--shine),"+tg.grad;
   $("attacker-avatar").textContent = face(at);
   setHpBar($("attacker-hp-fill"), $("attacker-hp-text"), at.hp, at.maxHp);
-  $("target-name").textContent = tg.name;
   $("target-avatar").textContent = face(tg);
   setHpBar($("target-hp-fill"), $("target-hp-text"), tg.hp, tg.maxHp);
 }
@@ -1119,10 +1277,11 @@ function renderTable(){
   const sp = speaker();
   if(state.phase==="pvp"){
     const at = curUnit(), tg = curTarget();
+    const who = state.current.step==="defend" ? "Защищается" : "Атакует";
     $("table-label").innerHTML = "<b>"+esc(at.name)+"</b> <span class='tc-emoji'>⚔</span> <b>"+esc(tg.name)+"</b>"
-      + (isTeamMode() ? " <span class='tc-emoji'>·</span> отвечает <b>"+esc(sp.name)+"</b>" : "");
+      + " <span class='tc-emoji'>·</span> "+who+": "+pb(sp);
   }else{
-    $("table-label").innerHTML = "Ходит <b>"+esc(sp.name)+"</b>"
+    $("table-label").innerHTML = "Ходит "+pb(sp)
       + (isTeamMode() ? " <span class='tc-emoji'>·</span> <b>"+esc(curUnit().name)+"</b>" : "");
   }
 }
@@ -1138,12 +1297,14 @@ function renderPlayers(){
       div.className = "card player-card team-card ornate" + (t.alive ? "" : " dead") + (isCurrent ? " active" : "");
       const qPos = state.queue.indexOf(t.id);
       const badge = (t.alive && !isCurrent && qPos>=state.queuePos) ? '<div class="p-queue">'+(qPos - state.queuePos + 1)+'</div>' : "";
-      const emojis = t.members.map(id=>state.players[id].avatar.emoji).join("");
-      const names = t.members.map(id=>state.players[id].name).join(" · ");
+      const mems = t.members.map(id=>state.players[id]);
+      const emojis = mems.map(m=>m.avatar.emoji).join("");
+      const names = mems.map(m=>m.name).join(" · ");
+      const namesHtml = mems.map(m=>'<span style="color:'+m.color+'">'+esc(m.name)+'</span>').join(" · ");  // цвет каждого ника
       div.id = "pcard-"+t.id;
       div.innerHTML = badge +
         '<div class="p-head"><span class="avatar-sm" title="'+esc(names)+'">'+emojis+'</span><div class="p-name">'+esc(t.name)+'</div></div>'+
-        '<div class="p-sub">'+esc(names)+'</div>'+
+        '<div class="p-sub">'+namesHtml+'</div>'+
         '<div class="hp-wrap small"><div class="hp-bar"><div class="hp-fill"></div><div class="hp-text"></div></div></div>';
       setHpBar(div.querySelector(".hp-fill"), div.querySelector(".hp-text"), t.hp, t.maxHp);
       grid.appendChild(div);
@@ -1157,7 +1318,7 @@ function renderPlayers(){
     const isCurrent = state.current && state.current.attackerIdx===i;
     const badge = (p.alive && !isCurrent && qPos>=state.queuePos) ? '<div class="p-queue">'+(qPos - state.queuePos + 1)+'</div>' : "";
     div.innerHTML = badge +
-      '<div class="p-head"><span class="avatar-sm" title="'+esc(p.avatar.name)+'">'+p.avatar.emoji+'</span><div class="p-name">'+esc(p.name)+'</div></div>'+
+      '<div class="p-head"><span class="avatar-sm" title="'+esc(p.avatar.name)+'">'+p.avatar.emoji+'</span><div class="p-name" style="background-image:var(--shine),'+p.grad+'">'+esc(p.name)+'</div></div>'+
       '<div class="hp-wrap small"><div class="hp-bar"><div class="hp-fill"></div><div class="hp-text"></div></div></div>';
     setHpBar(div.querySelector(".hp-fill"), div.querySelector(".hp-text"), p.hp, p.maxHp);
     div.id = "pcard-"+i;
@@ -1235,6 +1396,11 @@ function nextTurn(){
     if(idx === null){ // круг окончен — новый раунд
       state.round++;
       newRound();
+      // ---- конец III круга: если босс ещё цел, он проводит зачистку ----
+      if(state.phase==="boss" && state.round===4 && !state.round3Done){
+        state.round3Done = true;
+        if(bossMassacre()) return;   // всплыл баннер — ход продолжится по кнопке
+      }
     }
   }
 
@@ -1256,10 +1422,10 @@ function nextTurn(){
   renderAll();
 }
 
+/* ---- ход: ведущий выбирает тему, игрок — сложность, потом вопрос ---- */
 function pickTopic(topicIdx){
-  if(!state.current || state.current.answered || state.transitioning) return;
+  if(!state.current || state.current.answered || state.transitioning || state.pendingTopic!=null) return;
   const unit = curUnit();
-  const sp = speaker();
   // ---- одну и ту же тему дважды подряд брать нельзя (кроме последней оставшейся колоды) ----
   const nonEmpty = TOPICS.filter((t,i)=>state.pools[i].pos < state.pools[i].order.length).length;
   if(unit.lastTopic===topicIdx && nonEmpty>1){
@@ -1268,48 +1434,132 @@ function pickTopic(topicIdx){
   }
   // ---- казино: вместо вопроса барабан (только битва с боссом, один раз за игру) ----
   if(state.phase==="boss" && !state.casinoUsed && Math.random() < CASINO_CHANCE){ startCasino(topicIdx); return; }
-  let drawn = drawQuestion(topicIdx);
+  // ---- сначала игрок выбирает сложность ----
+  showDiff(topicIdx);
+}
+
+/* ---- экран выбора сложности ★ / ★★ / ★★★ ---- */
+function showDiff(topicIdx){
+  const sp = speaker();
+  state.pendingTopic = topicIdx;
+  $("diff-topic").innerHTML = '<span class="tc-emoji">'+TOPICS[topicIdx].emoji+'</span> '+esc(TOPICS[topicIdx].name);
+  $("diff-for").innerHTML = state.phase==="boss"
+    ? "Ходит: "+pb(sp)+(isTeamMode()? " <span class='tc-emoji'>·</span> <b>"+esc(curUnit().name)+"</b>" : "")
+    : "<b>"+esc(curUnit().name)+"</b> <span class='tc-emoji'>⚔</span> <b>"+esc(curTarget().name)+"</b>"
+      + (isTeamMode()? " <span class='tc-emoji'>·</span> атакует "+pb(sp) : "");
+  const has = d=>poolHas(topicIdx, d);
+  // одной и той же сложностью подряд играть нельзя (кроме случая, когда других не осталось)
+  let avail = [1,2,3].filter(d=>has(d) && d!==sp.lastDiff);
+  if(avail.length===0) avail = [1,2,3].filter(has);
+  [1,2,3].forEach(d=>{
+    const b = $("diff-"+d);
+    b.disabled = !avail.includes(d);
+    b.title = b.disabled
+      ? (has(d) ? "Эту сложность нельзя выбирать дважды подряд" : "В этой теме нет таких вопросов")
+      : "";
+    b.querySelector(".d-note").textContent = state.phase==="boss"
+      ? "урон "+dmgBossFor(d)+" · риск "+dmgSelfFor(d)
+      : "урон "+dmgPvpFor(d);
+  });
+  $("diff-overlay").classList.add("show");
+}
+
+function chooseDiff(d){
+  const topicIdx = state.pendingTopic;
+  if(topicIdx==null) return;
+  const sp = speaker();
+  if(!poolHas(topicIdx, d)) return;
+  if(d===sp.lastDiff && [1,2,3].some(x=>x!==d && poolHas(topicIdx,x))) return; // запрет повтора
+  $("diff-overlay").classList.remove("show");
+  state.pendingTopic = null;
+  sp.lastDiff = d;
+  let drawn = drawQuestion(topicIdx, d);
   if(!drawn){ toast("В этой колоде карты кончились!"); renderTable(); return; }
-  // ---- в командном режиме вопросы сложнее: ★ нередко уступает место следующей карте ----
-  if(isTeamMode() && drawn.q.difficulty===1 && Math.random() < TEAM_HARD_SHIFT){
+  // ---- в командном режиме ★ нередко уступает место следующей (более сложной) карте ----
+  if(isTeamMode() && d===1 && Math.random() < TEAM_HARD_SHIFT){
     const harder = drawQuestion(topicIdx);
     if(harder) drawn = harder;
   }
+  setupQuestion(topicIdx, drawn);
+}
+[1,2,3].forEach(d=>{
+  $("diff-"+d).onclick = ()=>{ if($("diff-"+d).disabled) return; chooseDiff(d); };
+});
+
+/* ---- сборка вопроса: мега/проклятие, подписи, варианты, способности ---- */
+function setupQuestion(topicIdx, drawn){
+  const unit = curUnit();
   unit.lastTopic = topicIdx;   // следующий ход этой единицы — другая тема
   const q = drawn.q;
-  const tg = curTarget();
-
   // ---- мегавопрос и вопрос-проклятие: по одному разу за игру ----
   const mega = !state.megaUsed && Math.random() < MEGA_CHANCE;
   const curse = !mega && !state.curseUsed && Math.random() < CURSE_CHANCE;
   if(mega) state.megaUsed = true;
   if(curse) state.curseUsed = true;
-  state.current.mega = mega;
-  state.current.curse = curse;
-  state.current.answered = false;
-  state.current.q = q;
-
-  const dmgShown = mega ? MEGA_DMG
+  const cur = state.current;
+  cur.mega = mega;
+  cur.curse = curse;
+  cur.answered = false;
+  cur.q = q;
+  cur.topicIdx = topicIdx;
+  cur.boost = false;                              // способность «Азарт» ещё не активна
+  cur.step = state.phase==="pvp" ? "attack" : null; // первый шаг дуэли — атака
+  cur.defenderSpeakerId = null;
+  cur.attackCorrect = null;
+  cur.dmg = mega ? MEGA_DMG
     : (state.phase==="pvp" ? dmgPvpFor(q.difficulty) : dmgBossFor(q.difficulty));
-  $("q-diff").innerHTML = (mega || curse)
-    ? '<span class="tc-emoji" style="color:#ff6b5e;">☠</span> <span class="dmg-note">'+(mega?"мега "+MEGA_DMG:"проклятие")+'</span>'
-    : "★".repeat(q.difficulty) + ' <span class="dmg-note">'
-      + (state.phase==="boss" ? "урон "+dmgShown+" · риск "+dmgSelfFor(q.difficulty) : "урон "+dmgShown)
-      + '</span>';
+  renderQDiff();
   $("q-mega-label").classList.toggle("hidden", !mega);
   $("q-curse-label").classList.toggle("hidden", !curse);
   $("q-card").classList.toggle("mega", mega);
   if(mega) sfx.gong();   // глубокий гонг мегавопроса
-  $("q-for").innerHTML = state.phase==="boss"
-    ? "Отвечает: <b>"+esc(sp.name)+"</b>"+(isTeamMode() ? " <span class='tc-emoji'>·</span> <b>"+esc(unit.name)+"</b>" : "")
-    : "<b>"+esc(unit.name)+"</b> <span class='tc-emoji'>⚔</span> <b>"+esc(tg.name)+"</b>"
-      + (isTeamMode() ? " <span class='tc-emoji'>·</span> отвечает <b>"+esc(sp.name)+"</b>" : "");
+  renderQFor();
   $("q-topic").innerHTML = '<span class="tc-emoji">'+TOPICS[topicIdx].emoji+'</span> '+esc(TOPICS[topicIdx].name);
   $("q-text").textContent = q.text;
+  buildOptions();
+  $("q-overlay").classList.add("show");
+  renderAbilities();   // после show — иначе кнопки сочтут окно закрытым
+}
 
-  // ---- варианты ответа в случайном порядке, скрыты до кнопки ----
+/* ---- строка урона/риска справа сверху ---- */
+function renderQDiff(){
+  const cur = state.current;
+  if(cur.mega || cur.curse){
+    $("q-diff").innerHTML = '<span class="tc-emoji" style="color:#ff6b5e;">☠</span> <span class="dmg-note">'
+      + (cur.mega ? "мега "+MEGA_DMG : "проклятие") + '</span>';
+    return;
+  }
+  const d = cur.q.difficulty;
+  const shown = state.phase==="boss" ? (cur.boost ? cur.dmg*2 : cur.dmg) : cur.dmg;
+  $("q-diff").innerHTML = "★".repeat(d) + ' <span class="dmg-note">'
+    + (state.phase==="boss"
+        ? "урон "+shown+" · риск "+(cur.boost ? ABILITY_FLAT_RISK : dmgSelfFor(d))
+        : "урон "+shown+(cur.boost ? " ⚡×2 при верном" : ""))
+    + '</span>';
+}
+
+/* ---- кто отвечает ---- */
+function renderQFor(){
+  const cur = state.current;
+  if(!cur) return;
+  const sp = speaker();
+  const unit = curUnit();
+  if(state.phase==="boss"){
+    $("q-for").innerHTML = "Отвечает: "+pb(sp)+(isTeamMode()? " <span class='tc-emoji'>·</span> <b>"+esc(unit.name)+"</b>" : "");
+  }else{
+    const tg = curTarget();
+    const who = cur.step==="defend" ? "Защищается" : "Атакует";
+    $("q-for").innerHTML = "<b>"+esc(unit.name)+"</b> <span class='tc-emoji'>⚔</span> <b>"+esc(tg.name)+"</b>"
+      + " <span class='tc-emoji'>·</span> "+who+": "+pb(sp);
+  }
+}
+
+/* ---- варианты ответа в случайном порядке, скрыты до кнопки ---- */
+function buildOptions(){
+  const cur = state.current;
+  const q = cur.q;
   const variants = shuffle(q.options.map((text,origIdx)=>({text, correct:origIdx===q.answer})));
-  state.current.answerIdx = variants.findIndex(v=>v.correct);
+  cur.answerIdx = variants.findIndex(v=>v.correct);
   const opts = $("q-opts");
   opts.innerHTML = "";
   const letters = ["А","Б","В","Г"];
@@ -1324,15 +1574,110 @@ function pickTopic(topicIdx){
   $("q-next").classList.add("hidden");
   $("q-show").classList.remove("hidden");
   hideTimer();
-  $("q-overlay").classList.add("show");
+}
+
+/* ---- три способности: показываются вместе с вопросом, раз за игру ---- */
+function renderAbilities(){
+  const cur = state.current;
+  const sp = cur ? speaker() : null;
+  const shown = $("q-overlay").classList.contains("show");
+  const canAct = !!(cur && shown && !cur.answered && sp && sp.ab);
+  const isDef = !!(cur && cur.step==="defend");
+  const bossPhase = state.phase==="boss";
+  const set = (id, ok, why)=>{ const b = $(id); b.disabled = !ok; b.title = why || ""; };
+  // 🔀 Замена — другой вопрос (любая фаза, кроме уже отвеченного)
+  set("ab-swap", canAct && sp.ab.swap,
+      sp && !sp.ab.swap ? "Способность уже использована" : "Поменять этот вопрос на другой");
+  // ⚡ Азарт — урон ×2, но при ошибке сам получаешь 200
+  const boostWhy = !sp || !sp.ab.boost ? "Способность уже использована"
+    : cur && cur.curse ? "На вопросе-проклятии не работает"
+    : isDef ? "Только для атакующего"
+    : "Урон ×2 этого вопроса · при ошибке сам получишь "+ABILITY_FLAT_RISK;
+  set("ab-boost", canAct && sp.ab.boost && !cur.curse && !isDef, boostWhy);
+  // 🎴 Передача — отдать вопрос другому и пропустить ход (только битва с боссом)
+  const giveWhy = !sp || !sp.ab.give ? "Способность уже использована"
+    : !bossPhase ? "Только в битве с боссом"
+    : "Отдать вопрос случайному сопернику и пропустить свой ход";
+  set("ab-give", canAct && sp.ab.give && bossPhase, giveWhy);
+}
+
+function useSwap(){
+  const cur = state.current;
+  if(!cur || cur.answered || !$("q-overlay").classList.contains("show")) return;
+  const sp = speaker();
+  if(!sp || !sp.ab.swap) return;
+  const d = cur.q.difficulty;
+  // та же тема и сложность → та же тема любая → другая тема той же сложности → вообще любая
+  let drawn = drawQuestion(cur.topicIdx, d)
+           || drawQuestion(cur.topicIdx, null)
+           || drawAnywhere(d)
+           || drawAnywhere(null);
+  if(!drawn){ toast('<span class="t-bad">Больше нет вопросов!</span>'); return; }
+  sp.ab.swap = false;
+  cur.q = drawn.q;
+  cur.topicIdx = drawn.topicIdx;
+  if(cur.step !== "defend"){   // у защиты урон считается от исходного вопроса атаки
+    cur.dmg = cur.mega ? MEGA_DMG
+      : (state.phase==="pvp" ? dmgPvpFor(drawn.q.difficulty) : dmgBossFor(drawn.q.difficulty));
+  }
+  $("q-topic").innerHTML = '<span class="tc-emoji">'+TOPICS[drawn.topicIdx].emoji+'</span> '+esc(TOPICS[drawn.topicIdx].name);
+  $("q-text").textContent = drawn.q.text;
+  renderQDiff();
+  buildOptions();   // свежие варианты снова скрыты — ведущий жмёт «Показать ответы»
+  renderAbilities();
+  toast('<span class="t-good">🔀 Замена!</span> Новый вопрос');
+  sfx.flip();
+}
+
+function useBoost(){
+  const cur = state.current;
+  if(!cur || cur.answered || !$("q-overlay").classList.contains("show")) return;
+  const sp = speaker();
+  if(!sp || !sp.ab.boost || cur.curse || cur.step==="defend") return;
+  sp.ab.boost = false;
+  cur.boost = true;
+  renderQDiff();
+  renderAbilities();
+  toast('<span class="t-gold">⚡ Азарт!</span> урон этого вопроса ×2'
+    + (state.phase==="boss" ? ', но при ошибке ты получишь <b>'+ABILITY_FLAT_RISK+'</b>' : ' для соперника'));
+  sfx.mega();
+}
+
+function useGive(){
+  const cur = state.current;
+  if(!cur || cur.answered || !$("q-overlay").classList.contains("show")) return;
+  const sp = speaker();
+  if(!sp || !sp.ab.give || state.phase!=="boss") return;
+  const others = aliveUnits().filter(u=>u.id!==cur.attackerIdx);
+  if(!others.length){ toast('<span class="t-bad">Передавать некому!</span>'); return; }
+  const to = others[Math.floor(Math.random()*others.length)];
+  sp.ab.give = false;
+  cur.attackerIdx = to.id;
+  if(isTeamMode()){
+    cur.speakerId = to.members[to.speakerTurn % to.members.length];
+    to.speakerTurn++;
+  }else{
+    cur.speakerId = null;
+  }
+  to.lastTopic = cur.topicIdx;   // тема уже потрачена — новому отвечающему она тоже не светит
+  toast('🎴 Вопрос передан — теперь отвечает <b>'+esc(speaker().name)+'</b>');
+  sfx.flip();
+  renderQFor();
+  renderAll();
+  renderAbilities();
 }
 
 $("q-show").onclick = ()=>{
   if(!state.current || state.current.answered) return;
   $("q-opts").classList.remove("hidden");
   $("q-show").classList.add("hidden");
-  if(!state.current.mega) startTimer();   // у мегавопроса таймера нет
+  // у мегавопроса таймера нет, но защитник отвечает на новый вопрос — таймер идёт
+  if(!state.current.mega || state.current.step==="defend") startTimer();
 };
+
+$("ab-swap").onclick = useSwap;
+$("ab-boost").onclick = useBoost;
+$("ab-give").onclick = useGive;
 
 /* ============================================================
    КАЗИНО (только битва с боссом): барабан вместо вопроса
@@ -1456,38 +1801,176 @@ $("casino-next").onclick = ()=>{
 };
 
 function answer(chosen){
-  if(!state.current || state.current.answered) return;
-  state.current.answered = true;
+  const cur = state.current;
+  if(!cur || cur.answered) return;
+  const correct = chosen===cur.answerIdx;
+  // ---- Мордобой: вопрос идёт сначала атакующему, потом защитнику ----
+  if(state.phase==="pvp" && !cur.curse && cur.step){
+    if(cur.step==="attack") duelAttack(chosen, correct, null);
+    else duelDefend(chosen, correct, null);
+    return;
+  }
+  cur.answered = true;
   stopTimer();
-  const correct = chosen===state.current.answerIdx;
+  markAnswered(chosen, correct);
+  if(correct) resolveCorrect(); else resolveWrong(null);
+  renderAbilities();
+}
+
+function markAnswered(chosen, correct){
   const btns = $("q-opts").querySelectorAll(".q-opt");
   btns.forEach((b,i)=>{
     b.classList.add("disabled");
     if(i===state.current.answerIdx) b.classList.add("correct");
-    if(i===chosen && !correct) b.classList.add("wrong");
+    if(chosen!=null && i===chosen && !correct) b.classList.add("wrong");
   });
-  if(correct) resolveCorrect(); else resolveWrong(null);
+}
+
+/* ---- шаг атаки: атакующий ответил — вопрос идёт защитнику ---- */
+function duelAttack(chosen, correct, prefix){
+  const cur = state.current;
+  stopTimer();
+  const sp = speaker();               // атакующий игрок
+  const at = curUnit(), tg = curTarget();
+  sp.answers++;
+  if(correct){ sp.correct++; sp.streak = (sp.streak||0)+1; } else sp.streak = 0;
+  cur.attackCorrect = correct;
+  if(chosen!=null) markAnswered(chosen, correct);   // отметки (следом варианты пересоберутся под защитника)
+  // азарт провалился: атакующий сразу теряет 200 себе
+  if(!correct && cur.boost){
+    at.hp -= ABILITY_FLAT_RISK; at.dmgTaken += ABILITY_FLAT_RISK;
+    if(isTeamMode()) sp.dmgTaken += ABILITY_FLAT_RISK;
+    floatDamage($("pcard-"+at.id), "-"+ABILITY_FLAT_RISK, "dmg-red");
+    const ae = $("pcard-"+at.id);
+    ae?.classList.add("shake");
+    setTimeout(()=>ae?.classList.remove("shake"), 550);
+    checkPlayerDead(at, "own");
+    toast('<span class="t-gold">⚡ Азарт!</span> провал — атакующий получает <b>'+ABILITY_FLAT_RISK+'</b> урона');
+    renderPlayers(); renderDuelZone();
+    if(!at.alive){ finishDuel(); return; }   // сам себя и добил — дуэль окончена
+  }
+  toast((prefix||"") + (correct
+    ? '<span class="t-good">⚔ Атака верна!</span> Защитник отвечает на новый вопрос'
+    : '<span class="t-bad">⚔ Атака мимо!</span> Вопрос переходит защитнику'));
+  if(correct){
+    // защитнику — новый вопрос (лучше из той же темы)
+    const drawn = drawQuestion(cur.topicIdx, null) || drawAnywhere(null);
+    if(!drawn){
+      toast('<span class="t-gold">Вопросы кончились!</span> Защитник отбился даром');
+      finishDuel();
+      return;
+    }
+    cur.q = drawn.q;
+    cur.topicIdx = drawn.topicIdx;
+    $("q-topic").innerHTML = '<span class="tc-emoji">'+TOPICS[drawn.topicIdx].emoji+'</span> '+esc(TOPICS[drawn.topicIdx].name);
+    $("q-text").textContent = drawn.q.text;
+  }
+  // ---- шаг защитника: тот же вопрос (если атака мимо) или новый ----
+  cur.step = "defend";
+  cur.defenderSpeakerId = pickDefenderSpeaker();
+  buildOptions();             // варианты пересобраны без отметок и снова скрыты
+  renderQFor();
+  renderAbilities();          // в углу теперь способности защитника
+  sfx.flip();
+}
+
+function pickDefenderSpeaker(){
+  const tg = curTarget();
+  if(isTeamMode()){           // за команду-защитника говорит следующий по очереди игрок
+    const sid = tg.members[tg.speakerTurn % tg.members.length];
+    tg.speakerTurn++;
+    return sid;
+  }
+  return tg.id;
+}
+
+/* ---- шаг защиты: итог по исходному вопросу атаки ---- */
+function duelDefend(chosen, correct, prefix){
+  const cur = state.current;
+  cur.answered = true;
+  stopTimer();
+  const defSp = speaker();             // игрок-защитник
+  const at = curUnit(), tg = curTarget();
+  const atSp = state.players[cur.speakerId!=null ? cur.speakerId : cur.attackerIdx];
+  defSp.answers++;
+  if(correct){ defSp.correct++; defSp.streak = (defSp.streak||0)+1; } else defSp.streak = 0;
+  markAnswered(chosen, correct);
+  const base = cur.dmg;                                   // урон исходного вопроса
+  const dmg = (cur.boost && cur.attackCorrect) ? base*2 : base;  // азарт удваивает при верной атаке
+  const aC = cur.attackCorrect;
+  if(aC && correct){
+    applyDuelDamage(tg, 50, at, defSp, atSp);
+    toast((prefix||"")+'<span class="t-good">🛡 Защита выдержала!</span> '+esc(tg.name)+' теряет всего <b>50</b>');
+  }else if(aC && !correct){
+    applyDuelDamage(tg, dmg, at, defSp, atSp);
+    toast((prefix||"")+'<span class="t-bad">🛡 Защитник промахнулся!</span> '+esc(tg.name)+' получает <b>'+dmg+'</b> урона');
+  }else if(!aC && correct){
+    applyDuelDamage(at, dmg+50, tg, atSp, defSp);
+    toast((prefix||"")+'<span class="t-good">🛡 Контроль!</span> Атака провалена — '+esc(at.name)+' получает <b>'+(dmg+50)+'</b>');
+  }else{
+    applyDuelDamage(tg, dmg, at, defSp, atSp);
+    applyDuelDamage(at, dmg, tg, atSp, defSp);
+    toast((prefix||"")+'<span class="t-bad">💥 Оба промахнулись!</span> Обе стороны получают по <b>'+dmg+'</b>');
+  }
+  renderPlayers(); renderDuelZone();
+  renderAbilities();
+  $("q-next").classList.remove("hidden");
+}
+
+function applyDuelDamage(v, dmg, dealer, vSp, dSp){
+  v.hp -= dmg; v.dmgTaken += dmg;
+  dealer.dmgDealt += dmg;
+  if(isTeamMode()){                 // персональная статистика игроков внутри команд
+    if(vSp) vSp.dmgTaken += dmg;
+    if(dSp) dSp.dmgDealt += dmg;
+  }
+  if(v.hp<=0) v.killedBy = dealer.name;
+  floatDamage($("pcard-"+v.id), "-"+dmg, "dmg-red");
+  const el = $("pcard-"+v.id);
+  el?.classList.add("shake");
+  setTimeout(()=>el?.classList.remove("shake"), 550);
+  checkPlayerDead(v, dealer.name);
+}
+
+function finishDuel(){
+  const cur = state.current;
+  cur.answered = true;
+  stopTimer();
+  renderPlayers(); renderDuelZone();
+  renderAbilities();
+  $("q-next").classList.remove("hidden");
 }
 
 function onTimeUp(){
-  if(!state.current || state.current.answered) return;
-  state.current.answered = true;
+  const cur = state.current;
+  if(!cur || cur.answered) return;
   const btns = $("q-opts").querySelectorAll(".q-opt");
   btns.forEach((b,i)=>{
     b.classList.add("disabled");
-    if(i===state.current.answerIdx) b.classList.add("correct");
+    if(i===cur.answerIdx) b.classList.add("correct");
   });
+  // ---- таймаут на дуэли: засчитываем промах текущего шага ----
+  if(state.phase==="pvp" && !cur.curse && cur.step){
+    if(cur.step==="attack") duelAttack(null, false, '<span class="t-bad">⏰ Время вышло!</span> ');
+    else duelDefend(null, false, '<span class="t-bad">⏰ Время вышло!</span> ');
+    return;
+  }
+  cur.answered = true;
+  renderAbilities();
   resolveWrong('<span class="t-bad">⏰ Время вышло!</span>');
 }
 
 function resolveCorrect(){
-  const mega = state.current.mega;
-  const curse = state.current.curse;
-  const dmg = mega ? MEGA_DMG     // мегавопрос не удваивается в командном режиме
-    : (state.phase==="pvp" ? dmgPvpFor(state.current.q.difficulty) : dmgBossFor(state.current.q.difficulty));
+  const cur = state.current;
+  const mega = cur.mega;
+  const curse = cur.curse;
+  const dmgBase = mega ? MEGA_DMG     // мегавопрос не удваивается в командном режиме
+    : (state.phase==="pvp" ? dmgPvpFor(cur.q.difficulty) : dmgBossFor(cur.q.difficulty));
+  const dmg = (cur.boost && !curse) ? dmgBase*2 : dmgBase;   // «Азарт»: урон ×2 при верном ответе
   const sp = speaker();           // отвечающий игрок
   const at = curUnit();           // боевая единица (игрок или команда)
   sp.answers++; sp.correct++;
+  sp.streak = (sp.streak||0)+1;   // серия верных ответов подряд
 
   // ---- вопрос-проклятие: верно — жертва лечится ----
   if(curse){
@@ -1510,6 +1993,7 @@ function resolveCorrect(){
       renderPlayers(); renderDuelZone();
     }
     $("q-next").classList.remove("hidden");
+    renderAbilities();
     return;
   }
 
@@ -1517,13 +2001,28 @@ function resolveCorrect(){
     const d = Math.min(dmg, state.boss.hp);
     state.boss.hp -= dmg;
     at.dmgBoss += d; at.dmgDealt += d;
+    if(isTeamMode()){ sp.dmgBoss += d; sp.dmgDealt += d; }   // личная статистика игрока в команде
     sfx.correct(); sfx.hit(); if(mega) sfx.mega();
     toast(mega
       ? '<span class="t-bad">🔥 МЕГАВОПРОС!</span> Босс теряет <b>'+dmg+'</b> HP!'
-      : '<span class="t-good">✔ Верно!</span> '+esc(at.name)+' наносит БОССУ <b>'+dmg+'</b> урона');
+      : '<span class="t-good">✔ Верно!</span> '+esc(at.name)+' наносит БОССУ <b>'+dmg+'</b> урона'
+        + (cur.boost ? ' <span class="t-gold">⚡×2!</span>' : ''));
     floatDamage($("boss-zone"), "-"+dmg, mega ? "dmg-red" : "dmg-green");
     $("boss-zone").classList.add("shake");
     setTimeout(()=>$("boss-zone").classList.remove("shake"), 550);
+    // ---- серия из 5 верных подряд: с шансом 5% босс получает ещё +300 вместе с этим ударом ----
+    if(sp.streak % 5 === 0 && sp.streak > 0 && Math.random() < STREAK_BONUS_CHANCE){
+      const ex = Math.min(STREAK_BONUS_DMG, state.boss.hp);
+      state.boss.hp -= ex;
+      at.dmgBoss += ex; at.dmgDealt += ex;
+      if(isTeamMode()){ sp.dmgBoss += ex; sp.dmgDealt += ex; }
+      sfx.mega();
+      toast('<span class="t-gold">⚡ СЕРИЯ '+sp.streak+' ПОДРЯД!</span> Ударная волна: босс теряет ещё <b>'+ex+'</b> HP', 3200);
+      floatDamage($("boss-zone"), "-"+ex, "dmg-gold");
+      const bz = $("boss-zone");
+      bz.classList.add("shake");
+      setTimeout(()=>bz.classList.remove("shake"), 550);
+    }
     renderBossZone();
   }else{
     const tg = curTarget();
@@ -1542,19 +2041,25 @@ function resolveCorrect(){
     renderPlayers(); renderDuelZone();
   }
   $("q-next").classList.remove("hidden");
+  renderAbilities();
 }
 
 function resolveWrong(prefix){
-  const mega = state.current.mega;
-  const curse = state.current.curse;
+  const cur = state.current;
+  const mega = cur.mega;
+  const curse = cur.curse;
   const sp = speaker();           // отвечающий игрок
   const at = curUnit();           // боевая единица (игрок или команда)
   // урон, который получает единица: против босса — DMG_SELF, в Мордобе — DMG_PVP (×2 в командах)
-  const selfDmg = state.phase==="pvp" ? dmgPvpFor(state.current.q.difficulty) : dmgSelfFor(state.current.q.difficulty);
+  const selfDmg = state.phase==="pvp" ? dmgPvpFor(cur.q.difficulty) : dmgSelfFor(cur.q.difficulty);
   // ---- ярость босса: с шансом 5% за каждый неправильный ответ он удваивает урон ----
   const dbl = state.phase==="boss" && Math.random() < BOSS_DOUBLE_CHANCE;
-  const dmg = (mega ? MEGA_DMG : selfDmg) * (dbl ? 2 : 1);
+  // ---- «Азарт» провален: вместо обычного риска ровно 200 (ярость может удвоить) ----
+  const dmg = (cur.boost && !curse)
+    ? ABILITY_FLAT_RISK * (dbl ? 2 : 1)
+    : (mega ? MEGA_DMG : selfDmg) * (dbl ? 2 : 1);
   sp.answers++;
+  sp.streak = 0;                  // серия верных ответов прервана
 
   // ---- вопрос-проклятие: неверно — урон ВСЕМ единицам ----
   if(curse){
@@ -1570,12 +2075,15 @@ function resolveWrong(prefix){
     renderPlayers();
     if(state.phase==="pvp") renderDuelZone();
     $("q-next").classList.remove("hidden");
+    renderAbilities();
     return;
   }
 
   at.hp -= dmg; at.dmgTaken += dmg;
-  sfx.wrong(); sfx.hit(); if(mega) sfx.mega(); if(dbl) sfx.roar();
+  if(isTeamMode()) sp.dmgTaken += dmg;   // личная статистика игрока в команде
+  sfx.wrong(); sfx.hit(); if(mega && !(cur.boost)) sfx.mega(); if(dbl) sfx.roar();
   toast((dbl ? '<span class="t-bad">👹 БОСС РАЗЪЯРЁН! </span>' : '')
+    + (cur.boost ? '<span class="t-gold">⚡ Азарт провалился! </span>' : '')
     + (prefix || '<span class="t-bad">✘ Неверно…</span>')+' '+esc(at.name)+' получает <b>'+dmg+'</b> урона');
   floatDamage($("pcard-"+at.id), "-"+dmg, "dmg-red");
   $("pcard-"+at.id).classList.add("shake");
@@ -1584,6 +2092,7 @@ function resolveWrong(prefix){
   renderPlayers();
   if(state.phase==="pvp") renderDuelZone();
   $("q-next").classList.remove("hidden");
+  renderAbilities();
 }
 
 function checkPlayerDead(p, cause){   // p — боевая единица: игрок или команда
@@ -1608,6 +2117,43 @@ function checkPlayerDead(p, cause){   // p — боевая единица: иг
     else sfx.deathKiller();                       // убил другой игрок
     setTimeout(()=>toast('<span class="t-bad">☠ '+esc(p.name)+' выбывает!</span>'), 700);
   }
+}
+
+/* ---- конец III круга: босс жатит самых слабых ---- */
+function bossMassacre(){
+  const alive = aliveUnits();
+  if(alive.length===0) return false;
+  const total = units().length;
+  const dead = total - alive.length;
+  let kill;
+  if(isTeamMode()){
+    kill = 1;                                       // в командах босс забирает одну команду
+  }else if(dead===0){
+    kill = total>=11 ? 4 : total>=10 ? 3 : 2;       // все живы: 2–4 игрока по числу участников
+  }else{
+    kill = total>=10 ? 2 : 1;                       // уже были потери: 1–2 игрока
+  }
+  kill = Math.min(kill, alive.length);
+  // жертвы — самые слабые: при нуле смертей низкий «уровень» (урон) и жизни, иначе низкое HP и урон
+  const victims = (dead===0
+      ? alive.slice().sort((a,b)=> a.dmgDealt-b.dmgDealt || a.hp-b.hp)
+      : alive.slice().sort((a,b)=> a.hp-b.hp || a.dmgDealt-b.dmgDealt)
+    ).slice(0, kill);
+  sfx.roar();
+  victims.forEach(v=>{
+    v.hp = 0;
+    checkPlayerDead(v, "boss");
+    floatDamage($("pcard-"+v.id), "☠", "dmg-red");
+    const el = $("pcard-"+v.id);
+    el?.classList.add("shake");
+    setTimeout(()=>el?.classList.remove("shake"), 550);
+  });
+  renderPlayers();
+  const namesStr = victims.map(v=>esc(v.name)).join(", ");
+  showBanner("☠️", "ЗАЧИСТКА III КРУГА",
+    "Босс обрушил свой гнев. Жертвы: <b style='color:#ff8a80'>"+namesStr+"</b>",
+    ()=>{ nextTurn(); });
+  return true;
 }
 
 function bossDefeated(){
@@ -1645,17 +2191,24 @@ function finishGame(reason){
   stopTimer();
   state.phase = "end";
   state.finishReason = reason;
+  const defeat = reason === "wipe";   // босс (или бедствие) уничтожил всех — поражение
   // "last3" — остаются трое, места по урону; "exhausted"/"wipe" — карты кончились или экипаж пал:
   // места по нанесённому урону, затем по запасу HP
   const pool = (reason==="exhausted" || reason==="wipe")
     ? units()
     : aliveUnits();
   const finalists = pool.slice().sort((a,b)=> b.dmgDealt-a.dmgDealt || b.hp-a.hp);
-  finalists.slice(0, PRIZE.length).forEach((p,i)=>{ p.points += PRIZE[i]; });
-  sfx.win();
-  sfx.applause();      // аплодисменты и фанфара
-  confetti();          // хлопушки с конфетти
-  renderResults(finalists);
+  if(defeat){
+    // ---- поражение: баллы никто не получает, мишура падает и сгорает в огне ----
+    sfx.flame();
+    defeatBurn();
+  }else{
+    finalists.slice(0, PRIZE.length).forEach((p,i)=>{ p.points += PRIZE[i]; });
+    sfx.win();
+    sfx.applause();      // аплодисменты и фанфара
+    confetti();          // хлопушки с конфетти
+  }
+  renderResults(finalists, defeat);
   $("screen-game").classList.add("hidden");
   $("screen-results").classList.remove("hidden");
 }
@@ -1663,27 +2216,39 @@ function finishGame(reason){
 /* ============================================================
    ИТОГИ
    ============================================================ */
-function renderResults(finalists){
+function renderResults(finalists, defeat){
   const medals = ["🥇","🥈","🥉"];
-  $("results-sub").textContent = isTeamMode() ? "Командный режим · баллы командам" : "";
+  // ---- заголовок: обычное завершение или красное ПОРАЖЕНИЕ (всех добил босс) ----
+  $("results-title").innerHTML = defeat
+    ? '<span class="tc-emoji">💀</span> <span class="tc-emoji">ПОРАЖЕНИЕ</span> <span class="tc-emoji">💀</span>'
+    : "ИГРА ОКОНЧЕНА";
+  $("results-title").classList.toggle("defeat", !!defeat);
+  $("results-sub").textContent = isTeamMode()
+    ? (defeat ? "Командный режим · босс уничтожил всех — баллов нет" : "Командный режим · баллы командам")
+    : (defeat ? "Босс уничтожил всех — баллов нет" : "");
   const face = u => isTeamMode() ? u.members.map(id=>state.players[id].avatar.emoji).join("") : u.avatar.emoji;
 
   const pod = $("podium");
   pod.innerHTML = "";
-  finalists.slice(0,3).forEach((p,i)=>{
-    const d = document.createElement("div");
-    d.className = "card ornate";
-    d.innerHTML = '<div class="medal">'+medals[i]+'</div><div style="font-size:40px;">'+face(p)+'</div><div class="p-nick">'+esc(p.name)+'</div>'+
-      '<div class="p-pts">+'+PRIZE[i]+'</div>';
-    pod.appendChild(d);
-  });
-  if(state.bossKiller!==null){
-    const k = units()[state.bossKiller];
-    const d = document.createElement("div");
-    d.className = "card ornate";
-    d.innerHTML = '<div class="medal">💀</div><div style="font-size:40px;">'+face(k)+'</div><div class="p-nick">'+esc(k.name)+'</div>'+
-      '<div class="p-pts"><span class="badge-boss">ДОБИЛ БОССА</span><br>+'+BOSS_KILL_BONUS+'</div>';
-    pod.appendChild(d);
+  if(!defeat){
+    // ---- подиум и призы только при завершённой игре (при поражении баллов нет) ----
+    finalists.slice(0,3).forEach((p,i)=>{
+      const d = document.createElement("div");
+      d.className = "card ornate";
+      const nickStyle = isTeamMode() ? '' : ' style="background-image:var(--shine),'+p.grad+'"';
+      d.innerHTML = '<div class="medal">'+medals[i]+'</div><div style="font-size:40px;">'+face(p)+'</div><div class="p-nick"'+nickStyle+'>'+esc(p.name)+'</div>'+
+        '<div class="p-pts">+'+PRIZE[i]+'</div>';
+      pod.appendChild(d);
+    });
+    if(state.bossKiller!==null){
+      const k = units()[state.bossKiller];
+      const d = document.createElement("div");
+      d.className = "card ornate";
+      const nickStyle = isTeamMode() ? '' : ' style="background-image:var(--shine),'+k.grad+'"';
+      d.innerHTML = '<div class="medal">💀</div><div style="font-size:40px;">'+face(k)+'</div><div class="p-nick"'+nickStyle+'>'+esc(k.name)+'</div>'+
+        '<div class="p-pts"><span class="badge-boss">ДОБИЛ БОССА</span><br>+'+BOSS_KILL_BONUS+'</div>';
+      pod.appendChild(d);
+    }
   }
 
   const statusOf = p => {
@@ -1703,13 +2268,13 @@ function renderResults(finalists){
     rows.forEach((t,i)=>{
       const members = t.members.map(id=>state.players[id]);
       const emojis = members.map(m=>m.avatar.emoji).join("");
-      const nicks = members.map(m=>m.name).join(", ");
+      const nicks = members.map(m=>'<span style="color:'+m.color+'">'+esc(m.name)+"</span>").join(", ");
       const correct = members.reduce((s,m)=>s+m.correct,0);
       const answers = members.reduce((s,m)=>s+m.answers,0);
       const dmgPvp = t.dmgDealt - t.dmgBoss;
       html += "<tr class='"+(t.alive?"":"dead-row")+"'>"+
         "<td class='place'>"+(i+1)+"</td>"+
-        "<td class='name'>"+emojis+" <b>"+esc(t.name)+"</b><br><small>"+esc(nicks)+"</small>"+(state.bossKiller===t.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
+        "<td class='name'>"+emojis+" <b>"+esc(t.name)+"</b><br><small>"+nicks+"</small>"+(state.bossKiller===t.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
         "<td><b>"+t.points+"</b></td><td>"+statusOf(t)+"</td>"+
         "<td>"+t.dmgBoss+"</td><td>"+Math.max(0,dmgPvp)+"</td><td>"+t.dmgDealt+"</td><td>"+t.dmgTaken+"</td>"+
         "<td>"+correct+" / "+answers+"</td></tr>";
@@ -1721,13 +2286,35 @@ function renderResults(finalists){
       const dmgPvp = p.dmgDealt - p.dmgBoss;
       html += "<tr class='"+(p.alive?"":"dead-row")+"'>"+
         "<td class='place'>"+(i+1)+"</td>"+
-        "<td class='name'>"+p.avatar.emoji+" "+esc(p.name)+(state.bossKiller===p.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
+        "<td class='name' style='color:"+p.color+"'>"+p.avatar.emoji+" "+esc(p.name)+(state.bossKiller===p.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
         "<td><b>"+p.points+"</b></td><td>"+statusOf(p)+"</td>"+
         "<td>"+p.dmgBoss+"</td><td>"+Math.max(0,dmgPvp)+"</td><td>"+p.dmgDealt+"</td><td>"+p.dmgTaken+"</td>"+
         "<td>"+p.correct+" / "+p.answers+"</td></tr>";
     });
   }
   $("stats-table").innerHTML = html;
+
+  // ---- в командном режиме отдельная таблица и по игрокам ----
+  if(isTeamMode()){
+    $("players-title").classList.remove("hidden");
+    $("players-wrap").classList.remove("hidden");
+    const placeOf = {};
+    state.teams.slice().sort((a,b)=> b.points-a.points || b.dmgDealt-a.dmgDealt).forEach((t,i)=>placeOf[t.id]=i+1);
+    const prows = state.players.slice().sort((a,b)=> placeOf[a.teamId]-placeOf[b.teamId] || b.correct-a.correct || b.dmgDealt-a.dmgDealt);
+    let ph = "<tr><th>Игрок</th><th>Команда</th><th>Статус</th><th>Урон боссу</th><th>Нанесено</th><th>Получено</th><th>Ответы</th></tr>";
+    prows.forEach(p=>{
+      ph += "<tr class='"+(p.alive?"":"dead-row")+"'>"+
+        "<td class='name' style='color:"+p.color+"'>"+p.avatar.emoji+" "+esc(p.name)+"</td>"+
+        "<td>"+esc(state.teams[p.teamId].name)+"</td>"+
+        "<td>"+statusOf(p)+"</td>"+
+        "<td>"+p.dmgBoss+"</td><td>"+p.dmgDealt+"</td><td>"+p.dmgTaken+"</td>"+
+        "<td>"+p.correct+" / "+p.answers+"</td></tr>";
+    });
+    $("players-table").innerHTML = ph;
+  }else{
+    $("players-title").classList.add("hidden");
+    $("players-wrap").classList.add("hidden");
+  }
 }
 
 /* ============================================================
@@ -1766,6 +2353,22 @@ function confetti(){
     el.style.height = (8+Math.random()*10)+"px";
     document.body.appendChild(el);
     setTimeout(()=>el.remove(), 6500);
+  }
+}
+/* при поражении мишура начинает падать, но резко сгорает в огне */
+function defeatBurn(){
+  const colors = ["#e8c268","#d43f3f","#a78bfa","#4ade80","#f6dfa0","#ff8a80","#c4b2fd"];
+  for(let i=0;i<110;i++){
+    const el = document.createElement("div");
+    el.className = "confetti confetti-fire";
+    el.style.left = (Math.random()*100)+"vw";
+    el.style.background = colors[Math.floor(Math.random()*colors.length)];
+    el.style.animationDelay = (Math.random()*1.4)+"s";
+    el.style.animationDuration = (2.6+Math.random()*1.8)+"s";
+    el.style.width = (6+Math.random()*8)+"px";
+    el.style.height = (8+Math.random()*10)+"px";
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 7000);
   }
 }
 function showBanner(emoji, title, text, onBtn){
@@ -1874,6 +2477,9 @@ $("start-btn").onclick = ()=>{
   }
   // сброс игрового экрана от прошлой партии (иначе сразу откроется второй этап)
   $("screen-mode").classList.add("hidden");
+  $("diff-overlay").classList.remove("show");
+  $("q-overlay").classList.remove("show");
+  $("banner-overlay").classList.remove("show");
   $("boss-zone").classList.remove("hidden");
   $("boss-zone").classList.remove("boss-dying");
   $("topic-table").classList.remove("locked");
