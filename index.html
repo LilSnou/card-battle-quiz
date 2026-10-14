@@ -121,6 +121,8 @@ html[data-theme="stars"] #star-field{display:block;}
 #sakura-scene{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; display:none;}
 html[data-theme="japan"] #sakura-scene{display:block;}
 #sakura-tree{position:absolute; left:-60px; bottom:-40px; height:min(92vh,860px); opacity:.92;}
+/* большая цветущая ветка справа: от центра правого края экрана вверх к самому верху */
+#sakura-branch{position:absolute; right:-16px; top:0; height:min(92vh,920px); opacity:.94;}
 #petals{position:absolute; inset:0;}
 #petals i{
   position:absolute; top:-8vh;
@@ -136,7 +138,7 @@ html[data-theme="japan"] #sakura-scene{display:block;}
   100%{transform:translate(-6px,114vh) rotate(380deg);}
 }
 
-/* ---------- Сцены тем: Хеллоуин, Новый год, Тёмная фэнтези ---------- */
+/* ---------- Сцены тем: Хеллоуин, Новый год, Дарк Фэнтези ---------- */
 #halloween-scene,#newyear-scene,#fantasy-scene{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; display:none;}
 html[data-theme="halloween"] #halloween-scene{display:block;}
 html[data-theme="newyear"]  #newyear-scene{display:block;}
@@ -197,7 +199,7 @@ html[data-theme="fantasy"]  #fantasy-scene{display:block;}
 #newyear-scene .ny-moon-halo{animation:nyHalo 7s ease-in-out infinite alternate;}
 @keyframes nyHalo{from{opacity:.55;} to{opacity:1;}}
 
-/* --- Тёмная фэнтези: кровавая луна, готический замок на вершине --- */
+/* --- Дарк Фэнтези: кровавая луна, готический замок на вершине --- */
 #fantasy-scene .w{animation:winFlick 3.2s ease-in-out infinite alternate;}
 @keyframes winFlick{from{opacity:.5;} to{opacity:.95;}}
 #fantasy-scene .moon-halo{animation:haloBreathe 6s ease-in-out infinite alternate;}
@@ -1291,7 +1293,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
   <div id="snowfall"></div>
 </div>
 
-<!-- Тёмная фэнтези: кровавая луна над холмом с очень тёмным готическим замком -->
+<!-- Дарк Фэнтези: кровавая луна над холмом с очень тёмным готическим замком -->
 <div id="fantasy-scene" aria-hidden="true">
   <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
     <defs>
@@ -1371,58 +1373,41 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <circle cx="96" cy="292" r="24"/>
     </g>
   </svg>
+  <svg id="sakura-branch" viewBox="0 0 420 860">
+    <!-- большая ветка сакуры: начинается у центра правого края и тянется вверх к верхнему краю -->
+    <g stroke="#2b1420" fill="none" stroke-linecap="round">
+      <path d="M436 470 C370 452 336 402 322 344 C304 274 264 222 212 172 C166 128 124 66 104 -6" stroke-width="24"/>
+      <path d="M330 330 C372 312 402 300 434 266" stroke-width="13"/>
+      <path d="M258 230 C222 232 192 220 162 200" stroke-width="10"/>
+      <path d="M206 168 C200 128 208 92 202 50" stroke-width="10"/>
+      <path d="M366 404 C390 430 412 442 438 448" stroke-width="9"/>
+      <path d="M292 300 C314 276 330 250 338 218" stroke-width="8"/>
+    </g>
+    <!-- цветущие облака вдоль ветки, в тон дереву слева -->
+    <g fill="#f4b4cc" opacity=".92">
+      <circle cx="356" cy="396" r="74"/>
+      <circle cx="242" cy="226" r="64"/>
+      <circle cx="130" cy="86" r="58"/>
+      <circle cx="428" cy="272" r="46"/>
+      <circle cx="164" cy="196" r="40"/>
+      <circle cx="204" cy="54" r="42"/>
+      <circle cx="436" cy="452" r="52"/>
+      <circle cx="340" cy="216" r="40"/>
+    </g>
+    <g fill="#ffd9e4" opacity=".75">
+      <circle cx="334" cy="364" r="38"/>
+      <circle cx="226" cy="200" r="32"/>
+      <circle cx="118" cy="64" r="28"/>
+      <circle cx="418" cy="254" r="24"/>
+      <circle cx="424" cy="436" r="26"/>
+      <circle cx="326" cy="200" r="20"/>
+      <circle cx="196" cy="44" r="20"/>
+    </g>
+  </svg>
   <div id="petals"></div>
 </div>
 
-<div id="bg-decor" aria-hidden="true">
-  <!-- по краям -->
-  <span style="left:3%; top:6%; font-size:52px; transform:rotate(-18deg);">💀</span>
-  <span style="left:12%; top:34%; font-size:40px; transform:rotate(14deg);">⚔️</span>
-  <span style="left:6%; top:66%; font-size:46px; transform:rotate(-8deg);">🛡️</span>
-  <span style="left:15%; top:88%; font-size:38px; transform:rotate(22deg);">🧪</span>
-  <span style="left:30%; top:3%; font-size:34px;">⭐</span>
-  <span style="left:44%; top:92%; font-size:42px; transform:rotate(-14deg);">🗡️</span>
-  <span style="left:58%; top:5%; font-size:36px; transform:rotate(10deg);">🏹</span>
-  <span style="left:70%; top:88%; font-size:44px;">👑</span>
-  <span style="left:84%; top:12%; font-size:48px; transform:rotate(16deg);">🔮</span>
-  <span style="left:92%; top:40%; font-size:38px; transform:rotate(-12deg);">💀</span>
-  <span style="left:88%; top:70%; font-size:34px;">✨</span>
-  <span style="left:95%; top:86%; font-size:40px; transform:rotate(8deg);">🌙</span>
-  <span style="left:24%; top:70%; font-size:34px; transform:rotate(-22deg);">☠️</span>
-  <span style="left:36%; top:16%; font-size:32px;">📜</span>
-  <span style="left:64%; top:28%; font-size:36px; transform:rotate(12deg);">🕯️</span>
-  <span style="left:76%; top:54%; font-size:34px;">💎</span>
-  <span style="left:50%; top:60%; font-size:30px; transform:rotate(-10deg);">🪓</span>
-  <span style="left:8%; top:50%; font-size:32px;">⚜️</span>
-  <!-- плотнее: второй слой -->
-  <span style="left:20%; top:16%; font-size:30px; transform:rotate(18deg);">🦇</span>
-  <span style="left:18%; top:52%; font-size:34px; transform:rotate(-16deg);">🧪</span>
-  <span style="left:28%; top:40%; font-size:28px;">⚔️</span>
-  <span style="left:34%; top:84%; font-size:32px; transform:rotate(12deg);">🛡️</span>
-  <span style="left:40%; top:34%; font-size:26px; transform:rotate(-8deg);">⭐</span>
-  <span style="left:46%; top:8%; font-size:30px;">🌙</span>
-  <span style="left:54%; top:76%; font-size:28px; transform:rotate(20deg);">🗡️</span>
-  <span style="left:60%; top:48%; font-size:32px; transform:rotate(-14deg);">🔮</span>
-  <span style="left:66%; top:66%; font-size:30px;">👑</span>
-  <span style="left:72%; top:22%; font-size:28px; transform:rotate(14deg);">☠️</span>
-  <span style="left:80%; top:36%; font-size:34px; transform:rotate(-18deg);">💀</span>
-  <span style="left:86%; top:56%; font-size:30px; transform:rotate(10deg);">🏹</span>
-  <span style="left:90%; top:24%; font-size:28px;">✨</span>
-  <span style="left:94%; top:60%; font-size:32px; transform:rotate(-10deg);">🧪</span>
-  <span style="left:10%; top:76%; font-size:30px; transform:rotate(16deg);">📜</span>
-  <span style="left:22%; top:94%; font-size:28px;">💎</span>
-  <span style="left:48%; top:46%; font-size:26px; transform:rotate(-20deg);">🕯️</span>
-  <span style="left:56%; top:24%; font-size:30px; transform:rotate(8deg);">🪓</span>
-  <span style="left:68%; top:80%; font-size:28px; transform:rotate(-12deg);">⚜️</span>
-  <span style="left:78%; top:8%; font-size:32px;">🧛</span>
-  <span style="left:38%; top:56%; font-size:26px; transform:rotate(16deg);">🕸️</span>
-  <span style="left:62%; top:88%; font-size:28px; transform:rotate(-16deg);">🎃</span>
-  <span style="left:42%; top:70%; font-size:26px;">🕷️</span>
-  <span style="left:16%; top:24%; font-size:28px; transform:rotate(-14deg);">🩸</span>
-  <span style="left:82%; top:90%; font-size:30px; transform:rotate(12deg);">🐺</span>
-  <span style="left:96%; top:14%; font-size:26px;">🪶</span>
-  <span style="left:4%; top:28%; font-size:26px; transform:rotate(18deg);">🕸️</span>
-</div>
+<div id="bg-decor" aria-hidden="true"></div>
 
 <!-- ================= НАСТРОЙКИ ================= -->
 <div id="settings-overlay" class="overlay">
@@ -1479,7 +1464,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
         <li><b>🛡 Война гильдий</b> (командная) — 4–6 гильдий по 2 игрока: общий запас HP (вдвое больше), весь урон ×2 (кроме мегавопроса и проклятия), 20 секунд на ответ, баллы — гильдии. Очки говорят по очереди.</li>
       </ul>
       <h3>⋯ Меню и оформление</h3>
-      <p>В правом верхнем углу главного меню — значок <b>⋯</b>: там <b>Настройки</b> (звук), эти <b>Правила</b> и <b>Поменять оформление</b>: Тёмная фэнтези, Хеллоуин, Новый год, Япония или Звёздное небо. Выбор сохраняется.</p>
+      <p>В правом верхнем углу главного меню — значок <b>⋯</b>: там <b>Настройки</b> (звук), эти <b>Правила</b> и <b>Поменять оформление</b>: Дарк Фэнтези, Хеллоуин, Новый год, Япония, Звёздное небо или Тетрадь. Выбор сохраняется.</p>
     </div>
     <button class="btn btn-ruby" data-close>✕ Понятно</button>
   </div>
@@ -3347,22 +3332,11 @@ document.querySelectorAll("[data-close]").forEach(b=>{
 
 // ---- темы оформления ----
 const THEMES = {
-  fantasy:{
-    name:"Тёмная фэнтези",
-    decor:["💀","⚔️","🛡️","🧪","⭐","🗡️","🏹","👑","🔮","🌙","☠️","📜","🕯️","💎","🪓","⚜️","🦇","🕸️","🎃","🧛","🩸","🐺","🪶"]
-  },
-  halloween:{
-    name:"Хеллоуин",
-    decor:["🎃","👻","🦇","🕸️","🕷️","💀","☠️","🌙","🍬","🧙"]
-  },
-  newyear:{
-    name:"Новый год",
-    decor:["🎄","⛄","🎁","❄️","🔔","🦌","⭐","🥂","🧣","☃️"]
-  },
-  japan:{
-    name:"Япония",
-    decor:["🌸","⛩️","🎎","🎏","🏯","🍥","🍣","🏵️","🀄","🎴"]
-  },
+  // у тем со своими сценами полупрозрачный узор-декор (decor) убран — остаются фон и сцена
+  fantasy:{ name:"Дарк Фэнтези" },
+  halloween:{ name:"Хеллоуин" },
+  newyear:{ name:"Новый год" },
+  japan:{ name:"Япония" },
   stars:{
     name:"Звёздное небо",
     decor:["⭐","✨","🌙","🌟","☄️","🪐"]
@@ -3372,10 +3346,11 @@ const THEMES = {
     decor:["✏️","📓","🖊️","📏","📕","📎","📐","🖍️"]
   }
 };
-const DECOR_FANTASY = $("bg-decor").innerHTML;   // статичный «родной» декор сохраняем для возврата
 function buildDecor(id){
   const box = $("bg-decor");
-  if(id === "fantasy"){ box.innerHTML = DECOR_FANTASY; return; }
+  // темы со своими сценами (Дарк Фэнтези, Хеллоуин, Новый год, Япония):
+  // полупрозрачный узор-эмодзи по фону убран — только фон и сцена
+  if(id === "fantasy" || id === "halloween" || id === "newyear" || id === "japan"){ box.innerHTML = ""; return; }
   const set = THEMES[id].decor;
   let html = "";
   for(let i=0;i<46;i++){
