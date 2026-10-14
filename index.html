@@ -189,6 +189,11 @@ html[data-theme="fantasy"]  #fantasy-scene{display:block;}
 @keyframes flick{from{fill:#ffb020; opacity:.75;} to{fill:#ff7a00; opacity:1;}}
 #halloween-scene .pump-glow{animation:glowFlick .55s ease-in-out infinite alternate;}
 #halloween-scene .ground-svg{overflow:visible;}   /* крупные засохшие деревья растут выше полосы земли */
+/* правое дерево: глаза и улыбка светятся красным и слегка пульсируют */
+#halloween-scene .evil-eye,#halloween-scene .red-smile{fill:#ff4436;}
+#halloween-scene .evil-halo{fill:#ff2416; opacity:.32; animation:redPulse 2.6s ease-in-out infinite alternate;}
+#halloween-scene .red-smile-halo{fill:none; stroke:#ff2416; stroke-width:7; opacity:.4; animation:redPulse 2.6s ease-in-out infinite alternate;}
+@keyframes redPulse{from{opacity:.16;} to{opacity:.55;}}
 @keyframes glowFlick{from{opacity:.25;} to{opacity:.6;}}
 
 /* --- Новый год: сугробы, ёлка с гирляндой, сани в небе --- */
@@ -851,13 +856,15 @@ table.stats th,table.stats td.place,#table-label,#table-label b,
 /* ---------- Тост ---------- */
 #toast{
   position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-140%);
+  opacity:0; visibility:hidden;   /* иначе пустой тост оставляет «язычок» в центре верха экрана */
   background:linear-gradient(165deg,#241a33,#140e1d); color:var(--silver);
   border:2px solid var(--gold); border-radius:16px; padding:16px 34px;
   font-family:'Tagesschrift','Georgia',serif; font-size:21px; z-index:200; text-align:center;
-  box-shadow:0 0 26px rgba(232,194,104,.3), 0 12px 28px rgba(0,0,0,.7); transition:transform .35s;
+  box-shadow:0 0 26px rgba(232,194,104,.3), 0 12px 28px rgba(0,0,0,.7);
+  transition:transform .35s, opacity .28s, visibility 0s .35s;
   max-width:92vw;
 }
-#toast.show{transform:translateX(-50%) translateY(0);}
+#toast.show{transform:translateX(-50%) translateY(0); opacity:1; visibility:visible; transition:transform .35s, opacity .28s, visibility 0s 0s;}
 #toast .t-bad{color:#ff8a80;} #toast .t-good{color:var(--emerald);} #toast .t-gold{color:var(--gold);}
 
 /* ---------- Экран итогов ---------- */
@@ -1147,9 +1154,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
         <path d="M-14 -150 C-30 -164 -38 -180 -38 -196" stroke-width="4"/>
         <path d="M-38 -196 C-38 -204 -44 -210 -52 -212" stroke-width="3"/>
       </g>
-      <!-- чёрное дупло: чёрный обод, вглуби — тёмная полость -->
-      <ellipse class="tree-hollow" cx="-3" cy="-92" rx="11" ry="16" fill="#000" stroke="none"/>
-      <ellipse cx="-3" cy="-90" rx="7.5" ry="11.5" fill="#191233" stroke="none"/>
+      <!-- дупло убрано: левое дерево теперь чистое, без полости -->
     </g>
     <!-- дерево с жуткой улыбкой: S-образный ствол, ветви свисают вниз и загибаются крючками -->
     <g class="dead-tree" transform="translate(1000,204) scale(2.8)" fill="#050308">
@@ -1168,14 +1173,22 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
         <path d="M40 -208 C43 -215 51 -218 59 -217" stroke-width="3.5"/>
         <path d="M40 -208 C47 -205 54 -206 60 -210" stroke-width="3"/>
       </g>
-      <!-- жуткая улыбка: глубокая пасть на сучке, зубы-зазубрины вырезаны стволом -->
-      <path class="tree-smile" stroke="none" fill="#dccf96" d="M-17 -86 Q-4 -48 9 -86 Q-4 -76 -17 -86 Z"/>
+      <!-- два страшных светящихся глаза над улыбкой (пульсируют вместе с ней) -->
+      <g class="tree-eyes">
+        <ellipse class="evil-halo" cx="-14.6" cy="-102" rx="9" ry="8"/>
+        <ellipse class="evil-halo" cx="-1.7" cy="-102" rx="9" ry="8"/>
+        <path class="evil-eye" d="M-20 -109 L-9.5 -104 L-14.6 -95 Z"/>
+        <path class="evil-eye" d="M-7 -104 L3.5 -109 L-1.7 -95 Z"/>
+      </g>
+      <!-- жуткая улыбка: ровная, строго по центру ствола, светится красным -->
+      <path class="red-smile-halo" fill="none" d="M-20.5 -80 Q-6.5 -50 7.5 -80 Q-6.5 -70 -20.5 -80 Z"/>
+      <path class="tree-smile red-smile" stroke="none" d="M-20.5 -80 Q-6.5 -50 7.5 -80 Q-6.5 -70 -20.5 -80 Z"/>
       <g class="smile-teeth" stroke="none" fill="#050308">
-        <path d="M-14 -84 L-11 -69 L-8 -84 Z"/>
-        <path d="M-7 -83.5 L-4 -69 L-1 -83.5 Z"/>
-        <path d="M0 -84 L3 -69 L6 -84 Z"/>
-        <path d="M-10.5 -66 L-7.5 -77 L-4.5 -66 Z"/>
-        <path d="M-3.5 -65 L-0.5 -76 L2.5 -65 Z"/>
+        <path d="M-17.5 -77.5 L-14.6 -67.5 L-11.7 -77.5 Z"/>
+        <path d="M-9.5 -76 L-6.5 -66.5 L-3.5 -76 Z"/>
+        <path d="M0 -77.5 L3 -68 L6 -77.5 Z"/>
+        <path d="M-14 -65 L-11 -73 L-8 -65 Z"/>
+        <path d="M-5 -63 L-2 -71.5 L1 -63 Z"/>
       </g>
     </g>
     <g transform="translate(160,158)">
