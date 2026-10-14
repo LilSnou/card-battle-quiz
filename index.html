@@ -664,6 +664,14 @@ html[data-theme="notebook"] [style*="--pencil"]{
   position:relative;
 }
 .overlay.show .q-card{transform:none;}
+/* ---- бой (Босс и Мордобой): всё в два раза больше — плашки, карточки, текст ----
+   zoom пересчитывает раскладку (как смена базового размера), поэтому ничего не ломается;
+   vw/vh-ограничения карточек при этом ужимаются вдвое, чтобы не вылезать за экран */
+html[data-battle="1"] #screen-game{zoom:2;}                                    /* игровая сцена ×2 */
+html[data-battle="1"] .q-card{width:min(1200px,49vw); max-height:48vh;}        /* карточка вопроса */
+html[data-battle="1"] #diff-overlay .card{width:min(640px,47vw) !important;}    /* выбор сложности (ширина инлайном) */
+html[data-battle="1"] #casino-overlay .card{width:min(780px,48vw) !important;}  /* колесо фортуны (ширина инлайном) */
+html[data-battle="1"] #banner-overlay .card{max-width:48vw;}                    /* баннеры круга — не шире экрана */
 .q-card.mega{
   border-color:var(--ruby);
   box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 0 44px rgba(212,63,63,.65);
@@ -2005,6 +2013,7 @@ function mkPlayer(id, name, hp){
   };
 }
 function startGame(cfg){
+  document.documentElement.setAttribute("data-battle","1");   // бою — масштаб ×2 (плашки, карточки, текст)
   const mode = cfg.mode;
   let players, teams = null;
   if(mode === "team"){
@@ -3228,6 +3237,7 @@ function finishGame(reason){
   }
   renderResults(finalists, defeat);
   $("screen-game").classList.add("hidden");
+  document.documentElement.removeAttribute("data-battle");   // бой кончился — обычный масштаб
   $("screen-results").classList.remove("hidden");
 }
 
