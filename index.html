@@ -58,6 +58,9 @@ html[data-theme="halloween"] body{
     radial-gradient(ellipse at 85% 115%, rgba(255,120,20,.16), transparent 55%),
     radial-gradient(ellipse at 50% 45%, #1d1026 0%, #120a16 75%),
     linear-gradient(160deg,#180d1f,#120a16);
+  /* шортхенд background сбрасывает attachment в scroll — возвращаем fixed,
+     иначе фон тайлится по высоте экрана и при скролле виден шов */
+  background-attachment:fixed;
 }
 html[data-theme="halloween"] .card{background:linear-gradient(165deg,#2e1c40 0%,#221330 55%,#190c22 100%);}
 
@@ -67,11 +70,13 @@ html[data-theme="newyear"]{
   --violet:#8fd0ff; --muted:#94b0cd; --silver:#e8f2fb; --emerald:#6fe3b2;
 }
 html[data-theme="newyear"] body{
+  background-attachment:fixed;   /* защита от шва фона при скролле (см. Хеллоуин) */
+  /* глубокая ночь новогоднего неба */
   background:
-    radial-gradient(ellipse at 18% -10%, rgba(80,160,255,.20), transparent 55%),
-    radial-gradient(ellipse at 85% 115%, rgba(255,215,140,.14), transparent 55%),
-    radial-gradient(ellipse at 50% 45%, #13263f 0%, #0a1424 75%),
-    linear-gradient(160deg,#0e1e35,#0a1424);
+    radial-gradient(ellipse at 18% -10%, rgba(60,130,230,.16), transparent 55%),
+    radial-gradient(ellipse at 85% 115%, rgba(255,215,140,.10), transparent 55%),
+    radial-gradient(ellipse at 50% 45%, #0d1e3a 0%, #060e20 75%),
+    linear-gradient(160deg,#0a1730,#050b1a);
 }
 html[data-theme="newyear"] .card{background:linear-gradient(165deg,#1e3a60 0%,#152844 55%,#0d1b2e 100%);}
 
@@ -87,6 +92,7 @@ html[data-theme="japan"] body{
     radial-gradient(ellipse at 85% 115%, rgba(200,40,70,.16), transparent 55%),
     radial-gradient(ellipse at 50% 45%, #241119 0%, #170c12 75%),
     linear-gradient(160deg,#1e1017,#170c12);
+  background-attachment:fixed;   /* защита от шва фона при скролле (см. Хеллоуин) */
 }
 html[data-theme="japan"] .card{background:linear-gradient(165deg,#361c28 0%,#27141d 55%,#1c0d14 100%);}
 
@@ -101,6 +107,7 @@ html[data-theme="stars"] body{
     radial-gradient(ellipse at 80% 100%, rgba(150,80,220,.16), transparent 55%),
     radial-gradient(ellipse at 50% 45%, #0d1730 0%, #060b1c 78%),
     linear-gradient(160deg,#0a1226,#060b1c);
+  background-attachment:fixed;   /* защита от шва фона при скролле (см. Хеллоуин) */
 }
 html[data-theme="stars"] .card{background:linear-gradient(165deg,#182648 0%,#101a36 55%,#0a1122 100%);}
 /* мерцающие звёзды — мелкие точки, только в теме «Звёздное небо» */
@@ -183,6 +190,12 @@ html[data-theme="fantasy"]  #fantasy-scene{display:block;}
   75% {transform:translate(16px,90vh);}
   100%{transform:translate(-8px,118vh);}
 }
+/* ночное небо: луна посередине и мерцающие звёзды */
+#newyear-scene .sky-svg{position:absolute; inset:0; width:100%; height:100%;}
+#newyear-scene .ny-star{animation:nyTwinkle 3s ease-in-out infinite alternate;}
+@keyframes nyTwinkle{from{opacity:.18;} to{opacity:.95;}}
+#newyear-scene .ny-moon-halo{animation:nyHalo 7s ease-in-out infinite alternate;}
+@keyframes nyHalo{from{opacity:.55;} to{opacity:1;}}
 
 /* --- Тёмная фэнтези: кровавая луна, готический замок на вершине --- */
 #fantasy-scene .w{animation:winFlick 3.2s ease-in-out infinite alternate;}
@@ -1118,40 +1131,91 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
   </svg>
 </div>
 
-<!-- Новый год: сани с оленями, сугробы и ёлка с гирляндой -->
+<!-- Новый год: ночное небо с луной, сани с оленями, сугробы, ёлка и снеговик -->
 <div id="newyear-scene" aria-hidden="true">
+  <!-- ночное небо: звёзды и луна посередине -->
+  <svg class="sky-svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <radialGradient id="nyMoonG" cx="38%" cy="34%"><stop offset="0%" stop-color="#fff8e2"/><stop offset="62%" stop-color="#ffeec2"/><stop offset="100%" stop-color="#e9cc8f"/></radialGradient>
+      <radialGradient id="nyMoonHalo"><stop offset="0%" stop-color="rgba(255,238,194,.32)"/><stop offset="100%" stop-color="rgba(255,238,194,0)"/></radialGradient>
+    </defs>
+    <g fill="#e8f1ff">
+      <circle class="ny-star" cx="70" cy="90" r="2.4" style="animation-delay:-1.2s"/>
+      <circle class="ny-star" cx="160" cy="40" r="1.7" style="animation-delay:-2.4s"/>
+      <circle class="ny-star" cx="250" cy="150" r="2.1" style="animation-delay:-0.6s"/>
+      <circle class="ny-star" cx="340" cy="70" r="1.6" style="animation-delay:-1.8s"/>
+      <circle class="ny-star" cx="430" cy="190" r="2.6" style="animation-delay:-0.9s"/>
+      <circle class="ny-star" cx="520" cy="60" r="1.8" style="animation-delay:-2.7s"/>
+      <circle class="ny-star" cx="610" cy="130" r="2.2" style="animation-delay:-1.5s"/>
+      <circle class="ny-star" cx="830" cy="80" r="2.5" style="animation-delay:-0.3s"/>
+      <circle class="ny-star" cx="920" cy="170" r="1.7" style="animation-delay:-2.1s"/>
+      <circle class="ny-star" cx="1010" cy="50" r="2.3" style="animation-delay:-1.1s"/>
+      <circle class="ny-star" cx="1100" cy="140" r="1.9" style="animation-delay:-2.6s"/>
+      <circle class="ny-star" cx="1190" cy="70" r="2.4" style="animation-delay:-0.7s"/>
+      <circle class="ny-star" cx="1280" cy="180" r="1.6" style="animation-delay:-1.9s"/>
+      <circle class="ny-star" cx="1370" cy="60" r="2.2" style="animation-delay:-1.4s"/>
+      <circle class="ny-star" cx="120" cy="260" r="1.8" style="animation-delay:-2.9s"/>
+      <circle class="ny-star" cx="300" cy="320" r="2.5" style="animation-delay:-0.5s"/>
+      <circle class="ny-star" cx="480" cy="280" r="1.7" style="animation-delay:-2.2s"/>
+      <circle class="ny-star" cx="960" cy="300" r="2.1" style="animation-delay:-1.6s"/>
+      <circle class="ny-star" cx="1140" cy="340" r="2.6" style="animation-delay:-0.8s"/>
+      <circle class="ny-star" cx="1320" cy="290" r="1.8" style="animation-delay:-2.5s"/>
+      <circle class="ny-star" cx="60" cy="430" r="2.3" style="animation-delay:-1.3s"/>
+      <circle class="ny-star" cx="240" cy="480" r="1.6" style="animation-delay:-0.4s"/>
+      <circle class="ny-star" cx="1240" cy="450" r="2.4" style="animation-delay:-2.8s"/>
+      <circle class="ny-star" cx="1400" cy="380" r="1.9" style="animation-delay:-1.7s"/>
+      <circle class="ny-star" cx="640" cy="420" r="2.2" style="animation-delay:-1.0s"/>
+      <circle class="ny-star" cx="860" cy="470" r="1.7" style="animation-delay:-2.3s"/>
+      <circle class="ny-star" cx="400" cy="540" r="2.5" style="animation-delay:-0.2s"/>
+      <circle class="ny-star" cx="1050" cy="540" r="1.8" style="animation-delay:-2.0s"/>
+    </g>
+    <circle class="ny-moon-halo" cx="720" cy="212" r="252" fill="url(#nyMoonHalo)"/>
+    <circle id="ny-moon" cx="720" cy="212" r="86" fill="url(#nyMoonG)"/>
+    <circle cx="692" cy="186" r="17" fill="#e2c68c" opacity=".5"/>
+    <circle cx="750" cy="238" r="13" fill="#e2c68c" opacity=".45"/>
+    <circle cx="730" cy="166" r="8" fill="#e2c68c" opacity=".4"/>
+  </svg>
   <div class="sleigh">
-    <svg width="330" height="96" viewBox="0 0 350 96">
+    <svg width="380" height="90" viewBox="0 0 420 100">
       <g fill="#0a1226" stroke="#0a1226">
-        <g transform="translate(10,34)">
-          <ellipse cx="20" cy="14" rx="16" ry="8"/>
-          <path d="M32 10 l8 -12 5 3 -7 12z" stroke="none"/>
-          <circle cx="43" cy="-2" r="5" stroke="none"/>
-          <path d="M43 -7 l-5 -10 M43 -7 l5 -10 M41 -12 l-7 -3 M45 -12 l7 -3" stroke-width="2.5" fill="none"/>
-          <path d="M8 20 l-7 13 M16 22 l-3 13 M28 22 l5 13 M34 19 l9 11" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <!-- упряжка с Санта — позади, слева -->
+        <g id="ny-sleigh" transform="translate(18,6)">
+          <path d="M8 84 C-6 88 -16 84 -16 76 L-10 73 C-10 79 -4 81 6 79 Z" stroke="none"/>
+          <rect x="10" y="74" width="98" height="7" rx="3" stroke="none"/>
+          <path d="M14 74 C4 60 8 42 26 42 L30 42 L30 26 C30 17 41 13 47 20 C51 25 51 34 49 42 L88 42 C104 42 112 54 108 66 C106 72 100 74 92 74 Z" stroke="none"/>
+          <path d="M20 40 C10 28 18 12 32 14 C44 16 46 32 38 42 Z" stroke="none"/>
+          <circle cx="70" cy="22" r="10" stroke="none"/>
+          <path d="M59 17 C60 0 82 0 82 16 Z" stroke="none"/>
+          <circle cx="84" cy="14" r="3.5" stroke="none"/>
+          <path d="M54 46 C54 30 62 24 72 24 C84 24 92 32 92 46 Z" stroke="none"/>
+          <path d="M90 38 C100 42 108 47 114 52" stroke-width="3" fill="none"/>
         </g>
-        <g transform="translate(84,22)">
-          <ellipse cx="20" cy="14" rx="16" ry="8"/>
-          <path d="M32 10 l8 -12 5 3 -7 12z" stroke="none"/>
-          <circle cx="43" cy="-2" r="5" stroke="none"/>
-          <path d="M43 -7 l-5 -10 M43 -7 l5 -10 M41 -12 l-7 -3 M45 -12 l7 -3" stroke-width="2.5" fill="none"/>
-          <path d="M8 20 l-7 13 M16 22 l-3 13 M28 22 l5 13 M34 19 l9 11" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <!-- узда к оленям -->
+        <path d="M132 58 C146 61 158 62 168 59" stroke-width="3" fill="none"/>
+        <!-- олени впереди справа — они летят первыми -->
+        <g id="ny-deer" transform="translate(160,0)">
+          <g transform="translate(0,46)">
+            <ellipse cx="20" cy="14" rx="16" ry="8"/>
+            <path d="M32 10 l8 -12 5 3 -7 12z" stroke="none"/>
+            <circle cx="43" cy="-2" r="5" stroke="none"/>
+            <path d="M43 -7 l-5 -10 M43 -7 l5 -10 M41 -12 l-7 -3 M45 -12 l7 -3" stroke-width="2.5" fill="none"/>
+            <path d="M8 20 l-7 13 M16 22 l-3 13 M28 22 l5 13 M34 19 l9 11" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          </g>
+          <g transform="translate(76,34)">
+            <ellipse cx="20" cy="14" rx="16" ry="8"/>
+            <path d="M32 10 l8 -12 5 3 -7 12z" stroke="none"/>
+            <circle cx="43" cy="-2" r="5" stroke="none"/>
+            <path d="M43 -7 l-5 -10 M43 -7 l5 -10 M41 -12 l-7 -3 M45 -12 l7 -3" stroke-width="2.5" fill="none"/>
+            <path d="M8 20 l-7 13 M16 22 l-3 13 M28 22 l5 13 M34 19 l9 11" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          </g>
+          <g transform="translate(152,24)">
+            <ellipse cx="20" cy="14" rx="16" ry="8"/>
+            <path d="M32 10 l8 -12 5 3 -7 12z" stroke="none"/>
+            <circle cx="43" cy="-2" r="5" stroke="none"/>
+            <path d="M43 -7 l-5 -10 M43 -7 l5 -10 M41 -12 l-7 -3 M45 -12 l7 -3" stroke-width="2.5" fill="none"/>
+            <path d="M8 20 l-7 13 M16 22 l-3 13 M28 22 l5 13 M34 19 l9 11" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          </g>
         </g>
-        <g transform="translate(158,30)">
-          <ellipse cx="20" cy="14" rx="16" ry="8"/>
-          <path d="M32 10 l8 -12 5 3 -7 12z" stroke="none"/>
-          <circle cx="43" cy="-2" r="5" stroke="none"/>
-          <path d="M43 -7 l-5 -10 M43 -7 l5 -10 M41 -12 l-7 -3 M45 -12 l7 -3" stroke-width="2.5" fill="none"/>
-          <path d="M8 20 l-7 13 M16 22 l-3 13 M28 22 l5 13 M34 19 l9 11" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-        </g>
-        <!-- построчки к саням -->
-        <path d="M244 62 L214 52 M212 48 L198 40" stroke-width="2.5" fill="none"/>
-        <!-- сани с Санта -->
-        <circle cx="286" cy="30" r="11" stroke="none"/>
-        <path d="M274 24 C277 8 296 8 298 24 Z" stroke="none"/>
-        <path d="M254 62 C254 46 264 38 282 38 L312 38 C330 38 338 48 338 62 C338 76 328 82 312 82 L270 82 C258 82 254 74 254 62 Z" stroke="none"/>
-        <path d="M326 44 C340 30 352 42 352 56 L352 66 C338 72 326 62 326 52 Z" stroke="none"/>
-        <path d="M252 82 C240 84 232 80 230 72 L236 68 C238 74 242 76 252 74 Z" stroke="none"/>
       </g>
     </svg>
   </div>
@@ -1183,65 +1247,83 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       </g>
       <polygon class="tree-star" fill="#ffd76a" points="0,-96 13,-58 54,-58 21,-34 34,6 0,-18 -34,6 -21,-34 -54,-58 -13,-58"/>
     </g>
+    <!-- снеговик с цилиндром справа, стоит в снегу у края экрана -->
+    <g class="snowman" transform="translate(1392,450)">
+      <!-- руки-сучки -->
+      <path d="M-34 -116 L-76 -140 M-76 -140 L-88 -134 M-76 -140 L-82 -152" stroke="#6b4a2a" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <path d="M34 -118 L76 -140 M76 -140 L88 -133 M76 -140 L84 -152" stroke="#6b4a2a" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <!-- три комка снега -->
+      <circle cx="0" cy="-46" r="48" fill="#fbfdff" stroke="#c9d8ec" stroke-width="3"/>
+      <circle cx="0" cy="-114" r="36" fill="#fbfdff" stroke="#c9d8ec" stroke-width="3"/>
+      <circle cx="0" cy="-164" r="27" fill="#fbfdff" stroke="#c9d8ec" stroke-width="3"/>
+      <!-- красный шарф -->
+      <path d="M-27 -141 C-10 -133 14 -133 28 -139 L31 -128 C14 -122 -10 -122 -27 -130 Z" fill="#c22f2f"/>
+      <path d="M18 -131 L33 -98 L21 -96 L10 -125 Z" fill="#c22f2f"/>
+      <!-- лицо: угольки и морковка -->
+      <circle cx="-9" cy="-170" r="4.2" fill="#1a2233"/>
+      <circle cx="9" cy="-170" r="4.2" fill="#1a2233"/>
+      <path d="M4 -163 L32 -156 L4 -152 Z" fill="#ff8c1a"/>
+      <circle cx="-9" cy="-152" r="2.6" fill="#1a2233"/>
+      <circle cx="1" cy="-149" r="2.6" fill="#1a2233"/>
+      <circle cx="11" cy="-151" r="2.6" fill="#1a2233"/>
+      <!-- пуговицы -->
+      <circle cx="0" cy="-124" r="4.5" fill="#1a2233"/>
+      <circle cx="0" cy="-106" r="4.5" fill="#1a2233"/>
+      <circle cx="-4" cy="-62" r="5" fill="#1a2233"/>
+      <circle cx="-4" cy="-40" r="5" fill="#1a2233"/>
+      <!-- цилиндр -->
+      <rect x="-42" y="-197" width="84" height="11" rx="5" fill="#141b2c"/>
+      <rect x="-26" y="-245" width="52" height="51" rx="3" fill="#141b2c"/>
+      <rect x="-26" y="-207" width="52" height="12" fill="#c22f2f"/>
+    </g>
   </svg>
   <!-- падающий снег поверх сценки -->
   <div id="snowfall"></div>
 </div>
 
-<!-- Тёмная фэнтези: кровавая луна, гора с готическим замком, черепа и мечи на пути -->
+<!-- Тёмная фэнтези: кровавая луна над холмом со very тёмным готическим замком -->
 <div id="fantasy-scene" aria-hidden="true">
   <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
     <defs>
       <radialGradient id="bmGlow"><stop offset="0%" stop-color="rgba(212,63,63,.4)"/><stop offset="100%" stop-color="rgba(212,63,63,0)"/></radialGradient>
       <radialGradient id="bmCore" cx="38%" cy="34%"><stop offset="0%" stop-color="#ff6a5a"/><stop offset="60%" stop-color="#c62f2c"/><stop offset="100%" stop-color="#7e1a1a"/></radialGradient>
-      <symbol id="skullSym" viewBox="0 0 40 46">
-        <path fill="#d8d2e2" d="M20 1C9.5 1 2 8.6 2 19c0 6 3.2 10.4 5.2 12.4V38c0 3 2.2 5 5.2 5h15.2c3 0 5.2-2 5.2-5v-6.6C34.8 29.4 38 25 38 19 38 8.6 30.5 1 20 1z"/>
-        <circle cx="13" cy="19.5" r="5.2" fill="#120d1e"/><circle cx="27" cy="19.5" r="5.2" fill="#120d1e"/>
-        <path d="M17.6 28h4.8L20 34z" fill="#120d1e"/>
-        <path d="M15 39v5M20 39v5M25 39v5" stroke="#120d1e" stroke-width="2.4"/>
-      </symbol>
-      <symbol id="swordSym" viewBox="0 0 40 56">
-        <path fill="#cfd6e2" d="M20 2 L25 13 L25 36 L20 42 L15 36 L15 13 Z"/>
-        <rect x="7" y="36" width="26" height="5" rx="2" fill="#8a94a8"/>
-        <rect x="17.5" y="41" width="5" height="10" rx="2" fill="#6b7484"/>
-        <circle cx="20" cy="53" r="3.4" fill="#8a94a8"/>
-      </symbol>
     </defs>
     <!-- кровавая луна над замком -->
-    <circle class="moon-halo" cx="700" cy="190" r="270" fill="url(#bmGlow)"/>
-    <circle cx="700" cy="190" r="128" fill="url(#bmCore)"/>
-    <circle cx="662" cy="160" r="22" fill="#8f1f1d" opacity=".45"/>
-    <circle cx="734" cy="232" r="16" fill="#8f1f1d" opacity=".4"/>
-    <circle cx="714" cy="138" r="10" fill="#8f1f1d" opacity=".35"/>
-    <!-- гора -->
-    <path fill="#120d1e" d="M0 900 L0 706 L262 560 L424 644 L700 330 L902 472 L1132 402 L1440 604 L1440 900 Z"/>
-    <!-- готический замок на вершине -->
-    <g fill="#0a0713">
-      <rect x="628" y="252" width="152" height="82"/>
-      <rect x="612" y="198" width="36" height="136"/>
-      <path d="M612 198 L630 142 L648 198 Z"/>
-      <rect x="674" y="150" width="46" height="184"/>
-      <path d="M674 150 L697 82 L720 150 Z"/>
-      <rect x="744" y="208" width="34" height="126"/>
-      <path d="M744 208 L761 156 L778 208 Z"/>
-      <path d="M628 252 h14 v-12 h14 v12 h16 v-12 h14 v12 h16 v-12 h14 v12 h16 v-12 h14 v12 h14 v-12 h14 v12 v-14 h-152 z"/>
+    <circle class="moon-halo" cx="510" cy="160" r="270" fill="url(#bmGlow)"/>
+    <circle cx="510" cy="160" r="128" fill="url(#bmCore)"/>
+    <circle cx="472" cy="130" r="22" fill="#8f1f1d" opacity=".45"/>
+    <circle cx="544" cy="182" r="16" fill="#8f1f1d" opacity=".4"/>
+    <circle cx="524" cy="88" r="10" fill="#8f1f1d" opacity=".35"/>
+    <!-- очень тёмная гора -->
+    <path fill="#070510" d="M0 900 L0 706 L262 560 L424 644 L700 330 L902 472 L1132 402 L1440 604 L1440 900 Z"/>
+    <!-- холм на склоне горы -->
+    <path fill="#040309" d="M120 900 C150 740 280 486 500 482 C720 478 850 742 880 900 Z"/>
+    <!-- готический замок на вершине холма — силуэт, почти чёрный -->
+    <g fill="#020105">
+      <rect x="431" y="392" width="138" height="86"/>
+      <rect x="431" y="380" width="138" height="16"/>
+      <rect x="431" y="368" width="14" height="12"/>
+      <rect x="459" y="368" width="14" height="12"/>
+      <rect x="487" y="368" width="14" height="12"/>
+      <rect x="515" y="368" width="14" height="12"/>
+      <rect x="543" y="368" width="14" height="12"/>
+      <rect x="555" y="368" width="14" height="12"/>
+      <rect x="415" y="336" width="34" height="142"/>
+      <path d="M415 336 L432 282 L449 336 Z"/>
+      <rect x="472" y="284" width="46" height="194"/>
+      <path d="M472 284 L495 216 L518 284 Z"/>
+      <rect x="540" y="348" width="32" height="130"/>
+      <path d="M540 348 L556 296 L572 348 Z"/>
     </g>
     <g class="w" fill="#f5c542">
-      <rect x="691" y="192" width="9" height="17" rx="4"/>
-      <rect x="662" y="282" width="10" height="17" rx="4"/>
-      <rect x="755" y="256" width="9" height="15" rx="4"/>
-      <rect x="626" y="242" width="8" height="14" rx="3"/>
-      <rect x="702" y="242" width="8" height="14" rx="3"/>
+      <rect x="489" y="322" width="9" height="17" rx="4"/>
+      <rect x="455" y="424" width="10" height="17" rx="4"/>
+      <rect x="520" y="422" width="9" height="15" rx="4"/>
+      <rect x="425" y="368" width="8" height="14" rx="3"/>
+      <rect x="550" y="382" width="8" height="14" rx="3"/>
     </g>
     <!-- тропа к замку -->
-    <path d="M150 900 C330 812 258 722 430 668 C560 626 498 542 640 486 C690 466 690 420 682 356" stroke="#3d3058" stroke-width="12" stroke-dasharray="26 20" stroke-linecap="round" fill="none" opacity=".8"/>
-    <!-- черепи и мечи по дороге -->
-    <use href="#skullSym" x="212" y="756" width="46" height="46"/>
-    <use href="#swordSym" x="286" y="690" width="54" height="54"/>
-    <use href="#skullSym" x="392" y="616" width="40" height="40"/>
-    <use href="#swordSym" x="486" y="540" width="48" height="48"/>
-    <use href="#skullSym" x="566" y="470" width="36" height="36"/>
-    <use href="#swordSym" x="646" y="392" width="44" height="44"/>
+    <path d="M1210 900 C1030 860 1080 790 900 748 C764 716 828 654 672 614 C612 600 586 556 574 506" stroke="#241c3a" stroke-width="12" stroke-dasharray="26 20" stroke-linecap="round" fill="none" opacity=".8"/>
   </svg>
 </div>
 
