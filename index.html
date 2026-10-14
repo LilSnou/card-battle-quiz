@@ -117,6 +117,18 @@ html[data-theme="stars"] #star-field{display:block;}
 #star-field i.big{box-shadow:0 0 6px 1px rgba(255,255,255,.85);}
 @keyframes twinkle{from{opacity:.12;} to{opacity:1;}}
 
+/* ---------- Млечный путь по центру неба (тема «Звёздное небо») ---------- */
+#milkyway{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; display:none;}
+html[data-theme="stars"] #milkyway{display:block;}
+#milkyway svg{width:100%; height:100%;}
+.mw-edge{fill:none; stroke:#e6eeff; stroke-width:2.6; opacity:.34;}
+.mw-dust{fill:none; stroke:#070b20; stroke-width:13; opacity:.42;}
+#milkyway .mw-stars circle{fill:#eaf1ff; opacity:.85;}
+
+/* ---------- Чернильная клякса в правом верхнем углу (тема «Тетрадь») ---------- */
+#ink-blot{position:fixed; top:-46px; right:-40px; width:min(34vw,330px); pointer-events:none; z-index:0; display:none; opacity:.87; transform:rotate(-6deg);}
+html[data-theme="notebook"] #ink-blot{display:block;}
+
 /* ---------- Сакура в теме «Япония»: большое дерево и сыплющиеся лепестки ---------- */
 #sakura-scene{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; display:none;}
 html[data-theme="japan"] #sakura-scene{display:block;}
@@ -143,6 +155,15 @@ html[data-theme="japan"] #sakura-scene{display:block;}
 html[data-theme="halloween"] #halloween-scene{display:block;}
 html[data-theme="newyear"]  #newyear-scene{display:block;}
 html[data-theme="fantasy"]  #fantasy-scene{display:block;}
+/* грозовые тучи Дарк Фэнтези: чёрные полупрозрачные, медленно плывут, внутри мелькает молния */
+.st-cloud{fill:#000; opacity:.55; animation:cloudDrift 52s ease-in-out infinite alternate;}
+.st-cloud.c2{animation-duration:66s; animation-delay:-24s;}
+.st-cloud.c3{animation-duration:58s; animation-delay:-40s;}
+.st-flash{fill:#eaf2ff; opacity:0; animation:stormFlash 8s linear infinite;}
+.st-cloud.c2 .st-flash{animation-delay:-3s;}
+.st-cloud.c3 .st-flash{animation-delay:-5.4s;}
+@keyframes cloudDrift{from{transform:translateX(-28px);} to{transform:translateX(28px);}}
+@keyframes stormFlash{0%,86%,100%{opacity:0;} 88%{opacity:.5;} 89%{opacity:0;} 91%{opacity:.4;} 92%{opacity:0;}}
 #fantasy-scene svg{position:absolute; inset:0; width:100%; height:100%;}
 .ground-svg{position:absolute; left:0; bottom:0; width:100%; height:auto;}
 
@@ -231,7 +252,6 @@ html[data-theme="notebook"] .card{   /* рамки — из картона */
   box-shadow:inset 0 0 22px rgba(90,60,20,.3), 0 10px 22px rgba(60,40,10,.3);
 }
 html[data-theme="notebook"] .overlay{background:rgba(245,240,226,.88);}
-html[data-theme="notebook"] #bg-decor span{opacity:.13; filter:none;}
 html[data-theme="notebook"] .mode-btn{background:linear-gradient(180deg,rgba(239,230,205,.96),rgba(222,208,175,.97)); color:#3a3a46;}
 html[data-theme="notebook"] .btn{background:linear-gradient(180deg,#eadfc0,#d9caa3); color:#4a3413; border-color:#8a6a3b; box-shadow:0 8px 16px rgba(80,55,15,.3);}
 html[data-theme="notebook"] .btn:hover{box-shadow:0 0 22px rgba(122,90,46,.45), 0 8px 16px rgba(80,55,15,.3);}
@@ -739,9 +759,6 @@ html[data-theme="notebook"] [style*="--pencil"]{
 .duel-side.target .role{color:#86efac;}
 .role-icon{font-size:24px; line-height:1;}
 
-/* --- Полупрозрачные узоры на фоне --- */
-#bg-decor{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;}
-#bg-decor span{position:absolute; opacity:.045; filter:grayscale(.5); user-select:none;}
 #screen-mode,#screen-setup,#screen-game,#screen-results{position:relative; z-index:1;}
 
 /* --- Декоративная рамка карточек (фэнтези-орнамент) --- */
@@ -1196,14 +1213,20 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
           <rect x="10" y="74" width="98" height="7" rx="3" stroke="none"/>
           <path d="M14 74 C4 60 8 42 26 42 L30 42 L30 26 C30 17 41 13 47 20 C51 25 51 34 49 42 L88 42 C104 42 112 54 108 66 C106 72 100 74 92 74 Z" stroke="none"/>
           <path d="M20 40 C10 28 18 12 32 14 C44 16 46 32 38 42 Z" stroke="none"/>
-          <circle cx="70" cy="22" r="10" stroke="none"/>
-          <path d="M59 17 C60 0 82 0 82 16 Z" stroke="none"/>
-          <circle cx="84" cy="14" r="3.5" stroke="none"/>
+          <!-- Дед Мороз смотрит ВПЕРЁД: вправо, за оленями — нос и глаз справа, борода белая -->
           <path d="M54 46 C54 30 62 24 72 24 C84 24 92 32 92 46 Z" stroke="none"/>
           <path d="M90 38 C100 42 108 47 114 52" stroke-width="3" fill="none"/>
+          <circle class="santa-head" cx="70" cy="22" r="10" stroke="none"/>
+          <path class="santa-beard" d="M70 26 C80 27 85 35 83 45 C81 56 68 60 58 55 C48 50 47 39 54 32 C59 36 66 34 70 26 Z" fill="#f4f8ff"/>
+          <path d="M59 17 C60 0 82 0 82 16 Z" stroke="none"/>
+          <path d="M58 17 C66 13 76 13 83 16" fill="none" stroke="#f4f8ff" stroke-width="4"/>
+          <circle class="santa-pom" cx="55" cy="8" r="4" fill="#f4f8ff"/>
+          <circle class="santa-nose" cx="81" cy="24" r="3.4" fill="#f4f8ff"/>
+          <circle cx="76" cy="18" r="1.6" fill="#f4f8ff"/>
         </g>
-        <!-- узда к оленям -->
-        <path d="M132 58 C146 61 158 62 168 59" stroke-width="3" fill="none"/>
+        <!-- упряжь: две верёвки тянутся от саней через всех оленей -->
+        <path class="harness-rope" d="M128 57 C150 63 162 64 178 61 C206 56 224 52 246 49 C276 45 294 42 320 38 C330 36.5 336 35.5 344 34" stroke-width="2" fill="none"/>
+        <path class="harness-rope" d="M128 63 C150 69 162 70 178 67 C206 62 224 58 246 55 C276 51 294 48 320 44 C330 42.5 336 41.5 344 40" stroke-width="2" fill="none"/>
         <!-- олени впереди справа — они летят первыми -->
         <g id="ny-deer" transform="translate(160,0)">
           <g transform="translate(0,46)">
@@ -1306,6 +1329,19 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
     <circle cx="472" cy="130" r="22" fill="#8f1f1d" opacity=".45"/>
     <circle cx="544" cy="182" r="16" fill="#8f1f1d" opacity=".4"/>
     <circle cx="524" cy="88" r="10" fill="#8f1f1d" opacity=".35"/>
+    <!-- три грозовые чёрные полупрозрачные тучи -->
+    <g class="st-cloud c1" transform="translate(96,96)">
+      <path d="M0 84 C-14 56 8 32 36 36 C46 12 84 2 112 20 C132 -2 174 -4 194 20 C222 8 258 24 262 50 C290 48 306 66 300 86 C294 100 40 102 0 84 Z"/>
+      <ellipse class="st-flash" cx="150" cy="58" rx="46" ry="20"/>
+    </g>
+    <g class="st-cloud c2" transform="translate(560,58)">
+      <path d="M0 76 C-12 50 6 28 32 32 C40 10 76 2 100 18 C118 -2 156 -2 174 18 C198 8 230 22 234 46 C260 44 274 60 268 78 C262 92 36 94 0 76 Z"/>
+      <ellipse class="st-flash" cx="130" cy="50" rx="40" ry="18"/>
+    </g>
+    <g class="st-cloud c3" transform="translate(1064,236)">
+      <path d="M0 88 C-16 60 6 34 38 38 C48 12 90 2 118 22 C140 -2 186 -2 206 24 C236 10 276 28 280 56 C310 54 328 74 320 94 C312 110 44 112 0 88 Z"/>
+      <ellipse class="st-flash" cx="170" cy="60" rx="50" ry="22"/>
+    </g>
     <!-- очень тёмная гора -->
     <path fill="#070510" d="M0 900 L0 706 L262 560 L424 644 L700 330 L902 472 L1132 402 L1440 604 L1440 900 Z"/>
     <!-- холм на склоне горы -->
@@ -1333,6 +1369,41 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <rect x="520" y="422" width="9" height="15" rx="4"/>
       <rect x="425" y="368" width="8" height="14" rx="3"/>
       <rect x="550" y="382" width="8" height="14" rx="3"/>
+    </g>
+  </svg>
+</div>
+
+<!-- Млечный путь по центру неба (тема «Звёздное небо») -->
+<div id="milkyway" aria-hidden="true">
+  <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="mwBand" x1="0" y1="900" x2="1440" y2="0" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#cfe0ff" stop-opacity="0"/>
+        <stop offset=".3" stop-color="#cfe0ff" stop-opacity=".38"/>
+        <stop offset=".6" stop-color="#eff5ff" stop-opacity=".5"/>
+        <stop offset="1" stop-color="#cfe0ff" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <!-- размытая полоса в три слоя — мягкие края без фильтров -->
+    <path d="M-60 812 C300 668 520 566 742 434 C980 292 1190 212 1500 84" stroke="url(#mwBand)" stroke-width="230" fill="none" opacity=".16"/>
+    <path d="M-60 812 C300 668 520 566 742 434 C980 292 1190 212 1500 84" stroke="url(#mwBand)" stroke-width="150" fill="none" opacity=".24"/>
+    <path d="M-60 812 C300 668 520 566 742 434 C980 292 1190 212 1500 84" stroke="url(#mwBand)" stroke-width="84" fill="none" opacity=".34"/>
+    <!-- очертания млечного пути: две светящиеся кромки полосы -->
+    <path class="mw-edge" d="M-60 748 C300 606 520 504 742 374 C980 234 1190 156 1500 26"/>
+    <path class="mw-edge" d="M-60 876 C300 730 520 628 742 494 C980 350 1190 268 1500 142"/>
+    <!-- тёмная пыльная дорожка внутри полосы -->
+    <path class="mw-dust" d="M60 826 C330 700 540 596 756 466 C984 330 1178 254 1420 152" stroke-dasharray="70 30 110 36"/>
+    <!-- звёзды, плотнее вдоль полосы -->
+    <g class="mw-stars">
+      <circle cx="180" cy="740" r="2"/><circle cx="330" cy="666" r="1.6"/>
+      <circle cx="470" cy="600" r="2.3"/><circle cx="610" cy="520" r="1.5"/>
+      <circle cx="742" cy="434" r="2.4"/><circle cx="880" cy="366" r="1.7"/>
+      <circle cx="1010" cy="308" r="2.1"/><circle cx="1150" cy="242" r="1.5"/>
+      <circle cx="1290" cy="180" r="2.2"/><circle cx="420" cy="688" r="1.4"/>
+      <circle cx="668" cy="588" r="1.8"/><circle cx="836" cy="472" r="1.4"/>
+      <circle cx="960" cy="414" r="1.9"/><circle cx="1094" cy="352" r="1.3"/>
+      <circle cx="270" cy="700" r="1.5"/><circle cx="556" cy="476" r="1.6"/>
+      <circle cx="798" cy="410" r="1.4"/><circle cx="1226" cy="288" r="1.8"/>
     </g>
   </svg>
 </div>
@@ -1407,7 +1478,29 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
   <div id="petals"></div>
 </div>
 
-<div id="bg-decor" aria-hidden="true"></div>
+<!-- чернильная клякса в правом верхнем углу листа (тема «Тетрадь») -->
+<div id="ink-blot" aria-hidden="true">
+  <svg viewBox="0 0 320 280">
+    <g fill="#0a0a0d">
+      <circle cx="252" cy="54" r="74"/>
+      <circle cx="182" cy="92" r="54"/>
+      <circle cx="300" cy="126" r="58"/>
+      <circle cx="222" cy="146" r="48"/>
+      <circle cx="146" cy="132" r="30"/>
+      <circle cx="262" cy="176" r="36"/>
+      <circle cx="178" cy="186" r="26"/>
+      <circle cx="112" cy="172" r="16"/>
+      <circle cx="228" cy="222" r="14"/>
+      <circle cx="90" cy="210" r="8"/>
+      <circle cx="58" cy="236" r="5"/>
+      <circle cx="124" cy="238" r="6"/>
+      <circle cx="152" cy="262" r="4"/>
+      <circle cx="96" cy="64" r="7"/>
+      <circle cx="50" cy="124" r="6"/>
+      <circle cx="72" cy="160" r="3.5"/>
+    </g>
+  </svg>
+</div>
 
 <!-- ================= НАСТРОЙКИ ================= -->
 <div id="settings-overlay" class="overlay">
@@ -3332,40 +3425,18 @@ document.querySelectorAll("[data-close]").forEach(b=>{
 
 // ---- темы оформления ----
 const THEMES = {
-  // у тем со своими сценами полупрозрачный узор-декор (decor) убран — остаются фон и сцена
+  // полупрозрачный узор-эмодзи по фону (decor) убран со всех тем — только фон, сцены и звёзды
   fantasy:{ name:"Дарк Фэнтези" },
   halloween:{ name:"Хеллоуин" },
   newyear:{ name:"Новый год" },
   japan:{ name:"Япония" },
-  stars:{
-    name:"Звёздное небо",
-    decor:["⭐","✨","🌙","🌟","☄️","🪐"]
-  },
-  notebook:{
-    name:"Тетрадь",
-    decor:["✏️","📓","🖊️","📏","📕","📎","📐","🖍️"]
-  }
+  stars:{ name:"Звёздное небо" },
+  notebook:{ name:"Тетрадь" }
 };
-function buildDecor(id){
-  const box = $("bg-decor");
-  // темы со своими сценами (Дарк Фэнтези, Хеллоуин, Новый год, Япония):
-  // полупрозрачный узор-эмодзи по фону убран — только фон и сцена
-  if(id === "fantasy" || id === "halloween" || id === "newyear" || id === "japan"){ box.innerHTML = ""; return; }
-  const set = THEMES[id].decor;
-  let html = "";
-  for(let i=0;i<46;i++){
-    const rot = Math.round(Math.random()*40-20);
-    html += '<span style="left:'+(Math.random()*96+2).toFixed(1)+'%; top:'+(Math.random()*93+3).toFixed(1)+'%; font-size:'
-      + (26+Math.round(Math.random()*28))+'px;' + (rot ? ' transform:rotate('+rot+'deg);' : '') + '">'
-      + set[Math.floor(Math.random()*set.length)] + '</span>';
-  }
-  box.innerHTML = html;
-}
 function applyTheme(id){
   if(!THEMES[id]) id = "fantasy";
   document.documentElement.setAttribute("data-theme", id);
   store.set("cbq-theme", id);
-  buildDecor(id);
   buildSakura(id === "japan");   // падающие лепестки — только для Японии
   buildSnow(id === "newyear");   // идущий снег — только для Нового года
   document.querySelectorAll("#theme-grid .theme-btn").forEach(b=>b.classList.toggle("active", b.dataset.t===id));
