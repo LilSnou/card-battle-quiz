@@ -241,6 +241,16 @@ html[data-theme="notebook"] .nick-slot input,
 html[data-theme="notebook"] .team-slot input{background:#faf6ea; color:#4a3413; box-shadow:inset 0 3px 8px rgba(90,60,20,.22);}
 html[data-theme="notebook"] .q-opt{background:linear-gradient(165deg,#ece1c5,#dccdaa); color:#33333e; border-color:#8a6a3b;}
 html[data-theme="notebook"] #toast{background:linear-gradient(165deg,#e3c288,#cba563); color:#3a3a46;}
+/* ники игроков — будто написаны цветными карандашами: у каждого свой цвет (--pencil),
+   металл и пастельные градиенты (рассчитанные на тёмный фон) выключаются */
+html[data-theme="notebook"] [style*="--pencil"]{
+  background-image:none !important;
+  color:var(--pencil,#35353f) !important;
+  -webkit-text-fill-color:var(--pencil,#35353f) !important;
+  animation:none !important;
+  text-shadow:0 0 .6px currentColor, .8px .9px 0 rgba(255,255,255,.42), -.7px -.7px 0 rgba(0,0,0,.2) !important;
+  letter-spacing:.3px;
+}
 
 /* ---------- Общая карта ---------- */
 .card{
@@ -1224,7 +1234,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
     <path fill="#f7fbff" d="M0 640 L0 436 C260 394 480 470 760 426 C1020 386 1240 456 1440 414 L1440 640 Z"/>
     <!-- большая новогодняя ёлка в правом углу -->
     <g transform="translate(1190,110)">
-      <rect x="-17" y="352" width="34" height="96" fill="#2b1a12"/>
+      <rect class="tree-trunk" x="-17" y="236" width="34" height="90" fill="#2b1a12"/>
       <path fill="#123a22" d="M0 -58 L118 128 L78 128 L148 256 L-148 256 L-78 128 L-118 128 Z"/>
       <g stroke="#0d2c1a" stroke-width="3" fill="none">
         <path d="M-84 92 C-40 116 40 116 84 92"/>
@@ -1247,8 +1257,8 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       </g>
       <polygon class="tree-star" fill="#ffd76a" points="0,-96 13,-58 54,-58 21,-34 34,6 0,-18 -34,6 -21,-34 -54,-58 -13,-58"/>
     </g>
-    <!-- снеговик с цилиндром справа, стоит в снегу у края экрана -->
-    <g class="snowman" transform="translate(1392,450)">
+    <!-- снеговик с цилиндром слева, стоит в снегу у края экрана -->
+    <g class="snowman" transform="translate(118,450)">
       <!-- руки-сучки -->
       <path d="M-34 -116 L-76 -140 M-76 -140 L-88 -134 M-76 -140 L-82 -152" stroke="#6b4a2a" stroke-width="6" fill="none" stroke-linecap="round"/>
       <path d="M34 -118 L76 -140 M76 -140 L88 -133 M76 -140 L84 -152" stroke="#6b4a2a" stroke-width="6" fill="none" stroke-linecap="round"/>
@@ -1281,7 +1291,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
   <div id="snowfall"></div>
 </div>
 
-<!-- Тёмная фэнтези: кровавая луна над холмом со very тёмным готическим замком -->
+<!-- Тёмная фэнтези: кровавая луна над холмом с очень тёмным готическим замком -->
 <div id="fantasy-scene" aria-hidden="true">
   <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
     <defs>
@@ -1298,9 +1308,9 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
     <path fill="#070510" d="M0 900 L0 706 L262 560 L424 644 L700 330 L902 472 L1132 402 L1440 604 L1440 900 Z"/>
     <!-- холм на склоне горы -->
     <path fill="#040309" d="M120 900 C150 740 280 486 500 482 C720 478 850 742 880 900 Z"/>
-    <!-- готический замок на вершине холма — силуэт, почти чёрный -->
+    <!-- готический замок на вершине холма — силуэт, почти чёрный, стоит на холме (основание уходит в склон) -->
     <g fill="#020105">
-      <rect x="431" y="392" width="138" height="86"/>
+      <rect x="431" y="392" width="138" height="120"/>
       <rect x="431" y="380" width="138" height="16"/>
       <rect x="431" y="368" width="14" height="12"/>
       <rect x="459" y="368" width="14" height="12"/>
@@ -1308,11 +1318,11 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <rect x="515" y="368" width="14" height="12"/>
       <rect x="543" y="368" width="14" height="12"/>
       <rect x="555" y="368" width="14" height="12"/>
-      <rect x="415" y="336" width="34" height="142"/>
+      <rect x="415" y="336" width="34" height="176"/>
       <path d="M415 336 L432 282 L449 336 Z"/>
-      <rect x="472" y="284" width="46" height="194"/>
+      <rect x="472" y="284" width="46" height="228"/>
       <path d="M472 284 L495 216 L518 284 Z"/>
-      <rect x="540" y="348" width="32" height="130"/>
+      <rect x="540" y="348" width="32" height="164"/>
       <path d="M540 348 L556 296 L572 348 Z"/>
     </g>
     <g class="w" fill="#f5c542">
@@ -1322,8 +1332,6 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <rect x="425" y="368" width="8" height="14" rx="3"/>
       <rect x="550" y="382" width="8" height="14" rx="3"/>
     </g>
-    <!-- тропа к замку -->
-    <path d="M1210 900 C1030 860 1080 790 900 748 C764 716 828 654 672 614 C612 600 586 556 574 506" stroke="#241c3a" stroke-width="12" stroke-dasharray="26 20" stroke-linecap="round" fill="none" opacity=".8"/>
   </svg>
 </div>
 
@@ -1761,8 +1769,11 @@ function nameGrad(c){
   // вертикальный металлический градиент оттенка игрока (бегущий блик остаётся)
   return "linear-gradient(180deg,#ffffff 0%,"+c.light+" 18%,"+c.base+" 42%,"+c.dark+" 56%,"+c.light+" 72%,"+c.dark+" 100%)";
 }
+/* цветные карандаши: свой цвет каждого игрока (в теме «Тетрадь» ники пишутся им) */
+const PENCILS = ["#d32f2f","#1565c0","#2e7d32","#6a1b9a","#ef6c00","#00838f",
+                 "#c2185b","#5d4037","#3949ab","#558b2f","#0277bd","#bf360c"];
 /* металлический ник игрока: свой оттенок, шрифт/стиль/блик — как у всех */
-const pb = p => '<b style="background-image:var(--shine),'+p.grad+'">'+esc(p.name)+'</b>';
+const pb = p => '<b style="background-image:var(--shine),'+p.grad+';--pencil:'+p.pencil+'">'+esc(p.name)+'</b>';
 
 function mkPlayer(id, name, hp){
   const col = NAME_COLORS[Math.floor(Math.random()*NAME_COLORS.length)];
@@ -1770,6 +1781,7 @@ function mkPlayer(id, name, hp){
     id, name, hp, maxHp:hp, alive:true,
     avatar:randomAvatar(),                      // аватарка рандомно (из базовых + темы оформления)
     color:col.base, grad:nameGrad(col),   // рандомный цвет ника
+    pencil:PENCILS[(Number(id)||0) % PENCILS.length],   // цветной карандаш (тема «Тетрадь»)
     teamId:null,
     dmgBoss:0, dmgDealt:0, dmgTaken:0,
     correct:0, answers:0,
@@ -1995,6 +2007,8 @@ function renderDuelZone(){
   // цвет ника игрока (команды остаются золотыми)
   $("attacker-name").style.backgroundImage = isTeamMode() ? "" : "var(--shine),"+at.grad;
   $("target-name").style.backgroundImage = isTeamMode() ? "" : "var(--shine),"+tg.grad;
+  if(at.pencil) $("attacker-name").style.setProperty("--pencil", at.pencil);   // цветной карандаш (тема «Тетрадь»)
+  if(tg.pencil) $("target-name").style.setProperty("--pencil", tg.pencil);
   $("attacker-avatar").textContent = face(at);
   setHpBar($("attacker-hp-fill"), $("attacker-hp-text"), at.hp, at.maxHp);
   $("target-avatar").textContent = face(tg);
@@ -2063,7 +2077,7 @@ function renderPlayers(){
     const isCurrent = state.current && state.current.attackerIdx===i;
     const badge = (p.alive && !isCurrent && qPos>=state.queuePos) ? '<div class="p-queue">'+(qPos - state.queuePos + 1)+'</div>' : "";
     div.innerHTML = badge +
-      '<div class="p-head"><span class="avatar-sm" title="'+esc(p.avatar.name)+'">'+p.avatar.emoji+'</span><div class="p-name" style="background-image:var(--shine),'+p.grad+'">'+esc(p.name)+'</div></div>'+
+      '<div class="p-head"><span class="avatar-sm" title="'+esc(p.avatar.name)+'">'+p.avatar.emoji+'</span><div class="p-name" style="background-image:var(--shine),'+p.grad+';--pencil:'+p.pencil+'">'+esc(p.name)+'</div></div>'+
       '<div class="hp-wrap small"><div class="hp-bar"><div class="hp-fill"></div><div class="hp-text"></div></div></div>';
     setHpBar(div.querySelector(".hp-fill"), div.querySelector(".hp-text"), p.hp, p.maxHp);
     div.id = "pcard-"+i;
@@ -3025,7 +3039,7 @@ function renderResults(finalists, defeat){
     finalists.slice(0,3).forEach((p,i)=>{
       const d = document.createElement("div");
       d.className = "card ornate";
-      const nickStyle = isTeamMode() ? '' : ' style="background-image:var(--shine),'+p.grad+'"';
+      const nickStyle = isTeamMode() ? '' : ' style="background-image:var(--shine),'+p.grad+';--pencil:'+p.pencil+'"';
       d.innerHTML = '<div class="medal">'+medals[i]+'</div><div style="font-size:40px;">'+face(p)+'</div><div class="p-nick"'+nickStyle+'>'+esc(p.name)+'</div>'+
         '<div class="p-pts">+'+PRIZE[i]+'</div>';
       pod.appendChild(d);
@@ -3034,7 +3048,7 @@ function renderResults(finalists, defeat){
       const k = units()[state.bossKiller];
       const d = document.createElement("div");
       d.className = "card ornate";
-      const nickStyle = isTeamMode() ? '' : ' style="background-image:var(--shine),'+k.grad+'"';
+      const nickStyle = isTeamMode() ? '' : ' style="background-image:var(--shine),'+k.grad+';--pencil:'+k.pencil+'"';
       d.innerHTML = '<div class="medal">💀</div><div style="font-size:40px;">'+face(k)+'</div><div class="p-nick"'+nickStyle+'>'+esc(k.name)+'</div>'+
         '<div class="p-pts"><span class="badge-boss">ДОБИЛ БОССА</span><br>+'+BOSS_KILL_BONUS+'</div>';
       pod.appendChild(d);
@@ -3060,7 +3074,7 @@ function renderResults(finalists, defeat){
     rows.forEach((t,i)=>{
       const members = t.members.map(id=>state.players[id]);
       const emojis = members.map(m=>m.avatar.emoji).join("");
-      const nicks = members.map(m=>'<span style="color:'+m.color+'">'+esc(m.name)+"</span>").join(", ");
+      const nicks = members.map(m=>'<span style="color:'+m.color+';--pencil:'+m.pencil+'">'+esc(m.name)+"</span>").join(", ");
       const correct = members.reduce((s,m)=>s+m.correct,0);
       const answers = members.reduce((s,m)=>s+m.answers,0);
       const dmgPvp = t.dmgDealt - t.dmgBoss;
@@ -3078,7 +3092,7 @@ function renderResults(finalists, defeat){
       const dmgPvp = p.dmgDealt - p.dmgBoss;
       html += "<tr class='"+(p.alive?"":"dead-row")+"'>"+
         "<td class='place'>"+(i+1)+"</td>"+
-        "<td class='name' style='color:"+p.color+"'>"+p.avatar.emoji+" "+esc(p.name)+(state.bossKiller===p.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
+        "<td class='name' style='color:"+p.color+";--pencil:"+p.pencil+"'>"+p.avatar.emoji+" "+esc(p.name)+(state.bossKiller===p.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
         "<td><b>"+p.points+"</b></td><td>"+statusOf(p, false)+"</td>"+
         "<td>"+p.dmgBoss+"</td><td>"+Math.max(0,dmgPvp)+"</td><td>"+p.dmgDealt+"</td><td>"+p.dmgTaken+"</td>"+
         "<td>"+p.correct+" / "+p.answers+"</td></tr>";
@@ -3096,7 +3110,7 @@ function renderResults(finalists, defeat){
     let ph = "<tr><th>Игрок</th><th>Команда</th><th>Статус</th><th>Урон боссу</th><th>Нанесено</th><th>Получено</th><th>Ответы</th></tr>";
     prows.forEach(p=>{
       ph += "<tr class='"+(p.alive?"":"dead-row")+"'>"+
-        "<td class='name' style='color:"+p.color+"'>"+p.avatar.emoji+" "+esc(p.name)+"</td>"+
+        "<td class='name' style='color:"+p.color+";--pencil:"+p.pencil+"'>"+p.avatar.emoji+" "+esc(p.name)+"</td>"+
         "<td>"+esc(state.teams[p.teamId].name)+"</td>"+
         "<td>"+statusOf(p, false)+"</td>"+
         "<td>"+p.dmgBoss+"</td><td>"+p.dmgDealt+"</td><td>"+p.dmgTaken+"</td>"+
