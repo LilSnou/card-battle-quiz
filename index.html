@@ -129,6 +129,106 @@ html[data-theme="japan"] #sakura-scene{display:block;}
   100%{transform:translate(-6px,114vh) rotate(380deg);}
 }
 
+/* ---------- Сцены тем: Хеллоуин, Новый год, Тёмная фэнтези ---------- */
+#halloween-scene,#newyear-scene,#fantasy-scene{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; display:none;}
+html[data-theme="halloween"] #halloween-scene{display:block;}
+html[data-theme="newyear"]  #newyear-scene{display:block;}
+html[data-theme="fantasy"]  #fantasy-scene{display:block;}
+#fantasy-scene svg{position:absolute; inset:0; width:100%; height:100%;}
+.ground-svg{position:absolute; left:0; bottom:0; width:100%; height:auto;}
+
+/* --- Хеллоуин: пролетающие силуэты мышей --- */
+#halloween-scene .bat{position:absolute; left:0; will-change:transform;
+  animation-name:batFly; animation-timing-function:linear; animation-iteration-count:infinite;}
+#halloween-scene .bat svg{animation:flap .3s ease-in-out infinite alternate;}
+@keyframes flap{from{transform:scaleY(1);} to{transform:scaleY(.45);}}
+@keyframes batFly{
+  0%{transform:translate(-16vw,0);}
+  20%{transform:translate(16vw,-6vh);}
+  40%{transform:translate(42vw,3vh);}
+  60%{transform:translate(68vw,-5vh);}
+  80%{transform:translate(94vw,4vh);}
+  100%{transform:translate(116vw,0);}
+}
+/* тыквы: внутри мерцает огонь */
+#halloween-scene .flame{animation:flick .38s steps(2,end) infinite alternate;}
+@keyframes flick{from{fill:#ffb020; opacity:.75;} to{fill:#ff7a00; opacity:1;}}
+#halloween-scene .pump-glow{animation:glowFlick .55s ease-in-out infinite alternate;}
+@keyframes glowFlick{from{opacity:.25;} to{opacity:.6;}}
+
+/* --- Новый год: сугробы, ёлка с гирляндой, сани в небе --- */
+#newyear-scene .gar{animation:blink 1.15s ease-in-out infinite;}
+#newyear-scene .gar.g2{animation-delay:.38s;}
+#newyear-scene .gar.g3{animation-delay:.76s;}
+@keyframes blink{0%,100%{opacity:.1;} 50%{opacity:1;}}
+#newyear-scene .tree-star{transform-box:fill-box; transform-origin:center; animation:starPulse 1.6s ease-in-out infinite alternate;}
+@keyframes starPulse{from{opacity:.55; transform:scale(.92);} to{opacity:1; transform:scale(1.08);}}
+#newyear-scene .sleigh{position:absolute; top:9%; left:0; will-change:transform; animation:sleighFly 55s linear infinite;}
+@keyframes sleighFly{
+  0%{transform:translate(-26vw,0);}
+  50%{transform:translate(50vw,-3vh);}
+  100%{transform:translate(126vw,0);}
+}
+/* непрерывно идущий снег */
+#snowfall{position:absolute; inset:0;}
+#snowfall i{
+  position:absolute; top:-4vh; border-radius:50%; background:#fff;
+  animation-name:snowFall; animation-timing-function:linear; animation-iteration-count:infinite;
+}
+#snowfall i.glow{box-shadow:0 0 5px 1px rgba(255,255,255,.8);}
+@keyframes snowFall{
+  0%  {transform:translate(0,-6vh);}
+  25% {transform:translate(22px,30vh);}
+  50% {transform:translate(-14px,60vh);}
+  75% {transform:translate(16px,90vh);}
+  100%{transform:translate(-8px,118vh);}
+}
+
+/* --- Тёмная фэнтези: кровавая луна, готический замок на вершине --- */
+#fantasy-scene .w{animation:winFlick 3.2s ease-in-out infinite alternate;}
+@keyframes winFlick{from{opacity:.5;} to{opacity:.95;}}
+#fantasy-scene .moon-halo{animation:haloBreathe 6s ease-in-out infinite alternate;}
+@keyframes haloBreathe{from{opacity:.5;} to{opacity:.85;}}
+
+/* ---------- Тема «Тетрадь»: лист в линейку, карандашь, картонные рамки ---------- */
+html[data-theme="notebook"]{
+  --bg:#f4efe0; --panel:#d8b57f; --panel-2:#e2c28d; --edge:#8a6a3b;
+  --gold:#6b4a1a; --gold-bright:#4a3413; --ruby:#a33; --ruby-dark:#7a2222;
+  --emerald:#2e7d4f; --amber:#b8860b; --silver:#3a3a46; --violet:#4a4a9a; --muted:#77705f;
+  --g-gold:linear-gradient(180deg,#5c5c68 0%,#3c3c48 40%,#2b2b35 55%,#4e4e5a 75%,#33333d 100%);
+  --g-silver:linear-gradient(180deg,#6a6a76 0%,#44444f 45%,#2e2e38 60%,#55555f 100%);
+  --g-violet:linear-gradient(180deg,#5a5ab0 0%,#3a3a8a 45%,#28286a 60%,#4a4aa0 100%);
+  --g-ruby:linear-gradient(180deg,#b04a4a 0%,#8a2e2e 45%,#6a2020 60%,#a04040 100%);
+  --g-emerald:linear-gradient(180deg,#3a8a5a 0%,#266a40 45%,#185231 60%,#327a4e 100%);
+}
+html[data-theme="notebook"] body{
+  color:#3a3a46;
+  text-shadow:0 0 .5px rgba(30,30,40,.55);   /* мягкий «графит» карандаша */
+  background:
+    linear-gradient(90deg, transparent 0 86px, rgba(214,70,70,.5) 86px 89px, transparent 89px),
+    repeating-linear-gradient(180deg, transparent 0 33px, rgba(92,132,200,.4) 33px 35px),
+    #f5f0e2;
+  background-attachment:fixed;
+}
+html[data-theme="notebook"] .card{   /* рамки — из картона */
+  background:linear-gradient(165deg,#dcbc85 0%,#cda765 55%,#bd9352 100%);
+  border-color:#7a5a2e;
+  box-shadow:inset 0 0 22px rgba(90,60,20,.3), 0 10px 22px rgba(60,40,10,.3);
+}
+html[data-theme="notebook"] .overlay{background:rgba(245,240,226,.88);}
+html[data-theme="notebook"] #bg-decor span{opacity:.13; filter:none;}
+html[data-theme="notebook"] .mode-btn{background:linear-gradient(180deg,rgba(239,230,205,.96),rgba(222,208,175,.97)); color:#3a3a46;}
+html[data-theme="notebook"] .btn{background:linear-gradient(180deg,#eadfc0,#d9caa3); color:#4a3413; border-color:#8a6a3b; box-shadow:0 8px 16px rgba(80,55,15,.3);}
+html[data-theme="notebook"] .btn:hover{box-shadow:0 0 22px rgba(122,90,46,.45), 0 8px 16px rgba(80,55,15,.3);}
+html[data-theme="notebook"] .btn-ruby{background:linear-gradient(180deg,#d99a9a,#c17070); color:#4a1414; border-color:#a33;}
+html[data-theme="notebook"] .count-btn{background:linear-gradient(180deg,#f0e7cd,#dfd2af); color:#3a3a46;}
+html[data-theme="notebook"] .diff-btn{background:linear-gradient(180deg,#f0e7cd,#dfd2af); color:#3a3a46;}
+html[data-theme="notebook"] #boss-name-input,
+html[data-theme="notebook"] .nick-slot input,
+html[data-theme="notebook"] .team-slot input{background:#faf6ea; color:#4a3413; box-shadow:inset 0 3px 8px rgba(90,60,20,.22);}
+html[data-theme="notebook"] .q-opt{background:linear-gradient(165deg,#ece1c5,#dccdaa); color:#33333e; border-color:#8a6a3b;}
+html[data-theme="notebook"] #toast{background:linear-gradient(165deg,#e3c288,#cba563); color:#3a3a46;}
+
 /* ---------- Общая карта ---------- */
 .card{
   background:linear-gradient(165deg,#241a33 0%,#1a1226 55%,#140e1d 100%);
@@ -910,6 +1010,241 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
   <div class="results-actions"><button class="btn btn-ruby btn-big" id="again-btn">⟲ Новая игра</button></div>
 </div>
 
+<!-- ================= СЦЕНЫ ТЕМ ================= -->
+<!-- Хеллоуин: летучие мыши и светящиеся тыквы -->
+<div id="halloween-scene" aria-hidden="true">
+  <div class="bat" style="top:8%; animation-duration:16s; animation-delay:-2s;">
+    <svg width="86" height="38" viewBox="0 0 100 44">
+      <g fill="#0a0512">
+        <ellipse cx="50" cy="24" rx="8" ry="12"/>
+        <path d="M50 14 L44 3 L47 14 Z"/><path d="M50 14 L56 3 L53 14 Z"/>
+        <path d="M44 16 C34 6 20 4 6 8 C12 10 14 14 12 18 C20 14 24 18 28 22 C32 26 38 28 44 28 Z"/>
+        <path d="M56 16 C66 6 80 4 94 8 C88 10 86 14 88 18 C80 14 76 18 72 22 C68 26 62 28 56 28 Z"/>
+      </g>
+    </svg>
+  </div>
+  <div class="bat" style="top:16%; animation-duration:22s; animation-delay:-9s;">
+    <svg width="64" height="28" viewBox="0 0 100 44">
+      <g fill="#0a0512">
+        <ellipse cx="50" cy="24" rx="8" ry="12"/>
+        <path d="M50 14 L44 3 L47 14 Z"/><path d="M50 14 L56 3 L53 14 Z"/>
+        <path d="M44 16 C34 6 20 4 6 8 C12 10 14 14 12 18 C20 14 24 18 28 22 C32 26 38 28 44 28 Z"/>
+        <path d="M56 16 C66 6 80 4 94 8 C88 10 86 14 88 18 C80 14 76 18 72 22 C68 26 62 28 56 28 Z"/>
+      </g>
+    </svg>
+  </div>
+  <div class="bat" style="top:24%; animation-duration:13s; animation-delay:-5s;">
+    <svg width="48" height="21" viewBox="0 0 100 44">
+      <g fill="#0a0512">
+        <ellipse cx="50" cy="24" rx="8" ry="12"/>
+        <path d="M50 14 L44 3 L47 14 Z"/><path d="M50 14 L56 3 L53 14 Z"/>
+        <path d="M44 16 C34 6 20 4 6 8 C12 10 14 14 12 18 C20 14 24 18 28 22 C32 26 38 28 44 28 Z"/>
+        <path d="M56 16 C66 6 80 4 94 8 C88 10 86 14 88 18 C80 14 76 18 72 22 C68 26 62 28 56 28 Z"/>
+      </g>
+    </svg>
+  </div>
+  <div class="bat" style="top:12%; animation-duration:19s; animation-delay:-14s;">
+    <svg width="74" height="33" viewBox="0 0 100 44">
+      <g fill="#0a0512">
+        <ellipse cx="50" cy="24" rx="8" ry="12"/>
+        <path d="M50 14 L44 3 L47 14 Z"/><path d="M50 14 L56 3 L53 14 Z"/>
+        <path d="M44 16 C34 6 20 4 6 8 C12 10 14 14 12 18 C20 14 24 18 28 22 C32 26 38 28 44 28 Z"/>
+        <path d="M56 16 C66 6 80 4 94 8 C88 10 86 14 88 18 C80 14 76 18 72 22 C68 26 62 28 56 28 Z"/>
+      </g>
+    </svg>
+  </div>
+  <div class="bat" style="top:28%; animation-duration:25s; animation-delay:-18s;">
+    <svg width="56" height="25" viewBox="0 0 100 44">
+      <g fill="#0a0512">
+        <ellipse cx="50" cy="24" rx="8" ry="12"/>
+        <path d="M50 14 L44 3 L47 14 Z"/><path d="M50 14 L56 3 L53 14 Z"/>
+        <path d="M44 16 C34 6 20 4 6 8 C12 10 14 14 12 18 C20 14 24 18 28 22 C32 26 38 28 44 28 Z"/>
+        <path d="M56 16 C66 6 80 4 94 8 C88 10 86 14 88 18 C80 14 76 18 72 22 C68 26 62 28 56 28 Z"/>
+      </g>
+    </svg>
+  </div>
+  <div class="bat" style="top:6%; animation-duration:15s; animation-delay:-7s;">
+    <svg width="42" height="19" viewBox="0 0 100 44">
+      <g fill="#0a0512">
+        <ellipse cx="50" cy="24" rx="8" ry="12"/>
+        <path d="M50 14 L44 3 L47 14 Z"/><path d="M50 14 L56 3 L53 14 Z"/>
+        <path d="M44 16 C34 6 20 4 6 8 C12 10 14 14 12 18 C20 14 24 18 28 22 C32 26 38 28 44 28 Z"/>
+        <path d="M56 16 C66 6 80 4 94 8 C88 10 86 14 88 18 C80 14 76 18 72 22 C68 26 62 28 56 28 Z"/>
+      </g>
+    </svg>
+  </div>
+  <!-- огромные тыквы с мерцающим огнём внутри -->
+  <svg class="ground-svg" viewBox="0 0 1440 300">
+    <defs>
+      <radialGradient id="pglow"><stop offset="0%" stop-color="rgba(255,150,30,.9)"/><stop offset="100%" stop-color="rgba(255,120,0,0)"/></radialGradient>
+    </defs>
+    <path fill="#0d0612" d="M0 300 L0 214 C240 184 430 236 700 208 C960 184 1190 230 1440 202 L1440 300 Z"/>
+    <g transform="translate(160,158)">
+      <circle class="pump-glow" cx="0" cy="55" r="110" fill="url(#pglow)"/>
+      <ellipse cx="0" cy="62" rx="92" ry="78" fill="#c2570f"/>
+      <ellipse cx="-36" cy="62" rx="56" ry="74" fill="#a94708" opacity=".65"/>
+      <ellipse cx="36" cy="62" rx="56" ry="74" fill="#a94708" opacity=".65"/>
+      <path d="M-6 -28 C-14 -52 2 -64 12 -50 C19 -41 10 -32 4 -28 Z" fill="#3f6b2a"/>
+      <g class="flame" fill="#ffb020">
+        <path d="M-48 28 L-21 33 L-36 53 Z"/>
+        <path d="M48 28 L21 33 L36 53 Z"/>
+        <path d="M-46 68 L-28 63 L-21 73 L-6 66 L0 78 L6 66 L21 73 L28 63 L46 68 L36 90 L-36 90 Z"/>
+      </g>
+    </g>
+    <g transform="translate(720,170) scale(1.25)">
+      <circle class="pump-glow" cx="0" cy="55" r="120" fill="url(#pglow)"/>
+      <ellipse cx="0" cy="62" rx="100" ry="86" fill="#c2570f"/>
+      <ellipse cx="-40" cy="62" rx="62" ry="82" fill="#a94708" opacity=".65"/>
+      <ellipse cx="40" cy="62" rx="62" ry="82" fill="#a94708" opacity=".65"/>
+      <path d="M-6 -32 C-16 -58 2 -70 14 -54 C22 -44 12 -36 4 -32 Z" fill="#3f6b2a"/>
+      <g class="flame" fill="#ffb020">
+        <path d="M-56 30 L-24 36 L-42 58 Z"/>
+        <path d="M56 30 L24 36 L42 58 Z"/>
+        <path d="M-54 74 L-32 68 L-24 80 L-6 72 L0 86 L6 72 L24 80 L32 68 L54 74 L42 100 L-42 100 Z"/>
+      </g>
+    </g>
+    <g transform="translate(1280,162) scale(.95)">
+      <circle class="pump-glow" cx="0" cy="55" r="110" fill="url(#pglow)"/>
+      <ellipse cx="0" cy="62" rx="94" ry="80" fill="#c2570f"/>
+      <ellipse cx="-37" cy="62" rx="58" ry="76" fill="#a94708" opacity=".65"/>
+      <ellipse cx="37" cy="62" rx="58" ry="76" fill="#a94708" opacity=".65"/>
+      <path d="M-6 -28 C-14 -52 2 -64 12 -50 C19 -41 10 -32 4 -28 Z" fill="#3f6b2a"/>
+      <g class="flame" fill="#ffb020">
+        <path d="M-50 28 L-22 33 L-37 54 Z"/>
+        <path d="M50 28 L22 33 L37 54 Z"/>
+        <path d="M-48 68 L-29 63 L-22 73 L-7 66 L0 79 L7 66 L22 73 L29 63 L48 68 L37 91 L-37 91 Z"/>
+      </g>
+    </g>
+  </svg>
+</div>
+
+<!-- Новый год: сани с оленями, сугробы и ёлка с гирляндой -->
+<div id="newyear-scene" aria-hidden="true">
+  <div class="sleigh">
+    <svg width="330" height="96" viewBox="0 0 350 96">
+      <g fill="#0a1226" stroke="#0a1226">
+        <g transform="translate(10,34)">
+          <ellipse cx="20" cy="14" rx="16" ry="8"/>
+          <path d="M32 10 l8 -12 5 3 -7 12z" stroke="none"/>
+          <circle cx="43" cy="-2" r="5" stroke="none"/>
+          <path d="M43 -7 l-5 -10 M43 -7 l5 -10 M41 -12 l-7 -3 M45 -12 l7 -3" stroke-width="2.5" fill="none"/>
+          <path d="M8 20 l-7 13 M16 22 l-3 13 M28 22 l5 13 M34 19 l9 11" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        </g>
+        <g transform="translate(84,22)">
+          <ellipse cx="20" cy="14" rx="16" ry="8"/>
+          <path d="M32 10 l8 -12 5 3 -7 12z" stroke="none"/>
+          <circle cx="43" cy="-2" r="5" stroke="none"/>
+          <path d="M43 -7 l-5 -10 M43 -7 l5 -10 M41 -12 l-7 -3 M45 -12 l7 -3" stroke-width="2.5" fill="none"/>
+          <path d="M8 20 l-7 13 M16 22 l-3 13 M28 22 l5 13 M34 19 l9 11" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        </g>
+        <g transform="translate(158,30)">
+          <ellipse cx="20" cy="14" rx="16" ry="8"/>
+          <path d="M32 10 l8 -12 5 3 -7 12z" stroke="none"/>
+          <circle cx="43" cy="-2" r="5" stroke="none"/>
+          <path d="M43 -7 l-5 -10 M43 -7 l5 -10 M41 -12 l-7 -3 M45 -12 l7 -3" stroke-width="2.5" fill="none"/>
+          <path d="M8 20 l-7 13 M16 22 l-3 13 M28 22 l5 13 M34 19 l9 11" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        </g>
+        <!-- построчки к саням -->
+        <path d="M244 62 L214 52 M212 48 L198 40" stroke-width="2.5" fill="none"/>
+        <!-- сани с Санта -->
+        <circle cx="286" cy="30" r="11" stroke="none"/>
+        <path d="M274 24 C277 8 296 8 298 24 Z" stroke="none"/>
+        <path d="M254 62 C254 46 264 38 282 38 L312 38 C330 38 338 48 338 62 C338 76 328 82 312 82 L270 82 C258 82 254 74 254 62 Z" stroke="none"/>
+        <path d="M326 44 C340 30 352 42 352 56 L352 66 C338 72 326 62 326 52 Z" stroke="none"/>
+        <path d="M252 82 C240 84 232 80 230 72 L236 68 C238 74 242 76 252 74 Z" stroke="none"/>
+      </g>
+    </svg>
+  </div>
+  <svg class="ground-svg" viewBox="0 0 1440 640">
+    <path fill="#e3eefb" d="M0 640 L0 310 C220 258 420 340 700 298 C980 256 1200 328 1440 276 L1440 640 Z"/>
+    <path fill="#f7fbff" d="M0 640 L0 436 C260 394 480 470 760 426 C1020 386 1240 456 1440 414 L1440 640 Z"/>
+    <!-- большая новогодняя ёлка в правом углу -->
+    <g transform="translate(1190,110)">
+      <rect x="-17" y="352" width="34" height="96" fill="#2b1a12"/>
+      <path fill="#123a22" d="M0 -58 L118 128 L78 128 L148 256 L-148 256 L-78 128 L-118 128 Z"/>
+      <g stroke="#0d2c1a" stroke-width="3" fill="none">
+        <path d="M-84 92 C-40 116 40 116 84 92"/>
+        <path d="M-112 210 C-50 240 50 240 112 210"/>
+      </g>
+      <g>
+        <circle class="gar g1" cx="-70" cy="96" r="7" fill="#ff5a5a"/>
+        <circle class="gar g2" cx="-34" cy="108" r="7" fill="#ffd76a"/>
+        <circle class="gar g3" cx="4" cy="112" r="7" fill="#6ab8ff"/>
+        <circle class="gar g1" cx="42" cy="106" r="7" fill="#ff5a5a"/>
+        <circle class="gar g2" cx="76" cy="94" r="7" fill="#ffd76a"/>
+        <circle class="gar g3" cx="-96" cy="212" r="8" fill="#6ab8ff"/>
+        <circle class="gar g1" cx="-58" cy="226" r="8" fill="#ff5a5a"/>
+        <circle class="gar g2" cx="-18" cy="234" r="8" fill="#ffd76a"/>
+        <circle class="gar g3" cx="24" cy="233" r="8" fill="#6ab8ff"/>
+        <circle class="gar g1" cx="64" cy="225" r="8" fill="#ff5a5a"/>
+        <circle class="gar g2" cx="100" cy="211" r="8" fill="#ffd76a"/>
+        <circle class="gar g3" cx="-40" cy="10" r="6" fill="#6ab8ff"/>
+        <circle class="gar g1" cx="24" cy="12" r="6" fill="#ff5a5a"/>
+      </g>
+      <polygon class="tree-star" fill="#ffd76a" points="0,-96 13,-58 54,-58 21,-34 34,6 0,-18 -34,6 -21,-34 -54,-58 -13,-58"/>
+    </g>
+  </svg>
+  <!-- падающий снег поверх сценки -->
+  <div id="snowfall"></div>
+</div>
+
+<!-- Тёмная фэнтези: кровавая луна, гора с готическим замком, черепа и мечи на пути -->
+<div id="fantasy-scene" aria-hidden="true">
+  <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice">
+    <defs>
+      <radialGradient id="bmGlow"><stop offset="0%" stop-color="rgba(212,63,63,.4)"/><stop offset="100%" stop-color="rgba(212,63,63,0)"/></radialGradient>
+      <radialGradient id="bmCore" cx="38%" cy="34%"><stop offset="0%" stop-color="#ff6a5a"/><stop offset="60%" stop-color="#c62f2c"/><stop offset="100%" stop-color="#7e1a1a"/></radialGradient>
+      <symbol id="skullSym" viewBox="0 0 40 46">
+        <path fill="#d8d2e2" d="M20 1C9.5 1 2 8.6 2 19c0 6 3.2 10.4 5.2 12.4V38c0 3 2.2 5 5.2 5h15.2c3 0 5.2-2 5.2-5v-6.6C34.8 29.4 38 25 38 19 38 8.6 30.5 1 20 1z"/>
+        <circle cx="13" cy="19.5" r="5.2" fill="#120d1e"/><circle cx="27" cy="19.5" r="5.2" fill="#120d1e"/>
+        <path d="M17.6 28h4.8L20 34z" fill="#120d1e"/>
+        <path d="M15 39v5M20 39v5M25 39v5" stroke="#120d1e" stroke-width="2.4"/>
+      </symbol>
+      <symbol id="swordSym" viewBox="0 0 40 56">
+        <path fill="#cfd6e2" d="M20 2 L25 13 L25 36 L20 42 L15 36 L15 13 Z"/>
+        <rect x="7" y="36" width="26" height="5" rx="2" fill="#8a94a8"/>
+        <rect x="17.5" y="41" width="5" height="10" rx="2" fill="#6b7484"/>
+        <circle cx="20" cy="53" r="3.4" fill="#8a94a8"/>
+      </symbol>
+    </defs>
+    <!-- кровавая луна над замком -->
+    <circle class="moon-halo" cx="700" cy="190" r="270" fill="url(#bmGlow)"/>
+    <circle cx="700" cy="190" r="128" fill="url(#bmCore)"/>
+    <circle cx="662" cy="160" r="22" fill="#8f1f1d" opacity=".45"/>
+    <circle cx="734" cy="232" r="16" fill="#8f1f1d" opacity=".4"/>
+    <circle cx="714" cy="138" r="10" fill="#8f1f1d" opacity=".35"/>
+    <!-- гора -->
+    <path fill="#120d1e" d="M0 900 L0 706 L262 560 L424 644 L700 330 L902 472 L1132 402 L1440 604 L1440 900 Z"/>
+    <!-- готический замок на вершине -->
+    <g fill="#0a0713">
+      <rect x="628" y="252" width="152" height="82"/>
+      <rect x="612" y="198" width="36" height="136"/>
+      <path d="M612 198 L630 142 L648 198 Z"/>
+      <rect x="674" y="150" width="46" height="184"/>
+      <path d="M674 150 L697 82 L720 150 Z"/>
+      <rect x="744" y="208" width="34" height="126"/>
+      <path d="M744 208 L761 156 L778 208 Z"/>
+      <path d="M628 252 h14 v-12 h14 v12 h16 v-12 h14 v12 h16 v-12 h14 v12 h16 v-12 h14 v12 h14 v-12 h14 v12 v-14 h-152 z"/>
+    </g>
+    <g class="w" fill="#f5c542">
+      <rect x="691" y="192" width="9" height="17" rx="4"/>
+      <rect x="662" y="282" width="10" height="17" rx="4"/>
+      <rect x="755" y="256" width="9" height="15" rx="4"/>
+      <rect x="626" y="242" width="8" height="14" rx="3"/>
+      <rect x="702" y="242" width="8" height="14" rx="3"/>
+    </g>
+    <!-- тропа к замку -->
+    <path d="M150 900 C330 812 258 722 430 668 C560 626 498 542 640 486 C690 466 690 420 682 356" stroke="#3d3058" stroke-width="12" stroke-dasharray="26 20" stroke-linecap="round" fill="none" opacity=".8"/>
+    <!-- черепи и мечи по дороге -->
+    <use href="#skullSym" x="212" y="756" width="46" height="46"/>
+    <use href="#swordSym" x="286" y="690" width="54" height="54"/>
+    <use href="#skullSym" x="392" y="616" width="40" height="40"/>
+    <use href="#swordSym" x="486" y="540" width="48" height="48"/>
+    <use href="#skullSym" x="566" y="470" width="36" height="36"/>
+    <use href="#swordSym" x="646" y="392" width="44" height="44"/>
+  </svg>
+</div>
+
 <!-- звёздное небо (тема «Звёздное небо») -->
 <div id="star-field" aria-hidden="true"></div>
 
@@ -1169,6 +1504,14 @@ const THEME_AVATARS = {
     {emoji:"🌙",  name:"Луна",          color:"#1e293b"},
     {emoji:"☄️", name:"Метеор",        color:"#374151"},
     {emoji:"🌠", name:"Падшая звезда", color:"#1e1b4b"}
+  ],
+  notebook:[
+    {emoji:"✏️", name:"Карандаш",  color:"#7a4a12"},
+    {emoji:"📎", name:"Скрепка",   color:"#6b7280"},
+    {emoji:"📏", name:"Линейка",   color:"#8a6a3b"},
+    {emoji:"📓", name:"Тетрадь",   color:"#1e3a8a"},
+    {emoji:"📐", name:"Угольник",  color:"#4b5563"},
+    {emoji:"🎒", name:"Рюкзак",    color:"#78350f"}
   ]
 };
 /* случайная аватарка: базовые + набор текущего оформления */
@@ -2927,6 +3270,10 @@ const THEMES = {
   stars:{
     name:"Звёздное небо",
     decor:["⭐","✨","🌙","🌟","☄️","🪐"]
+  },
+  notebook:{
+    name:"Тетрадь",
+    decor:["✏️","📓","🖊️","📏","📕","📎","📐","🖍️"]
   }
 };
 const DECOR_FANTASY = $("bg-decor").innerHTML;   // статичный «родной» декор сохраняем для возврата
@@ -2949,6 +3296,7 @@ function applyTheme(id){
   store.set("cbq-theme", id);
   buildDecor(id);
   buildSakura(id === "japan");   // падающие лепестки — только для Японии
+  buildSnow(id === "newyear");   // идущий снег — только для Нового года
   document.querySelectorAll("#theme-grid .theme-btn").forEach(b=>b.classList.toggle("active", b.dataset.t===id));
 }
 /* звёздное поле для темы «Звёздное небо» — строится один раз, мерцает через CSS */
@@ -2980,6 +3328,24 @@ function buildSakura(on){
     box.appendChild(p);
   }
 }
+/* идущий снег — только когда включена тема «Новый год» */
+function buildSnow(on){
+  const box = $("snowfall");
+  box.innerHTML = "";
+  if(!on) return;
+  for(let i=0;i<44;i++){
+    const f = document.createElement("i");
+    const w = 2 + Math.round(Math.random()*5);
+    f.style.left = (Math.random()*104-2).toFixed(1)+"%";
+    f.style.width = w+"px";
+    f.style.height = w+"px";
+    f.style.opacity = (0.5 + Math.random()*0.5).toFixed(2);
+    if(Math.random() < 0.25) f.className = "glow";                  // крупные хлопья с сиянием
+    f.style.animationDuration = (10 + Math.random()*16).toFixed(1)+"s";
+    f.style.animationDelay = (-Math.random()*24).toFixed(1)+"s";    // минус — снег уже идёт
+    box.appendChild(f);
+  }
+}
 function buildThemeGrid(){
   const grid = $("theme-grid");
   grid.innerHTML = "";
@@ -2987,7 +3353,7 @@ function buildThemeGrid(){
     const b = document.createElement("button");
     b.className = "theme-btn";
     b.dataset.t = id;
-    b.innerHTML = '<span class="theme-ico">'+(id==="fantasy" ? "🗡️" : id==="halloween" ? "🎃" : id==="newyear" ? "🎄" : id==="japan" ? "🌸" : "🌟")+'</span>'
+    b.innerHTML = '<span class="theme-ico">'+(id==="fantasy" ? "🗡️" : id==="halloween" ? "🎃" : id==="newyear" ? "🎄" : id==="japan" ? "🌸" : id==="notebook" ? "📓" : "🌟")+'</span>'
       + '<span class="theme-name">'+THEMES[id].name+'</span><span class="theme-check">✔ выбрано</span>';
     b.onclick = ()=>{ applyTheme(id); sfx.flip(); };
     grid.appendChild(b);
