@@ -116,6 +116,24 @@ html[data-theme="stars"] #star-field{display:block;}
 #star-field i{position:absolute; background:#fff; border-radius:50%; animation:twinkle ease-in-out infinite alternate;}
 #star-field i.big{box-shadow:0 0 6px 1px rgba(255,255,255,.85);}
 @keyframes twinkle{from{opacity:.12;} to{opacity:1;}}
+/* падающие звёзды: изредка пролетают по небу на 1–2 секунды (тема «Звёздное небо») */
+#shooting{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; display:none;}
+html[data-theme="stars"] #shooting{display:block;}
+#shooting i.shoot{
+  position:absolute; width:150px; height:2px; border-radius:2px;
+  background:linear-gradient(90deg, rgba(210,230,255,0), rgba(235,245,255,.95));
+  opacity:0; animation-name:shoot; animation-timing-function:ease-out; animation-fill-mode:forwards;
+}
+#shooting i.shoot::after{
+  content:""; position:absolute; right:-2px; top:-1.5px; width:5px; height:5px; border-radius:50%;
+  background:#fff; box-shadow:0 0 8px 2px rgba(210,235,255,.85);
+}
+@keyframes shoot{
+  0%{opacity:0; transform:translate(0,0) rotate(var(--shoot-rot,0deg));}
+  10%{opacity:1;}
+  70%{opacity:1;}
+  100%{opacity:0; transform:translate(var(--shoot-x,160px), var(--shoot-y,90px)) rotate(var(--shoot-rot,0deg));}
+}
 
 /* ---------- Млечный путь по центру неба (тема «Звёздное небо») ---------- */
 #milkyway{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; display:none;}
@@ -128,6 +146,10 @@ html[data-theme="stars"] #milkyway{display:block;}
 /* ---------- Чернильная клякса в правом верхнем углу (тема «Тетрадь») ---------- */
 #ink-blot{position:fixed; top:-46px; right:-40px; width:min(34vw,330px); pointer-events:none; z-index:0; display:none; opacity:.87; transform:rotate(-6deg);}
 html[data-theme="notebook"] #ink-blot{display:block;}
+
+/* ---------- Размытие фона (настройка «Размытие фона», запоминается) ---------- */
+#bg-blur{position:fixed; inset:0; pointer-events:none; z-index:0;}
+html[data-blur="on"] #bg-blur{backdrop-filter:blur(35px); -webkit-backdrop-filter:blur(35px);}
 
 /* ---------- Сакура в теме «Япония»: большое дерево и сыплющиеся лепестки ---------- */
 #sakura-scene{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; display:none;}
@@ -1507,6 +1529,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
 
 <!-- звёздное небо (тема «Звёздное небо») -->
 <div id="star-field" aria-hidden="true"></div>
+<div id="shooting" aria-hidden="true"></div>
 
 <!-- сакура в теме «Япония»: дерево + сыплющиеся лепестки -->
 <div id="sakura-scene" aria-hidden="true">
@@ -1599,6 +1622,9 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
   </svg>
 </div>
 
+<!-- слой размытого фона (настройка «Размытие фона»): размывает фон и сцены, интерфейс остаётся резким -->
+<div id="bg-blur" aria-hidden="true"></div>
+
 <!-- ================= НАСТРОЙКИ ================= -->
 <div id="settings-overlay" class="overlay">
   <div class="card ornate modal-card" id="settings-card">
@@ -1607,7 +1633,11 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <span>🔊 Звук</span>
       <button class="btn" id="set-sound">Вкл</button>
     </div>
-    <div class="set-note">Переключатель общий: действует во всей игре и запоминается.</div>
+    <div class="set-row">
+      <span>🌫 Размытие фона</span>
+      <button class="btn" id="set-blur">Выкл</button>
+    </div>
+    <div class="set-note">Переключатели общие: действуют во всей игре и запоминаются.</div>
     <button class="btn btn-ruby" data-close>✕ Закрыть</button>
   </div>
 </div>
@@ -1654,7 +1684,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
         <li><b>🛡 Война гильдий</b> (командная) — 4–6 гильдий по 2 игрока: общий запас HP (вдвое больше), весь урон ×2 (кроме мегавопроса и проклятия), 20 секунд на ответ, баллы — гильдии. Очки говорят по очереди.</li>
       </ul>
       <h3>⋯ Меню и оформление</h3>
-      <p>В правом верхнем углу главного меню — значок <b>⋯</b>: там <b>Настройки</b> (звук), эти <b>Правила</b> и <b>Поменять оформление</b>: Дарк Фэнтези, Хеллоуин, Новый год, Япония, Звёздное небо или Тетрадь. Выбор сохраняется.</p>
+      <p>В правом верхнем углу главного меню — значок <b>⋯</b>: там <b>Настройки</b> (звук и размытие фона), эти <b>Правила</b> и <b>Поменять оформление</b>: Дарк Фэнтези, Хеллоуин, Новый год, Япония, Звёздное небо или Тетрадь. Выбор сохраняется.</p>
     </div>
     <button class="btn btn-ruby" data-close>✕ Понятно</button>
   </div>
@@ -1924,6 +1954,7 @@ const TOPICS = [
    ============================================================ */
 let state = null;
 let muted = false;
+let blurred = false;
 
 /* ---- рандомный металлический цвет для ника каждого игрока ---- */
 const NAME_COLORS = [
@@ -3507,6 +3538,15 @@ function setMuted(v){
 $("mute-btn").onclick = ()=> setMuted(!muted);
 $("set-sound").onclick = ()=> setMuted(!muted);
 
+// ---- размытие фона: переключатель в настройках, запоминается ----
+function setBlur(v){
+  blurred = v;
+  document.documentElement.setAttribute("data-blur", blurred ? "on" : "off");
+  $("set-blur").textContent = blurred ? "Вкл" : "Выкл";
+  store.set("cbq-blur", blurred ? "1" : "0");
+}
+$("set-blur").onclick = ()=> setBlur(!blurred);
+
 // ---- меню «⋯» на главном экране ----
 $("dots-btn").onclick = (e)=>{ e.stopPropagation(); $("dots-menu").classList.toggle("hidden"); sfx.flip(); };
 document.addEventListener("click", (e)=>{   // клик мимо меню — закрывает его
@@ -3536,6 +3576,7 @@ function applyTheme(id){
   store.set("cbq-theme", id);
   buildSakura(id === "japan");   // падающие лепестки — только для Японии
   buildSnow(id === "newyear");   // идущий снег — только для Нового года
+  if(id === "stars") scheduleShootingStar(); else stopShootingStars();   // редкие падающие звёзды — только для Звёздного неба
   document.querySelectorAll("#theme-grid .theme-btn").forEach(b=>b.classList.toggle("active", b.dataset.t===id));
 }
 /* звёздное поле для темы «Звёздное небо» — строится один раз, мерцает через CSS */
@@ -3551,6 +3592,35 @@ function buildStars(){
   }
   f.innerHTML = html;
 }
+/* падающие звёзды: изредка пролетают на 1–2 секунды — только тема «Звёздное небо» */
+let shootTimer = null;
+function spawnShootingStar(){
+  const host = $("shooting");
+  if(!host) return null;
+  const s = document.createElement("i");
+  s.className = "shoot";
+  s.style.left = (5 + Math.random()*70).toFixed(1) + "vw";
+  s.style.top  = (3 + Math.random()*32).toFixed(1) + "vh";
+  const dx = 110 + Math.random()*160, dy = 70 + Math.random()*110;
+  s.style.setProperty("--shoot-x", dx.toFixed(0)+"px");
+  s.style.setProperty("--shoot-y", dy.toFixed(0)+"px");
+  s.style.setProperty("--shoot-rot", (Math.atan2(dy,dx)*180/Math.PI).toFixed(1)+"deg");
+  s.style.animationDuration = (1.1 + Math.random()*0.9).toFixed(2)+"s";
+  host.appendChild(s);
+  setTimeout(()=>s.remove(), 2300);
+  return s;
+}
+function scheduleShootingStar(){   // цепочка живёт только пока включена звёздная тема
+  clearTimeout(shootTimer);
+  shootTimer = setTimeout(function(){
+    shootTimer = null;
+    if(document.documentElement.getAttribute("data-theme")==="stars"){
+      spawnShootingStar();
+      scheduleShootingStar();
+    }
+  }, 2500 + Math.random()*8500);
+}
+function stopShootingStars(){ clearTimeout(shootTimer); shootTimer = null; }
 /* сыплющиеся лепестки сакуры — только когда включена тема «Япония» */
 function buildSakura(on){
   const box = $("petals");
@@ -3606,6 +3676,7 @@ buildStars();                                 // мерцающие звёзды
 buildThemeGrid();
 applyTheme(store.get("cbq-theme") || "fantasy");   // вернуть сохранённое оформление
 setMuted(store.get("cbq-muted") === "1");          // вернуть сохранённый звук
+setBlur(store.get("cbq-blur") === "1");            // вернуть сохранённое размытие фона
 
 </script>
 </body>
