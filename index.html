@@ -280,6 +280,7 @@ html[data-theme="notebook"]{
   --emerald:#2e7d4f; --amber:#b8860b; --silver:#3a3a46; --violet:#4a4a9a; --muted:#77705f;
   --g-gold:linear-gradient(180deg,#5c5c68 0%,#3c3c48 40%,#2b2b35 55%,#4e4e5a 75%,#33333d 100%);
   --g-silver:linear-gradient(180deg,#6a6a76 0%,#44444f 45%,#2e2e38 60%,#55555f 100%);
+  --g-silver-bright:linear-gradient(180deg,#3a3830 0%,#211f19 45%,#100f0b 60%,#2e2b24 100%);   /* на бумаге — чётче и контрастнее */
   --g-violet:linear-gradient(180deg,#5a5ab0 0%,#3a3a8a 45%,#28286a 60%,#4a4aa0 100%);
   --g-ruby:linear-gradient(180deg,#b04a4a 0%,#8a2e2e 45%,#6a2020 60%,#a04040 100%);
   --g-emerald:linear-gradient(180deg,#3a8a5a 0%,#266a40 45%,#185231 60%,#327a4e 100%);
@@ -719,7 +720,7 @@ html[data-battle="1"] #banner-overlay .card{max-width:80vw;}                    
 @keyframes cursePulse{from{opacity:.75;} to{opacity:1;}}
 .q-curse-wrap{text-align:center;}
 .q-text{
-  font-family:'Tagesschrift','Georgia',serif; font-size:34px; line-height:1.45; color:var(--silver); text-align:center;
+  font-family:'Tagesschrift','Georgia',serif; font-size:38px; line-height:1.45; color:var(--silver); text-align:center;
   margin:26px 6px; padding:30px 34px;
   background:rgba(0,0,0,.42);
   border:1px solid rgba(232,194,104,.32);
@@ -831,6 +832,7 @@ html[data-battle="1"] #banner-overlay .card{max-width:80vw;}                    
   --shine:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.85) 50%,transparent 58%);
   --g-gold:linear-gradient(180deg,#fff3cf 0%,#f6dfa0 16%,#e8c268 38%,#8a681f 54%,#f0d083 70%,#7a5a18 100%);
   --g-silver:linear-gradient(180deg,#ffffff 0%,#dfe6ef 18%,#aab4c3 44%,#5b6472 57%,#c9d2de 72%,#6b7484 100%);
+  --g-silver-bright:linear-gradient(180deg,#ffffff 0%,#f2f7ff 20%,#d5e0f0 46%,#a2b3c9 57%,#e9eff9 73%,#bcc7d8 100%);   /* текст вопроса — ярче */
   --g-violet:linear-gradient(180deg,#efe8ff 0%,#c4b2fd 18%,#a78bfa 42%,#5b3fae 56%,#c4b2fd 72%,#5b3fae 100%);
   --g-ruby:linear-gradient(180deg,#ffe0e0 0%,#ff8a80 18%,#d43f3f 42%,#7e2222 56%,#ff8a80 72%,#7e2222 100%);
   --g-emerald:linear-gradient(180deg,#eafff2 0%,#86efac 18%,#4ade80 42%,#166534 56%,#86efac 72%,#166534 100%);
@@ -857,6 +859,8 @@ table.stats th,table.stats td.place,#table-label,#table-label b,
 .podium .p-nick,table.stats th,#casino-result,#banner-title{background-image:var(--shine),var(--g-gold);}
 /* серебро */
 .q-text,.q-timer,.podium .p-pts,table.stats td.place,#table-label,.q-for{background-image:var(--shine),var(--g-silver);}
+/* текст вопроса — собственное яркое серебро, чище и светлее прочего */
+.q-text{background-image:var(--shine),var(--g-silver-bright);}
 /* фиолет */
 .q-topic,.q-curse-label,#phase-label,#round-label{background-image:var(--shine),var(--g-violet);}
 /* рубин */
@@ -2483,9 +2487,7 @@ function showDiff(topicIdx){
     b.title = b.disabled
       ? (has(d) ? "Эту сложность нельзя выбирать дважды подряд" : "В этой теме нет таких вопросов")
       : "";
-    b.querySelector(".d-note").textContent = state.phase==="boss"
-      ? "урон "+dmgBossFor(d)+" · риск "+dmgSelfFor(d)
-      : "урон "+dmgPvpFor(d);
+    // надписей «урон»/«риск» больше нет — только звёзды
   });
   $("diff-overlay").classList.add("show");
 }
@@ -2550,7 +2552,7 @@ function setupQuestion(topicIdx, drawn){
   renderAbilities();   // после show — иначе кнопки сочтут окно закрытым
 }
 
-/* ---- строка урона/риска справа сверху ---- */
+/* ---- сложность справа сверху: только звёзды, без надписей «урон»/«риск» ---- */
 function renderQDiff(){
   const cur = state.current;
   if(cur.mega || cur.curse){
@@ -2558,13 +2560,7 @@ function renderQDiff(){
       + (cur.mega ? "мега "+MEGA_DMG : "проклятие") + '</span>';
     return;
   }
-  const d = cur.q.difficulty;
-  const shown = state.phase==="boss" ? (cur.boost ? cur.dmg*2 : cur.dmg) : cur.dmg;
-  $("q-diff").innerHTML = "★".repeat(d) + ' <span class="dmg-note">'
-    + (state.phase==="boss"
-        ? "урон "+shown+" · риск "+(cur.boost ? ABILITY_FLAT_RISK : dmgSelfFor(d))
-        : "урон "+shown+(cur.boost ? " ⚡×2 при верном" : ""))
-    + '</span>';
+  $("q-diff").textContent = "★".repeat(cur.q.difficulty);
 }
 
 /* ---- кто отвечает ---- */
