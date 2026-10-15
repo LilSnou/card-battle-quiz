@@ -160,24 +160,14 @@ html[data-theme="notebook"] #ink-blot{display:block;}
 html[data-blur="on"] #bg-blur{backdrop-filter:blur(15px); -webkit-backdrop-filter:blur(15px);}
 
 /* ---------- Кровавая луна (событие начала II круга, Классика и Война гильдий) ----------
-   вуаль наливает экран кровью, луна появляется там, где её нет в теме;
-   появление и исчезновение — плавные (opacity/transform), тема накладывается сама */
+   экран наливается кровью — только красная вуаль, без отдельной луны на фоне;
+   появление и исчезновение — плавные (opacity), темы накладываются сами */
 #bloodmoon{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;}
 #bloodmoon .bm-tint{
   position:absolute; inset:0; opacity:0; transition:opacity 2s ease;
   background:radial-gradient(130% 100% at 50% 18%, rgba(210,26,20,.30) 0%, rgba(140,8,8,.42) 45%, rgba(60,0,0,.60) 100%);
 }
 html[data-blood="on"] #bloodmoon .bm-tint{opacity:1;}
-#bloodmoon .bm-disc{
-  position:absolute; right:7vw; top:5vh; width:min(220px,16vw); height:auto;
-  opacity:0; transform:scale(.55); transition:opacity 2.2s ease, transform 2.2s ease;
-}
-html[data-blood="on"] #bloodmoon .bm-disc{opacity:1; transform:scale(1);}
-/* свою луну окрашиваем, новую не рисуем: у Дарк Фэнтези луна уже кровавая, у Нового года — своя */
-html[data-blood="on"][data-theme="halloween"] #bloodmoon .bm-disc,
-html[data-blood="on"][data-theme="japan"] #bloodmoon .bm-disc,
-html[data-blood="on"][data-theme="stars"] #bloodmoon .bm-disc,
-html[data-blood="on"][data-theme="notebook"] #bloodmoon .bm-disc{display:block;}
 /* луна Нового года во время события наливается кровью */
 html[data-blood="on"][data-theme="newyear"] #ny-moon{fill:#d81f1f;}
 html[data-blood="on"][data-theme="newyear"] #ny-moon-halo{fill:rgba(255,40,30,.35);}
@@ -212,16 +202,6 @@ html[data-theme="japan"] #sakura-scene{display:block;}
 html[data-theme="halloween"] #halloween-scene{display:block;}
 html[data-theme="newyear"]  #newyear-scene{display:block;}
 html[data-theme="fantasy"]  #fantasy-scene{display:block;}
-/* грозовые тучи Дарк Фэнтези: чёрные полупрозрачные, медленно плывут, внутри мелькает молния */
-.st-cloud{fill:#000; opacity:.55; animation:cloudDrift 52s ease-in-out infinite alternate;}
-.st-cloud path{stroke:#5a5486; stroke-width:2.5;}   /* тонкий фиолетово-серый ободок — туча читается на тёмном небе */
-.st-cloud.c2{animation-duration:66s; animation-delay:-24s;}
-.st-cloud.c3{animation-duration:58s; animation-delay:-40s;}
-.st-flash{fill:#eaf2ff; opacity:0; animation:stormFlash 8s linear infinite;}
-.st-cloud.c2 .st-flash{animation-delay:-3s;}
-.st-cloud.c3 .st-flash{animation-delay:-5.4s;}
-@keyframes cloudDrift{from{transform:translateX(-28px);} to{transform:translateX(28px);}}
-@keyframes stormFlash{0%,86%,100%{opacity:0;} 88%{opacity:.5;} 89%{opacity:0;} 91%{opacity:.4;} 92%{opacity:0;}}
 /* кровавые звёзды: красные и мерцающие в темноте неба */
 .bm-star{fill:#ff4f42; opacity:.2; animation:bmTwinkle 3.6s ease-in-out infinite alternate;}
 @keyframes bmTwinkle{from{opacity:.12;} to{opacity:.95;}}
@@ -691,11 +671,11 @@ html[data-theme="notebook"] [style*="--pencil"]{
   position:relative;
 }
 .overlay.show .q-card{transform:none;}
-/* ---- бой (Босс и Мордобой): интерфейс боя крупнее обычного (×1.2) — плашки, карточки, текст ----
+/* ---- бой (Босс и Мордобой): интерфейс боя крупнее обычного (×1.19) — плашки, карточки, текст ----
    zoom пересчитывает раскладку (как смена базового размера), поэтому ничего не ломается;
    vw/vh-ограничения карточек при этом ужимаются под масштаб, чтобы не вылезать за экран */
-html[data-battle="1"] #screen-game{zoom:1.2;}                                  /* игровая сцена ×1.2 */
-html[data-battle="1"] .q-card{width:min(1200px,81vw); max-height:80vh;}        /* карточка вопроса */
+html[data-battle="1"] #screen-game{zoom:1.19;}                                 /* игровая сцена ×1.19 */
+html[data-battle="1"] .q-card{width:min(1200px,82vw); max-height:80vh;}        /* карточка вопроса */
 html[data-battle="1"] #diff-overlay .card{width:min(640px,79vw) !important;}    /* выбор сложности (ширина инлайном) */
 html[data-battle="1"] #casino-overlay .card{width:min(780px,80vw) !important;}  /* колесо фортуны (ширина инлайном) */
 html[data-battle="1"] #banner-overlay .card{max-width:80vw;}                    /* баннеры круга — не шире экрана */
@@ -1491,19 +1471,6 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
     <circle cx="472" cy="130" r="22" fill="#8f1f1d" opacity=".45"/>
     <circle cx="544" cy="182" r="16" fill="#8f1f1d" opacity=".4"/>
     <circle cx="524" cy="88" r="10" fill="#8f1f1d" opacity=".35"/>
-    <!-- три грозовые чёрные полупрозрачные тучи: низко, у самой линии горизонта, строго ниже луны -->
-    <g class="st-cloud c1" transform="translate(64,420)">
-      <path d="M0 84 C-14 56 8 32 36 36 C46 12 84 2 112 20 C132 -2 174 -4 194 20 C222 8 258 24 262 50 C290 48 306 66 300 86 C294 100 40 102 0 84 Z"/>
-      <ellipse class="st-flash" cx="150" cy="58" rx="46" ry="20"/>
-    </g>
-    <g class="st-cloud c2" transform="translate(408,432)">
-      <path d="M0 76 C-12 50 6 28 32 32 C40 10 76 2 100 18 C118 -2 156 -2 174 18 C198 8 230 22 234 46 C260 44 274 60 268 78 C262 92 36 94 0 76 Z"/>
-      <ellipse class="st-flash" cx="130" cy="50" rx="40" ry="18"/>
-    </g>
-    <g class="st-cloud c3" transform="translate(1210,420)">
-      <path d="M0 88 C-16 60 6 34 38 38 C48 12 90 2 118 22 C140 -2 186 -2 206 24 C236 10 276 28 280 56 C310 54 328 74 320 94 C312 110 44 112 0 88 Z"/>
-      <ellipse class="st-flash" cx="170" cy="60" rx="50" ry="22"/>
-    </g>
     <!-- очень тёмная гора -->
     <path fill="#070510" d="M0 900 L0 706 L262 560 L424 644 L700 330 L902 472 L1132 402 L1440 604 L1440 900 Z"/>
     <!-- холм на склоне горы -->
@@ -1665,27 +1632,9 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
   </svg>
 </div>
 
-<!-- Кровавая луна (событие II круга): красная вуаль на весь экран + луна там, где её нет в теме -->
+<!-- Кровавая луна (событие II круга): красная вуаль на весь экран -->
 <div id="bloodmoon" aria-hidden="true">
   <div class="bm-tint"></div>
-  <svg class="bm-disc" viewBox="0 0 200 200">
-    <defs>
-      <radialGradient id="bmG" cx="38%" cy="34%" r="75%">
-        <stop offset="0%" stop-color="#ff5a4a"/>
-        <stop offset="55%" stop-color="#d81e18"/>
-        <stop offset="100%" stop-color="#8f0d0d"/>
-      </radialGradient>
-      <radialGradient id="bmHalo" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="rgba(255,40,30,.55)"/>
-        <stop offset="100%" stop-color="rgba(255,40,30,0)"/>
-      </radialGradient>
-    </defs>
-    <circle class="bm-halo" cx="100" cy="100" r="98" fill="url(#bmHalo)"/>
-    <circle cx="100" cy="100" r="62" fill="url(#bmG)"/>
-    <circle cx="80" cy="86" r="9" fill="rgba(120,10,10,.5)"/>
-    <circle cx="118" cy="118" r="13" fill="rgba(120,10,10,.42)"/>
-    <circle cx="112" cy="74" r="6" fill="rgba(120,10,10,.45)"/>
-  </svg>
 </div>
 
 <!-- слой размытого фона (настройка «Размытие фона»): размывает фон и сцены, интерфейс остаётся резким -->
@@ -1731,7 +1680,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
         <li><b>🎰 Казино</b> (один раз за игру, только против Босса): вместо вопроса — колесо фортуны: исцеление, урон, пропуск хода, удар по Боссу или по случайному сопернику…</li>
         <li><b>⚡ Серия</b>: пять верных ответов подряд — с шансом 5% Босс вместе с пятым ударом получает ещё +300 урона. Считаются только обычные вопросы.</li>
         <li><b>🔥 Конец II круга</b>: если Босс ещё цел, он обрушивает удар по всем живым: −50 каждому (пулу каждой команды −100).</li>
-        <li><b>🌕 Кровавая луна</b> (начало II круга, только в Классике и Войне гильдий; шанс 50% — может не быть за игру вовсе): пока она светит, <b>весь урон ×1.2</b> — и босса, и игроков (кроме мега, проклятия и казино); экран наливается кровью, луна темы краснеет (а если луны нет — восходит кровавая), огонь тыкв становится красным. С началом III круга всё возвращается в норму.</li>
+        <li><b>🌕 Кровавая луна</b> (начало II круга, только в Классике и Войне гильдий; шанс 50% — может не быть за игру вовсе): пока длится событие, <b>весь урон ×1.2</b> — и босса, и игроков (кроме мега, проклятия и казино); экран плавно наливается кровью (отдельной луны на фоне нет — только красный оттенок), луна темы краснеет, огонь тыкв становится красным. С началом III круга всё возвращается в норму.</li>
         <li><b>👑 Конец III круга</b>: зачистка — Босс забирает 2–4 самых слабых игроков (при уже погибших — 1–2 самых низких по HP; в командах — одну команду).</li>
         <li><b>💎 Способности</b> (только в обычном и командном режимах, одна каждого типа за игру): 🔀 <b>Замена</b> — заменить вопрос на другой; ⚡ <b>Азарт</b> — урон ×2, но при ошибке сам получаешь 200; 🎴 <b>Передача</b> — отдать вопрос случайному сопернику и пропустить ход (только против Босса). Работают до нажатия «Показать ответы» и не работают на мега/проклятии.</li>
       </ul>
@@ -2068,7 +2017,7 @@ function mkPlayer(id, name, hp){
   };
 }
 function startGame(cfg){
-  document.documentElement.setAttribute("data-battle","1");   // бою — масштаб ×1.2 (плашки, карточки, текст)
+  document.documentElement.setAttribute("data-battle","1");   // бою — масштаб ×1.19 (плашки, карточки, текст)
   document.documentElement.setAttribute("data-blood","off");  // Кровавая луна — только внутри II круга
   const mode = cfg.mode;
   let players, teams = null;
