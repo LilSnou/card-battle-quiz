@@ -159,6 +159,33 @@ html[data-theme="notebook"] #ink-blot{display:block;}
 #bg-blur{position:fixed; inset:0; pointer-events:none; z-index:0;}
 html[data-blur="on"] #bg-blur{backdrop-filter:blur(15px); -webkit-backdrop-filter:blur(15px);}
 
+/* ---------- Кровавая луна (событие начала II круга, Классика и Война гильдий) ----------
+   вуаль наливает экран кровью, луна появляется там, где её нет в теме;
+   появление и исчезновение — плавные (opacity/transform), тема накладывается сама */
+#bloodmoon{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;}
+#bloodmoon .bm-tint{
+  position:absolute; inset:0; opacity:0; transition:opacity 2s ease;
+  background:radial-gradient(130% 100% at 50% 18%, rgba(210,26,20,.30) 0%, rgba(140,8,8,.42) 45%, rgba(60,0,0,.60) 100%);
+}
+html[data-blood="on"] #bloodmoon .bm-tint{opacity:1;}
+#bloodmoon .bm-disc{
+  position:absolute; right:7vw; top:5vh; width:min(220px,16vw); height:auto;
+  opacity:0; transform:scale(.55); transition:opacity 2.2s ease, transform 2.2s ease;
+}
+html[data-blood="on"] #bloodmoon .bm-disc{opacity:1; transform:scale(1);}
+/* свою луну окрашиваем, новую не рисуем: у Дарк Фэнтези луна уже кровавая, у Нового года — своя */
+html[data-blood="on"][data-theme="halloween"] #bloodmoon .bm-disc,
+html[data-blood="on"][data-theme="japan"] #bloodmoon .bm-disc,
+html[data-blood="on"][data-theme="stars"] #bloodmoon .bm-disc,
+html[data-blood="on"][data-theme="notebook"] #bloodmoon .bm-disc{display:block;}
+/* луна Нового года во время события наливается кровью */
+html[data-blood="on"][data-theme="newyear"] #ny-moon{fill:#d81f1f;}
+html[data-blood="on"][data-theme="newyear"] #ny-moon-halo{fill:rgba(255,40,30,.35);}
+/* огонь в тыквах Хеллоуина во время события горит красным */
+html[data-blood="on"][data-theme="halloween"] #halloween-scene .flame{animation-name:flickRed;}
+@keyframes flickRed{from{fill:#ff3020; opacity:.75;} to{fill:#c00000; opacity:1;}}
+html[data-blood="on"][data-theme="halloween"] #halloween-scene .pump-glow{fill:rgba(255,40,24,.5);}
+
 /* ---------- Сакура в теме «Япония»: большое дерево и сыплющиеся лепестки ---------- */
 #sakura-scene{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; display:none;}
 html[data-theme="japan"] #sakura-scene{display:block;}
@@ -664,14 +691,14 @@ html[data-theme="notebook"] [style*="--pencil"]{
   position:relative;
 }
 .overlay.show .q-card{transform:none;}
-/* ---- бой (Босс и Мордобой): интерфейс боя крупнее обычного (×1.3) — плашки, карточки, текст ----
+/* ---- бой (Босс и Мордобой): интерфейс боя крупнее обычного (×1.2) — плашки, карточки, текст ----
    zoom пересчитывает раскладку (как смена базового размера), поэтому ничего не ломается;
    vw/vh-ограничения карточек при этом ужимаются под масштаб, чтобы не вылезать за экран */
-html[data-battle="1"] #screen-game{zoom:1.3;}                                  /* игровая сцена ×1.3 */
-html[data-battle="1"] .q-card{width:min(1200px,75vw); max-height:73vh;}        /* карточка вопроса */
-html[data-battle="1"] #diff-overlay .card{width:min(640px,73vw) !important;}    /* выбор сложности (ширина инлайном) */
-html[data-battle="1"] #casino-overlay .card{width:min(780px,74vw) !important;}  /* колесо фортуны (ширина инлайном) */
-html[data-battle="1"] #banner-overlay .card{max-width:74vw;}                    /* баннеры круга — не шире экрана */
+html[data-battle="1"] #screen-game{zoom:1.2;}                                  /* игровая сцена ×1.2 */
+html[data-battle="1"] .q-card{width:min(1200px,81vw); max-height:80vh;}        /* карточка вопроса */
+html[data-battle="1"] #diff-overlay .card{width:min(640px,79vw) !important;}    /* выбор сложности (ширина инлайном) */
+html[data-battle="1"] #casino-overlay .card{width:min(780px,80vw) !important;}  /* колесо фортуны (ширина инлайном) */
+html[data-battle="1"] #banner-overlay .card{max-width:80vw;}                    /* баннеры круга — не шире экрана */
 .q-card.mega{
   border-color:var(--ruby);
   box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 0 44px rgba(212,63,63,.65);
@@ -1638,6 +1665,29 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
   </svg>
 </div>
 
+<!-- Кровавая луна (событие II круга): красная вуаль на весь экран + луна там, где её нет в теме -->
+<div id="bloodmoon" aria-hidden="true">
+  <div class="bm-tint"></div>
+  <svg class="bm-disc" viewBox="0 0 200 200">
+    <defs>
+      <radialGradient id="bmG" cx="38%" cy="34%" r="75%">
+        <stop offset="0%" stop-color="#ff5a4a"/>
+        <stop offset="55%" stop-color="#d81e18"/>
+        <stop offset="100%" stop-color="#8f0d0d"/>
+      </radialGradient>
+      <radialGradient id="bmHalo" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="rgba(255,40,30,.55)"/>
+        <stop offset="100%" stop-color="rgba(255,40,30,0)"/>
+      </radialGradient>
+    </defs>
+    <circle class="bm-halo" cx="100" cy="100" r="98" fill="url(#bmHalo)"/>
+    <circle cx="100" cy="100" r="62" fill="url(#bmG)"/>
+    <circle cx="80" cy="86" r="9" fill="rgba(120,10,10,.5)"/>
+    <circle cx="118" cy="118" r="13" fill="rgba(120,10,10,.42)"/>
+    <circle cx="112" cy="74" r="6" fill="rgba(120,10,10,.45)"/>
+  </svg>
+</div>
+
 <!-- слой размытого фона (настройка «Размытие фона»): размывает фон и сцены, интерфейс остаётся резким -->
 <div id="bg-blur" aria-hidden="true"></div>
 
@@ -1681,6 +1731,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
         <li><b>🎰 Казино</b> (один раз за игру, только против Босса): вместо вопроса — колесо фортуны: исцеление, урон, пропуск хода, удар по Боссу или по случайному сопернику…</li>
         <li><b>⚡ Серия</b>: пять верных ответов подряд — с шансом 5% Босс вместе с пятым ударом получает ещё +300 урона. Считаются только обычные вопросы.</li>
         <li><b>🔥 Конец II круга</b>: если Босс ещё цел, он обрушивает удар по всем живым: −50 каждому (пулу каждой команды −100).</li>
+        <li><b>🌕 Кровавая луна</b> (начало II круга, только в Классике и Войне гильдий; шанс 50% — может не быть за игру вовсе): пока она светит, <b>весь урон ×1.2</b> — и босса, и игроков (кроме мега, проклятия и казино); экран наливается кровью, луна темы краснеет (а если луны нет — восходит кровавая), огонь тыкв становится красным. С началом III круга всё возвращается в норму.</li>
         <li><b>👑 Конец III круга</b>: зачистка — Босс забирает 2–4 самых слабых игроков (при уже погибших — 1–2 самых низких по HP; в командах — одну команду).</li>
         <li><b>💎 Способности</b> (только в обычном и командном режимах, одна каждого типа за игру): 🔀 <b>Замена</b> — заменить вопрос на другой; ⚡ <b>Азарт</b> — урон ×2, но при ошибке сам получаешь 200; 🎴 <b>Передача</b> — отдать вопрос случайному сопернику и пропустить ход (только против Босса). Работают до нажатия «Показать ответы» и не работают на мега/проклятии.</li>
       </ul>
@@ -1737,6 +1788,8 @@ const CURSE_CHANCE    = 0.06;  // шанс вопроса-проклятия (о
 const CASINO_CHANCE   = 0.07;  // шанс казино (только в битве с боссом, один раз за игру)
 const SPECIAL_HOLD    = 3;     // столько первых вопросов игры — точно без особых событий (мега/проклятье/казино)
 const SPECIAL_RAMP    = 6;     // и столько ещё — шанс особых плавно растёт от половины базового до полного
+const BLOOD_CHANCE    = 0.5;   // шанс, что в начале II круга взойдёт Кровавая луна (может не быть за игру)
+const BLOOD_MULT      = 1.2;   // множитель всего урона во время Кровавой луны (не для мега/проклятия/казино)
 const CASINO_SPIN_MS  = 6500;  // длительность вращения барабана казино
 const ANSWER_TIME     = 15;    // секунд на ответ (у мегавопроса таймера нет)
 const ANSWER_TIME_TEAM= 20;    // секунд на ответ в командном режиме
@@ -2015,7 +2068,8 @@ function mkPlayer(id, name, hp){
   };
 }
 function startGame(cfg){
-  document.documentElement.setAttribute("data-battle","1");   // бою — масштаб ×1.3 (плашки, карточки, текст)
+  document.documentElement.setAttribute("data-battle","1");   // бою — масштаб ×1.2 (плашки, карточки, текст)
+  document.documentElement.setAttribute("data-blood","off");  // Кровавая луна — только внутри II круга
   const mode = cfg.mode;
   let players, teams = null;
   if(mode === "team"){
@@ -2060,6 +2114,7 @@ function startGame(cfg){
     curseUsed:false,
     casinoUsed:false,
     qCount:0,               // сколько вопросов уже показано (в начале игры особые события не выпадают)
+    bloodMoon:false,        // II круг под Кровавой луной (весь урон ×1.2)
     pendingTopic:null,       // тема выбрана, ждёт выбора сложности
     round2Done:false,        // удар босса по всем в конце II круга уже был
     round3Done:false,        // зачистка III круга уже была
@@ -2128,14 +2183,34 @@ function speaker(){
   return state.players[cur.speakerId!=null ? cur.speakerId : cur.attackerIdx];
 }
 const teamMult = ()=> state.mode==="team" ? 2 : 1; // в командном режиме урон ×2 (мегавопрос и проклятие — исключения)
-const dmgBossFor = d => DMG[d]*teamMult();
-const dmgSelfFor = d => DMG_SELF[d]*teamMult();
-const dmgPvpFor  = d => DMG_PVP[d]*teamMult();
+const dmgBossFor = d => Math.round(DMG[d]*teamMult()*bloodMult());
+const dmgSelfFor = d => Math.round(DMG_SELF[d]*teamMult()*bloodMult());
+const dmgPvpFor  = d => Math.round(DMG_PVP[d]*teamMult()*bloodMult());
 const answerTime = ()=> state.mode==="team" ? ANSWER_TIME_TEAM : ANSWER_TIME;
 
 function newRound(){
   state.queue = shuffle(aliveUnits().map(u=>u.id));
   state.queuePos = 0;
+}
+
+/* ============================================================
+   КРОВАВАЯ ЛУНА — событие начала II круга (Классика и Война гильдий)
+   с шансом BLOOD_CHANCE; весь урон ×BLOOD_MULT до начала III круга
+   ============================================================ */
+function bloodMoonRoll(){
+  return (state.mode==="solo" || state.mode==="team") && Math.random() < BLOOD_CHANCE;
+}
+function bloodMult(){ return state.bloodMoon ? BLOOD_MULT : 1; }
+function setBloodMoon(on){
+  if(!state || state.bloodMoon === on) return;
+  state.bloodMoon = on;
+  document.documentElement.setAttribute("data-blood", on ? "on" : "off");   // вуаль и луна — с плавной анимацией
+  if(on){
+    sfx.bloodmoon();
+    toast('<span class="t-bad">🌕 КРОВАВАЯ ЛУНА!</span> Небо налилось кровью — <b>весь урон ×1.2</b> до начала III круга');
+  }else{
+    toast('<span class="t-gold">🌅 Кровавая луна скрылась</span> — урон вернулся в норму');
+  }
 }
 
 /* ============================================================
@@ -2188,6 +2263,7 @@ const sfx = {
   hover:()=>noise(.09,.05,2600,900,"bandpass"),                                   // шелест карты при наведении
   weapon:()=>{ noise(.5,.16,400,6500,"highpass"); tone(1200,.25,"triangle",.08); tone(1800,.2,"triangle",.06,.06); }, // обнажение оружия
   gong:()=>{ tone(92,1.6,"sine",.25); tone(138,1.4,"sine",.18,.05); tone(46,1.8,"sine",.22,.02); }, // гонг мегавопроса
+  bloodmoon:()=>{ tone(52,2.2,"sine",.22); tone(78,1.8,"triangle",.12,.3); noise(1.4,.12,900,80,"lowpass",.15); }, // низкий дрон Кровавой луны
   casino:()=>{ [1046,1318,1568].forEach((f,i)=>tone(f,.14,"triangle",.12,i*.09)); noise(.3,.05,4200,1800); }, // монетки казино
   bossDie:()=>{ tone(70,1.2,"sawtooth",.25); tone(46,1.6,"sine",.3,.1); noise(1.0,.18,600,80,"lowpass"); [400,300,200,120].forEach((f,i)=>tone(f,.3,"sawtooth",.15,i*.15)); }, // гибель босса
   deathOwn:()=>{ [440,330,262,196].forEach((f,i)=>tone(f,.22,"square",.12,i*.13)); },   // падение за свою ошибку
@@ -2381,6 +2457,9 @@ function nextTurn(){
     if(idx === null){ // круг окончен — новый раунд
       state.round++;
       newRound();
+      // ---- Кровавая луна: в начале II круга — с шансом 50%; с началом III круга гаснет ----
+      if(state.round===2) setBloodMoon(bloodMoonRoll());
+      if(state.round===3) setBloodMoon(false);
       // ---- конец II круга: босс бьёт по всем живым (−50 / −100 командам) — в быстрой игре нет ----
       if(state.phase==="boss" && state.mode!=="quick" && state.round===3 && !state.round2Done){
         state.round2Done = true;
@@ -3140,7 +3219,7 @@ function checkPlayerDead(p, cause){   // p — боевая единица: иг
 function bossRound2Strike(){
   const alive = aliveUnits();
   if(alive.length===0) return false;
-  const dmg = 50 * teamMult();   // в командах общий пул получает двойной урон (×2)
+  const dmg = Math.round(50 * teamMult() * bloodMult());   // в командах пул получает ×2; при Кровавой луне — ещё ×1.2
   sfx.roar();
   alive.forEach(u=>{
     u.hp -= dmg;
@@ -3251,6 +3330,7 @@ function finishGame(reason){
   renderResults(finalists, defeat);
   $("screen-game").classList.add("hidden");
   document.documentElement.removeAttribute("data-battle");   // бой кончился — обычный масштаб
+  document.documentElement.setAttribute("data-blood","off"); // и без Кровавой луны
   $("screen-results").classList.remove("hidden");
 }
 
