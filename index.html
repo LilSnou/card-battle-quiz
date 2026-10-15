@@ -622,6 +622,8 @@ html[data-theme="notebook"] [style*="--pencil"]{
   opacity:.42; pointer-events:none; user-select:none;
 }
 #version-badge svg{display:block; width:15px; height:auto;}
+/* подпись с версией — только на главном экране; уйдя дальше, она исчезает */
+#screen-mode.hidden ~ #version-badge{display:none;}
 #dots-btn{
   width:54px; height:54px; border-radius:50%; cursor:pointer;
   background:var(--panel); border:2px solid var(--edge); color:var(--silver);
