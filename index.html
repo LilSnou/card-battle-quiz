@@ -160,6 +160,15 @@ html[data-theme="notebook"] #ink-blot{display:block;}
 /* ---------- Размытие фона (настройка «Размытие фона», запоминается) ---------- */
 #bg-blur{position:fixed; inset:0; pointer-events:none; z-index:0;}
 html[data-blur="on"] #bg-blur{backdrop-filter:blur(15px); -webkit-backdrop-filter:blur(15px);}
+/* производительность: пока размытие включено, всё за ним «замораживается» — размазанный фон становится
+   статичным, браузер кэширует его и не пересчитывает размытие каждый кадр (иначе игра фризит и подлагивает) */
+html[data-blur="on"] #halloween-scene *, html[data-blur="on"] #newyear-scene *,
+html[data-blur="on"] #fantasy-scene *, html[data-blur="on"] #sakura-scene *,
+html[data-blur="on"] #star-field, html[data-blur="on"] #shooting,
+html[data-blur="on"] #milkyway, html[data-blur="on"] #bloodmoon, html[data-blur="on"] #ink-blot{
+  animation-play-state:paused !important;
+}
+html[data-blur="on"] #shooting{display:none;}   /* падающие звёзды/ракета за размытием не нужны вовсе */
 
 /* ---------- Кровавая луна (событие начала II круга, Классика и Война гильдий) ----------
    экран наливается кровью — только красная вуаль, без отдельной луны на фоне;
@@ -866,12 +875,12 @@ table.stats th,table.stats td.place,#table-label,#table-label b,
   background-repeat:no-repeat;
   background-size:230% 100%,100% 100%;
   background-position:130% 0,0 0;
-  animation:metalShine 5.5s linear infinite;
+  animation:metalShine 8s linear infinite;
 }
-/* блик идёт волной часть цикла, остальное время фон статичен — меньше перерисовок, вид одинаково «металлический» */
+/* блик идёт волной короткую часть цикла, остальное время фон статичен — заметно меньше перерисовок */
 @keyframes metalShine{
-  0%, 68%{background-position:130% 0,0 0;}
-  94%, 100%{background-position:-130% 0,0 0;}
+  0%, 84%{background-position:130% 0,0 0;}
+  96%, 100%{background-position:-130% 0,0 0;}
 }
 /* золото */
 .topic-card .t-name,.p-name,.duel-side .who,.q-for,.q-for b,.q-diff,#results-title,
@@ -1680,13 +1689,14 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
   </svg>
 </div>
 
+<!-- слой размытого фона (настройка «Размытие фона»): размывает фон и сцены, интерфейс остаётся резким.
+     Идёт ПЕРЕД кровавой луной: вуаль ложится поверх размытия и её появление не пересчитывает размазанный фон -->
+<div id="bg-blur" aria-hidden="true"></div>
+
 <!-- Кровавая луна (событие II круга): красная вуаль на весь экран -->
 <div id="bloodmoon" aria-hidden="true">
   <div class="bm-tint"></div>
 </div>
-
-<!-- слой размытого фона (настройка «Размытие фона»): размывает фон и сцены, интерфейс остаётся резким -->
-<div id="bg-blur" aria-hidden="true"></div>
 
 <!-- ================= НАСТРОЙКИ ================= -->
 <div id="settings-overlay" class="overlay">
@@ -3696,6 +3706,7 @@ function buildStars(){
 /* падающие звёзды: изредка пролетают на 1–2 секунды — только тема «Звёздное небо» */
 let shootTimer = null;
 function spawnShootingStar(){
+  if(document.documentElement.getAttribute("data-blur")==="on") return null;   // за размытием звезда не видна — фон не будим
   const host = $("shooting");
   if(!host) return null;
   const s = document.createElement("i");
@@ -3725,6 +3736,7 @@ function stopShootingStars(){ clearTimeout(shootTimer); shootTimer = null; }
 /* маленькая космическая ракета: очень редко (раз в ~20–65 с) пролетает по низу экрана на 4–5 секунд */
 let rocketTimer = null;
 function spawnRocket(){
+  if(document.documentElement.getAttribute("data-blur")==="on") return null;   // за размытием ракета не видна
   const host = $("shooting");
   if(!host) return null;
   const r = document.createElement("div");
