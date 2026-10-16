@@ -1725,7 +1725,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <h3>⚔️ Акт I. Битва с Боссом</h3>
       <ol>
         <li>Очередной игрок выбирает <b>тему</b> из пяти карточек на столе (одну и ту же тему дважды подряд брать нельзя).</li>
-        <li>Потом — <b>сложность</b>: ★, ★★ или ★★★. На кнопке сразу видно: сколько БОСС потеряет при верном ответе и сколько получит игрок при неверном. <b>Одну и ту же сложность дважды подряд брать нельзя</b>.</li>
+        <li>Потом — <b>сложность</b>: ★, ★★ или ★★★. <b>Одну и ту же сложность дважды подряд брать нельзя</b>.</li>
         <li>Вопрос появляется на экране. Игрок думает вслух, затем ведущий жмёт <b>«Показать ответы»</b> — с этого момента идёт таймер (15 секунд; в командной игре 20).</li>
         <li><b>Верно</b> → Босс теряет урон: 50 / 100 / 150 (по сложности). <b>Неверно</b> → игрок сам теряет: 100 / 125 / 150.</li>
         <li>Кто <b>добил Босса</b> — получает +1 балл. Все выжившие переходят к Мордобою.</li>
@@ -1759,6 +1759,8 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       </ul>
       <h3>⋯ Меню и оформление</h3>
       <p>В правом верхнем углу главного меню — значок <b>⋯</b>: там <b>Настройки</b> (звук и размытие фона), эти <b>Правила</b> и <b>Поменять оформление</b>: Дарк Фэнтези, Хеллоуин, Новый год, Япония, Звёздное небо или Тетрадь. Выбор сохраняется.</p>
+      <h3>⌨️ Горячие клавиши</h3>
+      <p><b>1 / A</b>, <b>2 / B</b>, <b>3 / C</b>, <b>4 / D</b> — выбрать вариант ответа после «Показать ответы» (в русской раскладке — <b>А, Б, В, Г</b>). <b>O</b> (английская) — открыть <b>Настройки</b>, <b>Esc</b> — закрыть их; <b>Esc</b> на экране выбора игроков или команд — вернуться в главное меню.</p>
     </div>
     <button class="btn btn-ruby" data-close>✕ Понятно</button>
   </div>
@@ -3566,6 +3568,12 @@ function showSetupScreen(){
   $("screen-setup").classList.remove("hidden");
   buildCountBtns(); updateHpHint(); buildSetup();
 }
+/* назад в главное меню — с экрана настройки игроков/команд (Esc) и с итогов (кнопка) */
+function backToMenu(){
+  $("screen-setup").classList.add("hidden");
+  $("screen-results").classList.add("hidden");
+  $("screen-mode").classList.remove("hidden");
+}
 $("mode-solo").onclick = ()=>{ gameMode = "solo"; showSetupScreen(); };
 $("mode-quick").onclick = ()=>{ gameMode = "quick"; showSetupScreen(); };
 $("mode-team").onclick = ()=>{ gameMode = "team"; showSetupScreen(); };
@@ -3626,9 +3634,7 @@ $("start-btn").onclick = ()=>{
 $("q-next").onclick = nextTurn;
 $("again-btn").onclick = ()=>{
   // назад — в меню выбора режима
-  $("screen-results").classList.add("hidden");
-  $("screen-setup").classList.add("hidden");
-  $("screen-mode").classList.remove("hidden");
+  backToMenu();
 };
 /* ============================================================
    МЕНЮ «⋯», НАСТРОЙКИ, ПРАВИЛА, ОФОРМЛЕНИЕ
@@ -3663,7 +3669,7 @@ document.addEventListener("click", (e)=>{   // клик мимо меню — з
   const m = $("dots-menu");
   if(!m.classList.contains("hidden") && !m.contains(e.target) && e.target !== $("dots-btn")) m.classList.add("hidden");
 });
-$("dm-settings").onclick = ()=>{ $("dots-menu").classList.add("hidden"); $("settings-overlay").classList.add("show"); };
+$("dm-settings").onclick = openSettings;
 $("dm-rules").onclick   = ()=>{ $("dots-menu").classList.add("hidden"); $("rules-overlay").classList.add("show"); };
 $("dm-theme").onclick   = ()=>{ $("dots-menu").classList.add("hidden"); $("theme-overlay").classList.add("show"); };
 document.querySelectorAll("[data-close]").forEach(b=>{
@@ -3766,6 +3772,47 @@ function scheduleRocket(){   // цепочка живёт только пока 
   }, 20000 + Math.random()*45000);
 }
 function stopRocket(){ clearTimeout(rocketTimer); rocketTimer = null; }
+/* ============================================================
+   КЛАВИАТУРА (версия 1.0.1)
+   — Esc: закрыть настройки; с экрана настройки игроков/команд — назад в главное меню
+   — O (английская; та же физическая клавиша в любой раскладке) — открыть настройки
+   — 1/2/3/4, A/B/C/D (в русской раскладке — А/Б/В/Г) — выбрать вариант ответа
+   ============================================================ */
+function openSettings(){ $("dots-menu").classList.add("hidden"); $("settings-overlay").classList.add("show"); }
+function closeSettings(){ $("settings-overlay").classList.remove("show"); }
+function inTypingField(e){
+  const t = e.target;
+  return !!(t && (t.tagName==="INPUT" || t.tagName==="TEXTAREA" || t.isContentEditable));
+}
+const OPT_KEY_INDEX = {"1":0,"2":1,"3":2,"4":3,"a":0,"b":1,"c":2,"d":3,"а":0,"б":1,"в":2,"г":3};
+function optIndexForKey(key){
+  const k = String(key||"").toLowerCase();
+  return k in OPT_KEY_INDEX ? OPT_KEY_INDEX[k] : -1;
+}
+document.addEventListener("keydown", (e)=>{
+  if(inTypingField(e)) return;                        // ввод имён игроков/босса — клавиши не перехватываем
+  const k = String(e.key||"").toLowerCase();
+  if(e.key==="Escape"){
+    if($("settings-overlay").classList.contains("show")){ closeSettings(); e.preventDefault(); return; }
+    if(!$("screen-setup").classList.contains("hidden")){ backToMenu(); e.preventDefault(); return; }
+    return;
+  }
+  if(e.code==="KeyO" || k==="o" || k==="о"){           // O — открыть настройки
+    if(!$("settings-overlay").classList.contains("show")){ openSettings(); e.preventDefault(); }
+    return;
+  }
+  const idx = optIndexForKey(k);                      // 1/2/3/4, A/B/C/D, А/Б/В/Г — ответ в открытом вопросе
+  if(idx<0) return;
+  if($("settings-overlay").classList.contains("show")) return;   // поверх вопроса открыто окно
+  if(!$("q-overlay").classList.contains("show")) return;
+  if($("q-opts").classList.contains("hidden")) return;           // варианты ещё не показаны ведущим
+  const cur = state.current;
+  if(!cur || cur.answered) return;
+  const b = $("q-opts").querySelectorAll(".q-opt")[idx];
+  if(!b || b.classList.contains("disabled")) return;
+  b.click();
+  e.preventDefault();
+});
 /* сыплющиеся лепестки сакуры — только когда включена тема «Япония» */
 function buildSakura(on){
   const box = $("petals");
@@ -3840,7 +3887,7 @@ setBlur(store.get("cbq-blur") === "1");            // вернуть сохра�
     <rect x="4" y="4" width="112" height="146" rx="15" fill="url(#vbFace)" stroke="#2c3f73" stroke-width="6"/>
     <path d="M32 13C32 13 14 28 14 38.5c0 6 4.5 10.5 10.5 10.5 3 0 5.7-1.5 7.5-3.75 1.8 2.25 4.5 3.75 7.5 3.75 6 0 10.5-4.5 10.5-10.5C50 28 32 13 32 13z M27.5 46h9l2.5 8h-14z" fill="url(#vbPip)" transform="translate(19,34) scale(1.28)"/>
   </svg>
-  <span>Тёмные знания · v1.0.0</span>
+  <span>Тёмные знания · v1.0.1</span>
 </div>
 </body>
 </html>
