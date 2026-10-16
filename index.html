@@ -1760,7 +1760,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <h3>⋯ Меню и оформление</h3>
       <p>В правом верхнем углу главного меню — значок <b>⋯</b>: там <b>Настройки</b> (звук и размытие фона), эти <b>Правила</b> и <b>Поменять оформление</b>: Дарк Фэнтези, Хеллоуин, Новый год, Япония, Звёздное небо или Тетрадь. Выбор сохраняется.</p>
       <h3>⌨️ Горячие клавиши</h3>
-      <p><b>1 / A</b>, <b>2 / B</b>, <b>3 / C</b>, <b>4 / D</b> — выбрать вариант ответа после «Показать ответы» (в русской раскладке — <b>А, Б, В, Г</b>). <b>O</b> (английская) — открыть <b>Настройки</b>, <b>Esc</b> — закрыть их; <b>Esc</b> на экране выбора игроков или команд — вернуться в главное меню.</p>
+      <p><b>1 / A</b>, <b>2 / B</b>, <b>3 / C</b>, <b>4 / D</b> — выбрать вариант ответа после «Показать ответы» (в русской раскладке — <b>А, Б, В, Г</b>), а при выборе сложности — клавиши <b>1, 2, 3</b> (★, ★★, ★★★). <b>Пробел</b> — «Показать ответы», затем «Следующий ход». <b>O</b> (английская) — открыть <b>Настройки</b>; <b>Esc</b> — закрыть любое открытое окно (Настройки, Правила, Оформление), а на экране выбора игроков или команд — вернуться в главное меню. Финальная анимация (конфетти при победе, огонь при поражении) играет <b>один раз</b> и повторно не запускается.</p>
     </div>
     <button class="btn btn-ruby" data-close>✕ Понятно</button>
   </div>
@@ -2439,6 +2439,7 @@ function hideTimer(){
    ИГРОВОЙ ПОТОК
    ============================================================ */
 function nextTurn(){
+  if(state.phase==="end") return;   // после финала ходы не идут — итоги и анимации не перезапускаются
   $("q-overlay").classList.remove("show");
   hideTimer();
   // ---- условия завершения ----
@@ -3308,6 +3309,7 @@ function bossDefeated(){
 
 /* ---- завершение игры ---- */
 function finishGame(reason){
+  if(state.phase==="end") return;   // итоги уже показаны — анимация, звук и таблица играют/рисуются ровно один раз
   stopTimer();
   state.phase = "end";
   state.finishReason = reason;
@@ -3328,6 +3330,8 @@ function finishGame(reason){
     sfx.applause();      // аплодисменты и фанфара
     confetti();          // хлопушки с конфетти
   }
+  $("q-overlay").classList.remove("show");          // вопрос и сложность поверх итогов не нужны
+  $("diff-overlay").classList.remove("show");
   renderResults(finalists, defeat);
   $("screen-game").classList.add("hidden");
   document.documentElement.removeAttribute("data-battle");   // бой кончился — обычный масштаб
@@ -3774,9 +3778,10 @@ function scheduleRocket(){   // цепочка живёт только пока 
 function stopRocket(){ clearTimeout(rocketTimer); rocketTimer = null; }
 /* ============================================================
    КЛАВИАТУРА (версия 1.0.1)
-   — Esc: закрыть настройки; с экрана настройки игроков/команд — назад в главное меню
+   — Esc: закрыть открытое окно (Настройки/Правила/Оформление); с экрана настройки игроков — назад в меню
    — O (английская; та же физическая клавиша в любой раскладке) — открыть настройки
-   — 1/2/3/4, A/B/C/D (в русской раскладке — А/Б/В/Г) — выбрать вариант ответа
+   — 1/2/3 — сложность; 1/2/3/4 и A/B/C/D (А/Б/В/Г) — вариант ответа
+   — пробел: «Показать ответы», затем «Следующий ход»; после финала пробел молчит
    ============================================================ */
 function openSettings(){ $("dots-menu").classList.add("hidden"); $("settings-overlay").classList.add("show"); }
 function closeSettings(){ $("settings-overlay").classList.remove("show"); }
@@ -3792,8 +3797,10 @@ function optIndexForKey(key){
 document.addEventListener("keydown", (e)=>{
   if(inTypingField(e)) return;                        // ввод имён игроков/босса — клавиши не перехватываем
   const k = String(e.key||"").toLowerCase();
-  if(e.key==="Escape"){
-    if($("settings-overlay").classList.contains("show")){ closeSettings(); e.preventDefault(); return; }
+  if(e.key==="Escape"){                               // Esc: сначала закрыть открытое окно (сверху вниз), иначе «назад»
+    const top = ["theme-overlay","rules-overlay","settings-overlay"].map(id=>$(id))
+      .find(o=>o && o.classList.contains("show"));
+    if(top){ top.classList.remove("show"); e.preventDefault(); return; }
     if(!$("screen-setup").classList.contains("hidden")){ backToMenu(); e.preventDefault(); return; }
     return;
   }
@@ -3801,9 +3808,30 @@ document.addEventListener("keydown", (e)=>{
     if(!$("settings-overlay").classList.contains("show")){ openSettings(); e.preventDefault(); }
     return;
   }
-  const idx = optIndexForKey(k);                      // 1/2/3/4, A/B/C/D, А/Б/В/Г — ответ в открытом вопросе
+  const idx = optIndexForKey(k);                      // 1/2/3/4, A/B/C/D, А/Б/В/Г
+  // открыто любое меню (Настройки/Правила/Оформление) — игровые клавиши молчат
+  if($("settings-overlay").classList.contains("show") || $("rules-overlay").classList.contains("show")
+     || $("theme-overlay").classList.contains("show")) return;
+  if($("diff-overlay").classList.contains("show")){    // выбор сложности: клавиши 1/2/3 (и A/B/C/D)
+    if(idx>=0 && idx<=2){
+      const b = $("diff-"+(idx+1));
+      if(b && !b.disabled){ b.click(); e.preventDefault(); }
+    }
+    return;
+  }
+  if(k===" " || e.code==="Space"){                     // пробел: «Показать ответы», затем «Следующий ход»
+    e.preventDefault();                               // пробел не активирует наведённую кнопку — финал/итоги не запустятся заново
+    if(state && state.phase==="end") return;          // после финала пробел молчит
+    if($("q-overlay").classList.contains("show")){
+      if(!$("q-show").classList.contains("hidden")){
+        if(state.current && !state.current.answered) $("q-show").click();
+      }else if(!$("q-next").classList.contains("hidden")){
+        $("q-next").click();
+      }
+    }
+    return;
+  }
   if(idx<0) return;
-  if($("settings-overlay").classList.contains("show")) return;   // поверх вопроса открыто окно
   if(!$("q-overlay").classList.contains("show")) return;
   if($("q-opts").classList.contains("hidden")) return;           // варианты ещё не показаны ведущим
   const cur = state.current;
