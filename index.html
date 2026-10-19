@@ -700,6 +700,46 @@ html[data-theme="notebook"] [style*="--pencil"]{
   position:relative;
 }
 .overlay.show .q-card{transform:none;}
+/* ---------- Режим разработчика (Ctrl+M): кнопка в углу + панель управления боем ---------- */
+#dev-fab{
+  position:fixed; right:20px; bottom:20px; z-index:130;
+  width:58px; height:58px; border-radius:50%; cursor:pointer;
+  background:linear-gradient(165deg,var(--panel-2),var(--panel));
+  border:2px solid var(--gold); color:var(--gold-bright); font-size:26px; line-height:1;
+  box-shadow:0 10px 26px rgba(0,0,0,.55);
+  transition:transform .15s, box-shadow .15s;
+}
+#dev-fab:hover{transform:scale(1.07); box-shadow:0 0 22px rgba(232,194,104,.5);}
+#dev-overlay{z-index:140;}
+.dev-card{
+  width:min(620px,95vw); max-height:92vh; overflow:auto; padding:24px 28px 28px;
+  border-color:var(--violet); transform:translateY(18px) scale(.96); transition:transform .3s ease-out;
+}
+#dev-overlay.show .dev-card{transform:none;}
+.dev-sec{
+  margin-top:14px; padding:14px 16px; border:2px solid var(--edge); border-radius:12px;
+  background:linear-gradient(165deg,var(--panel-2),var(--panel));
+}
+.dev-sec-t{font-weight:700; font-size:20px; color:var(--gold); letter-spacing:.5px;}
+.dev-row{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; align-items:center;}
+.dev-row .btn{flex:1; min-width:170px; margin:0; padding:12px 14px; font-size:18px;}
+.dev-num{
+  width:130px; padding:10px; text-align:center; font-family:inherit; font-size:19px;
+  color:var(--gold-bright); background:var(--panel); border:2px solid var(--edge); border-radius:10px;
+}
+#dev-target{
+  flex:1; min-width:210px; padding:10px; font-family:inherit; font-size:17px;
+  color:var(--silver); background:var(--panel); border:2px solid var(--edge); border-radius:10px;
+}
+.dev-note{margin-top:12px; font-size:15px; color:var(--muted); line-height:1.45;}
+.dev-note b{color:var(--gold);}
+/* ---------- Таблица лидеров (меню «⋯») ---------- */
+#table-overlay{z-index:120;}
+#table-card{width:min(680px,95vw); max-height:90vh; overflow:auto; padding:26px 32px 30px;}
+#lb-wrap{max-height:46vh; overflow:auto; margin:4px 0 6px;}
+#lb-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+#lb-actions .btn{flex:1; min-width:160px; margin:0; padding:13px 14px; font-size:18px;}
+#lb-table td.pts{font-weight:800; font-family:'Tagesschrift','Georgia',serif; color:var(--gold-bright); font-size:20px;}
 /* ---- бой (Босс и Мордобой): интерфейс боя крупнее обычного (×1.19) — плашки, карточки, текст ----
    zoom пересчитывает раскладку (как смена базового размера), поэтому ничего не ломается;
    vw/vh-ограничения карточек при этом ужимаются под масштаб, чтобы не вылезать за экран */
@@ -1019,6 +1059,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <button id="dm-settings">⚙️ Настройки</button>
       <button id="dm-rules">📜 Правила</button>
       <button id="dm-theme">🎨 Поменять оформление</button>
+      <button id="dm-table">🏆 Таблица лидеров</button>
     </div>
   </div>
 </div>
@@ -1773,6 +1814,59 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
     <div id="theme-grid"></div>
     <div class="set-note">Оформление меняется сразу везде и запоминается.</div>
     <button class="btn btn-ruby" data-close>✕ Готово</button>
+  </div>
+</div>
+
+<!-- ================= ТАБЛИЦА ЛИДЕРОВ (меню «⋯») ================= -->
+<div id="table-overlay" class="overlay">
+  <div class="card ornate modal-card" id="table-card">
+    <div class="modal-title">🏆 Таблица лидеров</div>
+    <div class="set-note">Сумма баллов каждого игрока за всё время и за все игры. Импорт объединяет сохранения: игроки из разных файлов складываются в одной таблице.</div>
+    <div class="table-wrap" id="lb-wrap"><table class="stats" id="lb-table"></table></div>
+    <div id="lb-actions">
+      <button class="btn" id="lb-export">⬇ Экспорт JSON</button>
+      <button class="btn" id="lb-import">⬆ Импорт JSON</button>
+      <button class="btn btn-ruby" data-close>✕ Закрыть</button>
+    </div>
+    <input type="file" id="lb-file" accept=".json,application/json" class="hidden">
+  </div>
+</div>
+
+<!-- ================= РЕЖИМ РАЗРАБОТЧИКА (Ctrl+M) ================= -->
+<button id="dev-fab" class="hidden" title="Режим разработчика (Ctrl+M)">🛠️</button>
+<div id="dev-overlay" class="overlay">
+  <div class="card ornate dev-card">
+    <div class="modal-title">🛠️ Режим разработчика</div>
+    <div class="dev-sec">
+      <div class="dev-sec-t">① Урон или лечение игрока</div>
+      <div class="dev-row">
+        <select id="dev-target"></select>
+        <input type="number" class="dev-num" id="dev-amount" min="1" step="1" value="100">
+      </div>
+      <div class="dev-row">
+        <button class="btn" id="dev-dmg">⚔ Нанести урон</button>
+        <button class="btn" id="dev-heal">💚 Вылечить</button>
+      </div>
+    </div>
+    <div class="dev-sec" id="dev-boss-sec">
+      <div class="dev-sec-t">② Урон или лечение Босса</div>
+      <div class="dev-row">
+        <input type="number" class="dev-num" id="dev-boss-amount" min="1" step="1" value="100">
+      </div>
+      <div class="dev-row">
+        <button class="btn" id="dev-boss-dmg">💥 Урон Боссу</button>
+        <button class="btn" id="dev-boss-heal">💚 Вылечить Босса</button>
+      </div>
+    </div>
+    <div class="dev-sec">
+      <div class="dev-sec-t">③ Отмена действий</div>
+      <div class="dev-row">
+        <button class="btn" id="dev-undo">↩ Вернуться на ход назад</button>
+        <button class="btn" id="dev-undo-round">⟲ В начало круга</button>
+      </div>
+      <div class="dev-note" id="dev-info"></div>
+    </div>
+    <div class="dev-row"><button class="btn btn-ruby" data-close>✕ Закрыть</button></div>
   </div>
 </div>
 
@@ -2772,6 +2866,7 @@ function startGame(cfg){
     round3Done:false,        // зачистка III круга уже была
     finishReason:null
   };
+  devReset();      // режим разработчика: стеки отмены новой игры с нуля
   newRound();
 }
 function newGame(names, bossName){ startGame({mode:"solo", names, bossName}); }         // одиночная игра
@@ -2787,7 +2882,9 @@ function drawQuestion(topicIdx, diff){
   if(pool.pos >= pool.order.length) return null;   // колода пуста
   if(diff==null){                                  // любая доступная карта
     const qIdx = pool.order[pool.pos++];
-    return {q:TOPICS[topicIdx].questions[qIdx], topicIdx};
+    const q = TOPICS[topicIdx].questions[qIdx];
+    devNoteDraw(topicIdx, q);                      // режим разработчика: запомнить взятую карту
+    return {q, topicIdx};
   }
   // карта нужной сложности (выбор игрока): берём ближайшую, убираем из колоды
   for(let i=pool.pos;i<pool.order.length;i++){
@@ -2795,6 +2892,7 @@ function drawQuestion(topicIdx, diff){
     if(q.difficulty===diff){
       const qIdx = pool.order[i];
       pool.order.splice(i,1);
+      devNoteDraw(topicIdx, q);                    // режим разработчика: запомнить взятую карту
       return {q, topicIdx};
     }
   }
@@ -2843,6 +2941,7 @@ const answerTime = ()=> state.mode==="team" ? ANSWER_TIME_TEAM : ANSWER_TIME;
 function newRound(){
   state.queue = shuffle(aliveUnits().map(u=>u.id));
   state.queuePos = 0;
+  devRoundStart();   // режим разработчика: новый круг — снимок начала круга обновится с первым ходом
 }
 
 /* ============================================================
@@ -3140,6 +3239,7 @@ function nextTurn(){
     state.current.speakerId = team.members[team.speakerTurn % team.members.length];
     team.speakerTurn++;
   }
+  devTurnStart();   // режим разработчика: снимок состояния в начале хода (для отмены)
   sfx.flip();
   renderAll();
 }
@@ -3980,6 +4080,8 @@ function finishGame(reason){
   document.documentElement.removeAttribute("data-battle");   // бой кончился — обычный масштаб
   document.documentElement.setAttribute("data-blood","off"); // и без Кровавой луны
   $("screen-results").classList.remove("hidden");
+  lbCommitGame();     // таблица лидеров: суммируем баллы игроков за эту игру
+  devSyncUi();        // режим разработчика: кнопка скрывается — боя больше нет
 }
 
 /* ============================================================
@@ -4028,6 +4130,7 @@ function renderResults(finalists, defeat){
     if(p.deathCause==="casino") return '<span style="color:var(--gold)">Убит'+a+': казино</span>';
     if(p.deathCause==="boss") return '<span style="color:#ff8a80">Убит'+a+' БОССОМ</span>';
     if(p.deathCause==="own") return '<span style="color:#ff8a80">Убит'+a+': своя ошибка</span>';
+    if(p.deathCause==="dev") return '<span style="color:var(--violet)">Выбыл'+a+': режим разработчика</span>';
     return '<span style="color:#ff8a80">Убит'+a+': '+esc(p.deathCause || "?")+'</span>';
   };
 
@@ -4148,6 +4251,315 @@ function showBanner(emoji, title, text, onBtn){
   $("banner-text").innerHTML = text;
   $("banner-btn").onclick = ()=>{ $("banner-overlay").classList.remove("show"); onBtn(); };
   $("banner-overlay").classList.add("show");
+}
+
+/* ============================================================
+   РЕЖИМ РАЗРАБОТЧИКА (Ctrl+M) — только пока идёт бой:
+   урон/хил игрока и Босса, отмена последнего хода и начала круга
+   ============================================================ */
+const DEV = {
+  on:false,        // режим включён (Ctrl+M включает/выключает)
+  stack:[],        // снимки в начале каждого хода: {snap, drawn, round}
+  cur:null,        // запись текущего хода (последняя в stack)
+  rounds:{},       // снимки начала кругов: "фаза:номер" -> снимок (после ударов перехода)
+  drawnBy:{}       // взятые в каждом круге карты: "фаза:номер" -> [{topicIdx,q}]
+};
+const devRoundKey = ()=> state ? state.phase+":"+state.round : "";
+function devDraws(){ const k = devRoundKey(); return DEV.drawnBy[k] || (DEV.drawnBy[k]=[]); }
+const devSnap = ()=> JSON.stringify(state);
+function devReset(){ DEV.stack=[]; DEV.cur=null; DEV.rounds={}; DEV.drawnBy={}; }
+
+/* хук drawQuestion: карта ушла из колоды — запоминаем, чтобы после отмены не выдать её же снова */
+function devNoteDraw(topicIdx, q){
+  if(!state) return;
+  if(DEV.cur) DEV.cur.drawn.push({topicIdx, q});
+  devDraws().push({topicIdx, q});
+}
+/* хук nextTurn: ход начался (вопрос ещё не взят) — снимок для «на ход назад»;
+   он же становится снимком начала круга, если ход первый после ударов перехода */
+function devTurnStart(){
+  if(!state) return;
+  const key = devRoundKey();
+  const entry = {snap:devSnap(), drawn:[], round:key};
+  DEV.stack.push(entry);
+  DEV.cur = entry;
+  if(!DEV.rounds[key]) DEV.rounds[key] = entry.snap;
+}
+/* хук newRound: номер круга вошёл заново — старые снимки и списки карт этого круга неактуальны */
+function devRoundStart(){
+  if(!state) return;
+  const key = devRoundKey();
+  delete DEV.rounds[key];
+  DEV.drawnBy[key] = [];
+  DEV.cur = null;
+}
+/* бой идёт: состояние есть, финал не показан, открыт игровой экран */
+function devBattle(){ return !!(state && state.phase!=="end" && !$("screen-game").classList.contains("hidden")); }
+function devSyncUi(){
+  const show = DEV.on && devBattle();
+  $("dev-fab").classList.toggle("hidden", !show);
+  if(!show) $("dev-overlay").classList.remove("show");
+}
+/* Ctrl+M: включить/выключить режим (работает только во время боя) */
+function toggleDev(){
+  if(!devBattle()) return;
+  DEV.on = !DEV.on;
+  devSyncUi();
+  if(DEV.on){
+    devFillTargets();
+    toast('🛠 <span class="t-gold">Режим разработчика включён</span> — кнопка в правом нижнем углу, Ctrl+M выключает');
+  }
+}
+/* убрать из колод перечисленные карты (после восстановления снимка они снова в колоде) */
+function devRemoveDrawn(list){
+  if(!state || !list) return;
+  list.forEach(d=>{
+    if(!d || d.topicIdx==null) return;
+    const pool = state.pools[d.topicIdx];
+    if(!pool) return;
+    const qi = TOPICS[d.topicIdx].questions.indexOf(d.q);
+    if(qi<0) return;
+    const at = pool.order.indexOf(qi);
+    if(at>=0) pool.order.splice(at,1);
+  });
+}
+/* восстановить состояние из снимка и синхронизировать с ним экран */
+function devRestore(snap){
+  state = JSON.parse(snap);
+  ["q-overlay","diff-overlay","banner-overlay","casino-overlay"].forEach(id=>$(id).classList.remove("show"));
+  hideTimer();
+  document.documentElement.setAttribute("data-blood", state.bloodMoon ? "on" : "off");
+  $("topic-table").classList.toggle("locked", !!state.transitioning);
+  const bossPhase = state.phase==="boss";
+  $("boss-zone").classList.toggle("hidden", !bossPhase);
+  $("boss-zone").classList.remove("boss-dying");
+  $("duel-zone").classList.toggle("hidden", bossPhase);
+  $("duel-zone").style.display = bossPhase ? "none" : "flex";
+  $("boss-name").textContent = state.bossName;
+  renderAll();
+  devFillTargets();
+}
+/* «Вернуться на ход назад»: отменяем последнее действие — у отвечавшего будет новый вопрос */
+function devUndoTurn(){
+  if(!devBattle()) return;
+  if(state.transitioning){ toast("⏳ Дождитесь окончания анимации"); return; }
+  let e = DEV.stack.length ? DEV.stack[DEV.stack.length-1] : null;
+  // если в текущем ходе ещё не было ни вопроса, ни ответа — значит, отменять надо предыдущий ход
+  const active = !!e && (e.drawn.length>0 || (state.current && state.current.answered));
+  if(!active){
+    if(DEV.stack.length<2){ toast('↩ <span class="t-gold">Отменять нечего</span> — действий ещё не было'); return; }
+    DEV.stack.pop();
+    e = DEV.stack[DEV.stack.length-1];
+  }
+  const snap = e.snap;
+  DEV.stack.pop();
+  devRestore(snap);
+  devRemoveDrawn(devDraws());   // карты, взятые после снимка, остаются использованными — вопрос будет новый
+  const entry = {snap:devSnap(), drawn:[], round:devRoundKey()};
+  DEV.stack.push(entry); DEV.cur = entry;
+  $("dev-overlay").classList.remove("show");
+  toast('↩ <span class="t-good">Последний ход отменён</span> — игрок получит новый вопрос');
+}
+/* «В начало круга»: отменяем все ходы круга, HP — как в начале круга, вопросы всем новые;
+   отменённые события (казино, супервопрос, проклятие) смогут выпасть снова */
+function devUndoRound(){
+  if(!devBattle()) return;
+  if(state.transitioning){ toast("⏳ Дождитесь окончания анимации"); return; }
+  const key = devRoundKey();
+  const snap = DEV.rounds[key];
+  if(!snap){ toast('⟲ <span class="t-gold">В этом круге ещё не было ходов</span> — отменять нечего'); return; }
+  devRestore(snap);
+  devRemoveDrawn(devDraws());   // карты этого круга не возвращаются в игру — достанутся новые
+  const entry = {snap, drawn:[], round:key};
+  DEV.stack = [entry]; DEV.cur = entry;
+  $("dev-overlay").classList.remove("show");
+  toast('⟲ <span class="t-good">Круг начат заново</span> — все его ходы отменены, HP восстановлены');
+}
+function devReadAmount(inputId){
+  const n = Math.round(Number($(inputId).value));
+  if(!isFinite(n) || n<=0){ toast('⚠ Урон и лечение — положительное целое число'); return null; }
+  return n;
+}
+/* урон/лечение боевой единицы (игрок или команда), ввод количества — с клавиатуры */
+function devUnitAction(heal){
+  if(!devBattle()) return;
+  const n = devReadAmount("dev-amount"); if(n==null) return;
+  const u = units()[Number($("dev-target").value)];
+  if(!u) return;
+  if(heal){
+    const before = u.hp;
+    u.hp = Math.min(u.maxHp, u.hp + n);
+    const h = u.hp - before;
+    if(!u.alive && u.hp>0){   // вылеченного выбывшего возвращаем в бой (команда — целиком)
+      u.alive = true; u.deathCause = null; u.eliminatedIn = null;
+      if(u.members) u.members.forEach(pid=>{
+        const m = state.players[pid];
+        m.alive = true; m.hp = m.maxHp; m.deathCause = null; m.eliminatedIn = null;
+      });
+    }
+    floatDamage($("pcard-"+u.id), "+"+h, "dmg-green");
+    toast(h>0 ? '💚 <span class="t-good">'+esc(u.name)+' восстановил '+h+' HP</span> ('+u.hp+'/'+u.maxHp+')'
+              : '💚 У '+esc(u.name)+' уже полный HP');
+  }else{
+    if(!u.alive){ toast('☠ '+esc(u.name)+' уже выбыл — его можно вылечить'); return; }
+    const applied = Math.min(n, u.hp);
+    u.hp -= applied;
+    u.dmgTaken += applied;
+    floatDamage($("pcard-"+u.id), "-"+applied, "dmg-red");
+    if(u.hp<=0) checkPlayerDead(u, "dev");
+    toast('⚔ <span class="t-bad">'+esc(u.name)+' получает '+applied+' урона</span> ('+u.hp+'/'+u.maxHp+')');
+  }
+  renderPlayers();
+  if(state.phase==="pvp") renderDuelZone();
+  devFillTargets();
+}
+/* урон/лечение Босса (только в фазе битвы с Боссом) */
+function devBossAction(heal){
+  if(!devBattle() || state.phase!=="boss") return;
+  const n = devReadAmount("dev-boss-amount"); if(n==null) return;
+  const b = state.boss;
+  if(heal){
+    const before = b.hp;
+    b.hp = Math.min(b.maxHp, b.hp + n);
+    const h = b.hp - before;
+    floatDamage($("boss-zone"), "+"+h, "dmg-green");
+    toast(h>0 ? '💚 <span class="t-good">'+esc(state.bossName)+' восстанавливает '+h+' HP</span> ('+b.hp+'/'+b.maxHp+')'
+              : '💚 У Босса уже полный HP');
+  }else{
+    const applied = Math.min(n, b.hp);
+    b.hp -= applied;
+    floatDamage($("boss-zone"), "-"+applied, "dmg-red");
+    $("boss-zone").classList.add("shake");
+    setTimeout(()=>$("boss-zone").classList.remove("shake"), 550);
+    toast('💥 <span class="t-bad">'+esc(state.bossName)+' теряет '+applied+' HP</span> ('+b.hp+'/'+b.maxHp+')');
+  }
+  renderBossZone();
+  devFillTargets();
+}
+/* список целей (игроки или команды) и подпись под панелью */
+function devFillTargets(){
+  const sel = $("dev-target");
+  const keep = sel.value;
+  sel.innerHTML = "";
+  if(state){
+    units().forEach(u=>{
+      const o = document.createElement("option");
+      o.value = u.id;
+      o.textContent = (u.alive ? "" : "☠ ") + u.name + " · " + u.hp + "/" + u.maxHp + " HP";
+      sel.appendChild(o);
+    });
+    if(keep!=="" && [...sel.options].some(o=>o.value===keep)) sel.value = keep;
+  }
+  $("dev-boss-sec").classList.toggle("hidden", !(state && state.phase==="boss"));
+  $("dev-info").innerHTML = state
+    ? 'Круг <b>'+state.round+'</b>, '+(state.phase==="boss" ? "битва с Боссом" : "мордобой")
+      + ' · снимков ходов: <b>'+DEV.stack.length+'</b> · снимок начала круга: <b>'+(DEV.rounds[devRoundKey()] ? "есть" : "нет")+'</b>'
+      + '<br>Урон и лечение применяются сразу. «На ход назад» отменяет последний ответ — достанется новый вопрос. '
+      + '«В начало круга» отменяет все ходы круга (HP как в начале круга, вопросы новые, казино/супервопрос/проклятие смогут выпасть снова).'
+    : "";
+}
+
+/* ============================================================
+   ТАБЛИЦА ЛИДЕРОВ (меню «⋯»): сумма баллов игроков за все игры
+   + экспорт и импорт в JSON (импорт — со слиянием таблиц)
+   ============================================================ */
+const LB_KEY = "cbq-leaderboard";
+const LB_META = ["v","version","game","type","exported","title"];   // служебные поля в файле — не игроки
+/* любой поддерживаемый формат сохранения → [{name,total}] */
+function lbParse(data){
+  const out = [];
+  const add = (name, total)=>{
+    if(name==null) return;
+    const n = Number(total);
+    const nm = String(name).trim();
+    if(nm && isFinite(n)) out.push({name:nm, total:Math.round(n)});
+  };
+  if(Array.isArray(data)){
+    data.forEach(e=>{ if(e && typeof e==="object") add(e.name, e.total!=null ? e.total : e.points); });
+  }else if(data && typeof data==="object"){
+    const p = data.players;
+    if(Array.isArray(p)) p.forEach(e=>{ if(e && typeof e==="object") add(e.name, e.total!=null ? e.total : e.points); });
+    else if(p && typeof p==="object") Object.keys(p).forEach(k=>add(k, p[k]));
+    else Object.keys(data).forEach(k=>{ if(LB_META.indexOf(k)<0) add(k, data[k]); });
+  }
+  return out.filter(e=>e.total>0);
+}
+function lbSorted(map){
+  return Object.keys(map).map(name=>({name, total:map[name]}))
+    .sort((a,b)=> b.total-a.total || (a.name<b.name ? -1 : a.name>b.name ? 1 : 0));
+}
+function lbLoad(){
+  try{
+    const raw = store.get(LB_KEY);
+    if(!raw) return {};
+    const map = {};
+    lbParse(JSON.parse(raw)).forEach(e=>{ map[e.name] = (map[e.name]||0) + e.total; });
+    return map;
+  }catch(e){ return {}; }
+}
+function lbSave(map){ store.set(LB_KEY, JSON.stringify({v:1, players:lbSorted(map)})); }
+/* итоги текущей игры → в накопительную таблицу (вызывается один раз в finishGame) */
+function lbCommitGame(){
+  if(!state) return;
+  const map = lbLoad();
+  const add = (name, pts)=>{
+    if(!name || !(pts>0)) return;
+    const nm = String(name).trim();
+    if(nm) map[nm] = (map[nm]||0) + Math.round(pts);
+  };
+  if(isTeamMode()) state.teams.forEach(t=> t.members.forEach(pid=> add(state.players[pid].name, t.points)));
+  else state.players.forEach(p=> add(p.name, p.points));
+  lbSave(map);
+}
+/* импорт: объект или JSON-строка сливаются с текущей таблицей; возвращает размер таблицы (-1 — не JSON, 0 — игроков нет) */
+function lbImport(data){
+  if(typeof data==="string"){
+    try{ data = JSON.parse(data); }catch(e){ return -1; }
+  }
+  const entries = lbParse(data);
+  if(!entries.length) return 0;
+  const map = lbLoad();
+  entries.forEach(e=>{ map[e.name] = (map[e.name]||0) + e.total; });
+  lbSave(map);
+  renderLeaderboard();
+  return lbSorted(map).length;
+}
+function lbExportJson(){
+  return JSON.stringify({
+    game:"Тёмные знания", type:"leaderboard", version:1,
+    exported:new Date().toISOString(),
+    players:lbSorted(lbLoad())
+  }, null, 2);
+}
+function lbExportFile(){
+  const json = lbExportJson();
+  const name = "temnye-znaniya-leaderboard.json";
+  try{
+    const a = document.createElement("a");
+    const url = URL.createObjectURL(new Blob([json], {type:"application/json"}));
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 3000);
+  }catch(e){
+    const a = document.createElement("a");   // запасной путь там, где Blob-ссылки недоступны
+    a.href = "data:application/json;charset=utf-8,"+encodeURIComponent(json);
+    a.download = name;
+    a.click();
+  }
+  toast('⬇ <span class="t-good">Таблица сохранена</span> в файл '+name);
+}
+function renderLeaderboard(){
+  const rows = lbSorted(lbLoad());
+  const tb = $("lb-table");
+  if(!rows.length){
+    tb.innerHTML = '<tr><td class="name" style="text-align:center; color:var(--muted); padding:28px 12px;">'
+      + 'Пока пусто — сыграйте игру или импортируйте сохранение (JSON)</td></tr>';
+    return;
+  }
+  const medals = ["🥇","🥈","🥉"];
+  tb.innerHTML = '<tr><th style="width:86px;">МЕСТО</th><th style="text-align:left;">ИГРОК</th><th style="width:120px;">БАЛЛЫ</th></tr>'
+    + rows.map((r,i)=>'<tr><td class="place">'+(i<3 ? medals[i] : (i+1))+'</td>'
+      + '<td class="name">'+esc(r.name)+'</td><td class="pts">'+r.total+'</td></tr>').join("");
 }
 
 /* ============================================================
@@ -4276,6 +4688,7 @@ $("start-btn").onclick = ()=>{
   const sg = $("screen-game");
   sg.classList.remove("game-start"); void sg.offsetWidth; sg.classList.add("game-start");
   sfx.weapon();
+  devSyncUi();   // режим разработчика: кнопка возвращается, если он был включён
   nextTurn();
 };
 $("q-next").onclick = nextTurn;
@@ -4286,9 +4699,16 @@ $("again-btn").onclick = ()=>{
 /* ============================================================
    МЕНЮ «⋯», НАСТРОЙКИ, ПРАВИЛА, ОФОРМЛЕНИЕ
    ============================================================ */
-const store = {   // localStorage может быть недоступен (например, строгий офлайн-браузер) — не роняем игру
-  get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
-  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+const store = {   // localStorage может быть недоступен (офлайн-браузер, «приватный» режим) — не роняем игру,
+  _mem:{},        // значения держим ещё и в памяти: таблица лидеров работает в любом случае
+  get(k){
+    try{ const v = localStorage.getItem(k); if(v!=null) return v; }catch(e){}
+    return Object.prototype.hasOwnProperty.call(this._mem, k) ? this._mem[k] : null;
+  },
+  set(k,v){
+    this._mem[k] = String(v);
+    try{ localStorage.setItem(k, v); }catch(e){}
+  }
 };
 
 // ---- звук: единый переключатель (кнопка в игре + настройки), запоминается ----
@@ -4319,9 +4739,36 @@ document.addEventListener("click", (e)=>{   // клик мимо меню — з
 $("dm-settings").onclick = openSettings;
 $("dm-rules").onclick   = ()=>{ $("dots-menu").classList.add("hidden"); $("rules-overlay").classList.add("show"); };
 $("dm-theme").onclick   = ()=>{ $("dots-menu").classList.add("hidden"); $("theme-overlay").classList.add("show"); };
+$("dm-table").onclick   = ()=>{ $("dots-menu").classList.add("hidden"); renderLeaderboard(); $("table-overlay").classList.add("show"); sfx.flip(); };
 document.querySelectorAll("[data-close]").forEach(b=>{
   b.onclick = ()=> b.closest(".overlay").classList.remove("show");
 });
+
+// ---- таблица лидеров: экспорт в JSON и импорт с слиянием таблиц ----
+$("lb-export").onclick = lbExportFile;
+$("lb-import").onclick = ()=> $("lb-file").click();
+$("lb-file").onchange = (e)=>{
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    const n = lbImport(String(r.result||""));
+    if(n<0) toast('⚠ <span class="t-bad">Файл не похож на сохранение JSON</span>');
+    else if(n===0) toast('⚠ <span class="t-bad">В файле нет игроков</span>');
+    else toast('⬆ <span class="t-gold">Сохранение импортировано</span> — в таблице '+n+' игроков');
+    e.target.value = "";
+  };
+  r.readAsText(f);
+};
+
+// ---- режим разработчика: кнопка в углу, панель, урон/хил, отмена ----
+$("dev-fab").onclick = ()=>{ if(!DEV.on) return; devFillTargets(); $("dev-overlay").classList.add("show"); };
+$("dev-dmg").onclick      = ()=> devUnitAction(false);
+$("dev-heal").onclick     = ()=> devUnitAction(true);
+$("dev-boss-dmg").onclick = ()=> devBossAction(false);
+$("dev-boss-heal").onclick= ()=> devBossAction(true);
+$("dev-undo").onclick      = devUndoTurn;
+$("dev-undo-round").onclick= devUndoRound;
 
 // ---- темы оформления ----
 const THEMES = {
@@ -4438,10 +4885,12 @@ function optIndexForKey(key){
   return k in OPT_KEY_INDEX ? OPT_KEY_INDEX[k] : -1;
 }
 document.addEventListener("keydown", (e)=>{
+  // Ctrl/Cmd + M — режим разработчика (только во время боя): повторное нажатие выключает
+  if((e.ctrlKey||e.metaKey) && String(e.key||"").toLowerCase()==="m"){ e.preventDefault(); toggleDev(); return; }
   if(inTypingField(e)) return;                        // ввод имён игроков/босса — клавиши не перехватываем
   const k = String(e.key||"").toLowerCase();
   if(e.key==="Escape"){                               // Esc: сначала закрыть открытое окно (сверху вниз), иначе «назад»
-    const top = ["theme-overlay","rules-overlay","settings-overlay"].map(id=>$(id))
+    const top = ["dev-overlay","table-overlay","theme-overlay","rules-overlay","settings-overlay"].map(id=>$(id))
       .find(o=>o && o.classList.contains("show"));
     if(top){ top.classList.remove("show"); e.preventDefault(); return; }
     if(!$("screen-setup").classList.contains("hidden")){ backToMenu(); e.preventDefault(); return; }
@@ -4452,9 +4901,10 @@ document.addEventListener("keydown", (e)=>{
     return;
   }
   const idx = optIndexForKey(k);                      // 1/2/3/4, A/B/C/D, А/Б/В/Г
-  // открыто любое меню (Настройки/Правила/Оформление) — игровые клавиши молчат
+  // открыто любое меню (Настройки/Правила/Оформление/Лидеры/Разработчик) — игровые клавиши молчат
   if($("settings-overlay").classList.contains("show") || $("rules-overlay").classList.contains("show")
-     || $("theme-overlay").classList.contains("show")) return;
+     || $("theme-overlay").classList.contains("show") || $("table-overlay").classList.contains("show")
+     || $("dev-overlay").classList.contains("show")) return;
   if($("diff-overlay").classList.contains("show")){    // выбор сложности: клавиши 1/2/3 (и A/B/C/D)
     if(idx>=0 && idx<=2){
       const b = $("diff-"+(idx+1));
@@ -4558,7 +5008,7 @@ setBlur(store.get("cbq-blur") === "1");            // вернуть сохра�
     <rect x="4" y="4" width="112" height="146" rx="15" fill="url(#vbFace)" stroke="#2c3f73" stroke-width="6"/>
     <path d="M32 13C32 13 14 28 14 38.5c0 6 4.5 10.5 10.5 10.5 3 0 5.7-1.5 7.5-3.75 1.8 2.25 4.5 3.75 7.5 3.75 6 0 10.5-4.5 10.5-10.5C50 28 32 13 32 13z M27.5 46h9l2.5 8h-14z" fill="url(#vbPip)" transform="translate(19,34) scale(1.28)"/>
   </svg>
-  <span>Тёмные знания · v1.0.3</span>
+  <span>Тёмные знания · v1.0.4</span>
 </div>
 </body>
 </html>
