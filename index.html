@@ -4885,8 +4885,10 @@ function optIndexForKey(key){
   return k in OPT_KEY_INDEX ? OPT_KEY_INDEX[k] : -1;
 }
 document.addEventListener("keydown", (e)=>{
-  // Ctrl/Cmd + M — режим разработчика (только во время боя): повторное нажатие выключает
-  if((e.ctrlKey||e.metaKey) && String(e.key||"").toLowerCase()==="m"){ e.preventDefault(); toggleDev(); return; }
+  // Ctrl/Cmd + M — режим разработчика (только во время боя): повторное нажатие выключает.
+  // e.code — физическая клавиша, работает при любой раскладке; k — «m»/«ь»/«M» на всякий случай
+  const devKey = e.code==="KeyM" || ["m","ь"].includes(String(e.key||"").toLowerCase());
+  if((e.ctrlKey||e.metaKey) && devKey){ e.preventDefault(); toggleDev(); return; }
   if(inTypingField(e)) return;                        // ввод имён игроков/босса — клавиши не перехватываем
   const k = String(e.key||"").toLowerCase();
   if(e.key==="Escape"){                               // Esc: сначала закрыть открытое окно (сверху вниз), иначе «назад»
