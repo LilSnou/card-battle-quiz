@@ -1791,6 +1791,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
     <div id="ai-key-row">
       <input type="password" id="ai-key" placeholder="API-ключ DeepSeek (sk-…)" autocomplete="off" spellcheck="false">
       <button class="btn" id="set-ai-key">💾 Сохранить</button>
+      <button class="btn" id="set-ai-test" title="Отправить тестовый запрос к DeepSeek">🧪 Проверить</button>
     </div>
     <div class="set-note">🐋 Раз за игру (только в битве с Боссом) может выпасть «Вопрос от DeepSeek»: без уровня сложности и без таймера, верно — Боссу −100, неверно — игроку −100. Вопрос генерирует и перепроверяет нейросеть DeepSeek по выбранной теме. Нужен интернет и API-ключ с <b>platform.deepseek.com</b> (генерация стоит доли цента). Ключ хранится только на этом устройстве; без ключа или без сети вопрос не выпадает.</div>
     <div class="set-note">Переключатели общие: действуют во всей игре и запоминаются.</div>
@@ -1943,7 +1944,7 @@ const CURSE_CHANCE    = 0.06;  // шанс вопроса-проклятия (о
 const CASINO_CHANCE   = 0.07;  // шанс казино (только в битве с боссом, один раз за игру)
 const AI_CHANCE       = 0.08;  // шанс «Вопроса от DeepSeek» (только битва с боссом, один раз за игру)
 const AI_DMG          = 100;   // вопрос ИИ: верно — боссу −100, неверно — игроку −100 (ровно, без множителей)
-const AI_TIMEOUT      = 25000; // таймаут одного запроса к DeepSeek, мс
+const AI_TIMEOUT      = 35000; // таймаут одного запроса к DeepSeek, мс
 const SPECIAL_HOLD    = 3;     // столько первых вопросов игры — точно без особых событий (мега/проклятье/казино)
 const SPECIAL_RAMP    = 6;     // и столько ещё — шанс особых плавно растёт от половины базового до полного
 const BLOOD_CHANCE    = 0.5;   // шанс, что в начале II круга взойдёт Кровавая луна (может не быть за игру)
@@ -3317,25 +3318,44 @@ function specialChance(base){
 const AI_ENDPOINT = "https://api.deepseek.com/chat/completions";
 const AI = {
   genId:0,                                        // защита от «поздних» ответов (смена хода/новая игра)
+  lastError:"",                                   // последняя причина сбоя — показывается в тосте
 
   online(){ try{ return navigator.onLine !== false; }catch(e){ return true; } },   // есть ли интернет
   ready(){ return aiEnabled() && !!aiKey() && this.online(); },
 
-  /* ---- один запрос к DeepSeek API; при любой ошибке — reject ---- */
-  ask(messages, temperature){
+  /* ---- один запрос к DeepSeek API; при любой ошибке — reject, причина в AI.lastError ---- */
+  ask(messages, temperature, noFormat){
     const ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
     const t = ctrl ? setTimeout(()=>{ try{ ctrl.abort(); }catch(e){} }, AI_TIMEOUT) : null;
+    const body = {model:"deepseek-chat", messages, temperature};
+    if(!noFormat) body.response_format = {type:"json_object"};   // если API его вдруг не примет — повторим без формата
     return fetch(AI_ENDPOINT, {
       method:"POST",
       headers:{"Content-Type":"application/json", "Authorization":"Bearer "+aiKey()},
-      body:JSON.stringify({model:"deepseek-chat", messages, temperature, response_format:{type:"json_object"}}),
+      body:JSON.stringify(body),
       signal: ctrl ? ctrl.signal : undefined
     })
-    .then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
-    .then(j=>{
+    .then(r=> r.text().then(txt=>{
+      // API не знает response_format — повторяем запрос без него (парсер умеет и markdown)
+      if(!r.ok && r.status===400 && !noFormat && /response_format/i.test(txt)) return AI.ask(messages, temperature, true);
+      if(!r.ok){
+        let msg = "HTTP "+r.status;
+        try{ const er = JSON.parse(txt); if(er && er.error && er.error.message) msg += " — "+er.error.message; }
+        catch(e){ if(txt) msg += " — "+txt.slice(0,140); }
+        if(r.status===401) msg += " · ключ не принят — проверьте API-ключ";
+        if(r.status===402) msg += " · на балансе DeepSeek нет средств";
+        if(r.status===429) msg += " · слишком частые запросы — подождите немного";
+        throw new Error(msg);
+      }
+      let j; try{ j = JSON.parse(txt); }catch(e){ throw new Error("DeepSeek вернул не JSON"); }
       const c = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
       if(!c) throw new Error("пустой ответ DeepSeek");
       return c;
+    }))
+    .catch(e=>{
+      AI.lastError = (e && e.name==="AbortError") ? "DeepSeek молчит дольше "+Math.round(AI_TIMEOUT/1000)+" секунд"
+        : (e && e.message) ? e.message : "сетевая ошибка";
+      throw e;
     })
     .finally(()=>{ if(t) clearTimeout(t); });
   },
@@ -3364,7 +3384,7 @@ const AI = {
   /* ---- шаг 1: сама генерация (без уровня сложности — он вопросу не нужен) ---- */
   make(topic){
     return this.ask([
-      {role:"system", content:"Ты — составитель вопросов для настольной викторины «Тёмные знания». Говоришь по-русски. Отвечаешь ТОЛЬКО валидным JSON, без markdown и пояснений."},
+      {role:"system", content:"Ты — составитель вопросов для настольной викторины «Тёмные знания». Говоришь по-русски. Отвечаешь ТОЛЬКО валидным json (строго json, без markdown и пояснений)."},
       {role:"user", content:"Придумай один вопрос по теме «"+topic+"» для викторины.\n"
         +"Требования: 4 варианта ответа и ровно один верный; варианты правдоподобные и сопоставимой длины; "
         +"вопрос однозначен, без подвохов и без «все перечисленные/ничего из перечисленного»; не повторяй дословно школьные тестовые вопросы; "
@@ -3380,7 +3400,7 @@ const AI = {
   /* ---- шаг 2: самопроверка — модель отвечает на вопрос сама и сверяет ---- */
   verify(q){
     return this.ask([
-      {role:"system", content:"Ты — строгий проверщик вопросов викторины. Отвечаешь ТОЛЬКО валидным JSON, без markdown."},
+      {role:"system", content:"Ты — строгий проверщик вопросов викторины. Отвечаешь ТОЛЬКО валидным json (строго json, без markdown)."},
       {role:"user", content:"Проверь вопрос викторины:\nВопрос: "+q.text+"\nВарианты:\n"
         + q.options.map((o,i)=>(i+1)+") "+o).join("\n")
         + "\nЗаявлен верным вариант "+(q.answer+1)+": «"+q.options[q.answer]+"».\n"
@@ -3399,9 +3419,10 @@ const AI = {
       try{
         const q = await this.make(topic);
         if(await this.verify(q)) return q;
-      }catch(e){ /* попробуем ещё раз */ }
+        AI.lastError = "нейросеть не подтвердила свой же вопрос (две попытки)";
+      }catch(e){ /* причина уже записана в AI.lastError */ }
     }
-    throw new Error("DeepSeek: вопрос не прошёл самопроверку");
+    throw new Error(AI.lastError || "DeepSeek: вопрос не прошёл самопроверку");
   }
 };
 
@@ -3424,10 +3445,13 @@ function startAIQuestion(topicIdx){
     state.pendingTopic = null;
     state.aiUsed = true;                          // один раз за игру
     setupAIQuestion(topicIdx, q);
-  }, ()=>{
+  }, (err)=>{
     aiLoading(false);
     if(genId!==AI.genId || state.current!==cur) return;
     state.pendingTopic = null;
+    const why = AI.lastError || (err && err.message) || "неизвестная ошибка";
+    console.error("🐋 DeepSeek не ответил:", why);
+    toast('🐋 <span class="t-bad">DeepSeek не ответил</span><br>'+esc(why)+'<br>Будет обычный вопрос по теме', 6000);
     showDiff(topicIdx);                           // не вышло (нет сети/ключи) — обычный путь, событие не тратится
   });
 }
@@ -5013,6 +5037,20 @@ $("set-ai-key").onclick = ()=>{
   renderAiSettings();
 };
 $("ai-key").addEventListener("keydown", e=>{ if(e.key==="Enter") $("set-ai-key").click(); });
+// ---- тестовый запрос: проверяет, что ключ принят и DeepSeek отвечает ----
+$("set-ai-test").onclick = async ()=>{
+  if(!aiKey()){ toast("Сначала сохраните API-ключ DeepSeek"); return; }
+  const b = $("set-ai-test");
+  b.disabled = true; b.textContent = "⏳ Ждём…";
+  try{
+    await AI.ask([{role:"user", content:'Верни только json вида {"ok":true}'}], 0);
+    toast('<span class="t-good">🐋 Ключ работает!</span> DeepSeek ответил на тестовый запрос');
+  }catch(e){
+    console.error("🐋 Тест DeepSeek:", AI.lastError || e);
+    toast('🐋 <span class="t-bad">Тест не прошёл:</span><br>'+esc(AI.lastError || (e && e.message) || "неизвестная ошибка"), 7000);
+  }
+  b.disabled = false; b.textContent = "🧪 Проверить";
+};
 
 // ---- меню «⋯» на главном экране ----
 $("dots-btn").onclick = (e)=>{ e.stopPropagation(); $("dots-menu").classList.toggle("hidden"); sfx.flip(); };
