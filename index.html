@@ -666,16 +666,16 @@ html[data-theme="notebook"] [style*="--pencil"]{
   margin-bottom:12px; font-size:20px;
 }
 .set-note{font-size:14px; color:var(--muted); margin:0 2px 6px;}
-/* строка ввода API-ключа DeepSeek в настройках */
-#ai-key-row{display:flex; gap:10px; margin:-4px 0 12px;}
-#ai-key{
+/* строка выбора модели Puter.js в настройках */
+#ai-model-row{display:flex; gap:10px; margin:-4px 0 12px;}
+#ai-model{
   flex:1; min-width:0;
   background:#140e1d; border:2px solid var(--edge); border-radius:12px;
   padding:12px 14px; font-size:17px; color:var(--gold-bright); outline:none;
   box-shadow:inset 0 3px 8px rgba(0,0,0,.6);
 }
-#ai-key::placeholder{color:#6b5f80;}
-#ai-key:focus{border-color:var(--gold); box-shadow:0 0 16px rgba(232,194,104,.4);}
+#ai-model::placeholder{color:#6b5f80;}
+#ai-model:focus{border-color:var(--gold); box-shadow:0 0 16px rgba(232,194,104,.4);}
 /* экран ожидания: DeepSeek придумывает вопрос */
 #ai-loading .card{text-align:center; width:min(540px,92vw); padding:34px 28px;}
 #ai-whale{font-size:64px; display:block; margin-bottom:14px; animation:whaleBob 1.4s ease-in-out infinite alternate;}
@@ -1036,6 +1036,9 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
 .badge-boss{background:rgba(232,194,104,.15); border:1px solid var(--gold); color:var(--gold); border-radius:9px; padding:2px 9px; font-size:13px; font-weight:700;}
 .results-actions{text-align:center; margin-top:32px;}
 </style>
+<!-- Puter.js — генерация «Вопроса от DeepSeek» без своего API-ключа (User-Pays).
+     Офлайн скрипт не загрузится: событие просто не выпадет, игра работает как обычно. -->
+<script src="https://js.puter.com/v2/"></script>
 </head>
 <body>
 
@@ -1788,12 +1791,12 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <span>🐋 Вопросы от DeepSeek</span>
       <button class="btn" id="set-ai">Вкл</button>
     </div>
-    <div id="ai-key-row">
-      <input type="password" id="ai-key" placeholder="API-ключ DeepSeek (sk-…)" autocomplete="off" spellcheck="false">
-      <button class="btn" id="set-ai-key">💾 Сохранить</button>
-      <button class="btn" id="set-ai-test" title="Отправить тестовый запрос к DeepSeek">🧪 Проверить</button>
+    <div id="ai-model-row">
+      <input type="text" id="ai-model" placeholder="модель: deepseek/deepseek-v4.1-flash (по умолчанию)" autocomplete="off" spellcheck="false">
+      <button class="btn" id="set-ai-model" title="Сохранить модель; пустое поле — вернуть модель по умолчанию">💾 Сохранить</button>
+      <button class="btn" id="set-ai-test" title="Отправить тестовый запрос к DeepSeek через Puter.js">🧪 Проверить</button>
     </div>
-    <div class="set-note">🐋 Раз за игру (только в битве с Боссом) может выпасть «Вопрос от DeepSeek»: без уровня сложности и без таймера, верно — Боссу −100, неверно — игроку −100. Вопрос генерирует и перепроверяет нейросеть DeepSeek по выбранной теме. Нужен интернет и API-ключ с <b>platform.deepseek.com</b> (генерация стоит доли цента). Ключ хранится только на этом устройстве; без ключа или без сети вопрос не выпадает.</div>
+    <div class="set-note">🐋 Раз за игру (только в битве с Боссом) может выпасть «Вопрос от DeepSeek»: без уровня сложности и без таймера, верно — Боссу −100, неверно — игроку −100. Вопрос генерирует и перепроверяет модель DeepSeek через <b>Puter.js</b> — <b>без API-ключа и баланса</b> (запросы оплачивает аккаунт Puter; при первом запросе может открыться окно входа в Puter — разрешите его). Нужен интернет; если Puter.js не загрузился или запрос не прошёл, показывается причина, а вопрос идёт обычным путём.</div>
     <div class="set-note">Переключатели общие: действуют во всей игре и запоминаются.</div>
     <button class="btn btn-ruby" data-close>✕ Закрыть</button>
   </div>
@@ -1820,7 +1823,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
         <li><b>☠ Вопрос-проклятие</b> (один раз за игру): верно — жертва (Босс или цель) восстанавливает +100; неверно — проклятие обрушивается сразу на ВСЕХ живых: −100 каждому.</li>
         <li><b>👹 Ярость Босса</b>: с шансом 5% за каждый неправильный ответ Босс <b>удваивает</b> урон ошибшемуся (слышен рёв, всплывает «БОСС РАЗЪЯРЁН»).</li>
         <li><b>🎰 Казино</b> (один раз за игру, только против Босса): вместо вопроса — колесо фортуны: исцеление, урон, пропуск хода, удар по Боссу или по случайному сопернику…</li>
-        <li><b>🐋 Вопрос от DeepSeek</b> (один раз за игру, только против Босса, только при наличии интернета и ключа DeepSeek в настройках): вместо выбора сложности — вопрос, который генерирует и перепроверяет сама нейросеть DeepSeek по выбранной теме: 4 варианта, ровно один верный, <b>без уровня сложности и без таймера</b>. <b>Верно</b> → Босс теряет 100; <b>неверно</b> → игрок получает 100. Способности на нём недоступны.</li>
+        <li><b>🐋 Вопрос от DeepSeek</b> (один раз за игру, только против Босса, только при наличии интернета): вместо выбора сложности — вопрос, который генерирует и перепроверяет сама нейросеть DeepSeek по выбранной теме: 4 варианта, ровно один верный, <b>без уровня сложности и без таймера</b>. <b>Верно</b> → Босс теряет 100; <b>неверно</b> → игрок получает 100. Способности на нём недоступны.</li>
         <li><b>⚡ Серия</b>: пять верных ответов подряд — с шансом 5% Босс вместе с пятым ударом получает ещё +300 урона. Считаются только обычные вопросы.</li>
         <li><b>🔥 Конец II круга</b>: если Босс ещё цел, он обрушивает удар по всем живым: −50 каждому (пулу каждой команды −100).</li>
         <li><b>🌕 Кровавая луна</b> (начало II круга, только в Классике и Войне гильдий; шанс 50% — может не быть за игру вовсе): пока длится событие, <b>весь урон ×1.2</b> — и босса, и игроков (кроме мега, проклятия и казино); экран плавно наливается кровью (отдельной луны на фоне нет — только красный оттенок), луна темы краснеет, огонь тыкв становится красным. С началом III круга всё возвращается в норму.</li>
@@ -1944,7 +1947,7 @@ const CURSE_CHANCE    = 0.06;  // шанс вопроса-проклятия (о
 const CASINO_CHANCE   = 0.07;  // шанс казино (только в битве с боссом, один раз за игру)
 const AI_CHANCE       = 0.08;  // шанс «Вопроса от DeepSeek» (только битва с боссом, один раз за игру)
 const AI_DMG          = 100;   // вопрос ИИ: верно — боссу −100, неверно — игроку −100 (ровно, без множителей)
-const AI_TIMEOUT      = 35000; // таймаут одного запроса к DeepSeek, мс
+const AI_TIMEOUT      = 60000; // таймаут одного запроса к Puter.js, мс (первый запрос может ждать окно входа в Puter)
 const SPECIAL_HOLD    = 3;     // столько первых вопросов игры — точно без особых событий (мега/проклятье/казино)
 const SPECIAL_RAMP    = 6;     // и столько ещё — шанс особых плавно растёт от половины базового до полного
 const BLOOD_CHANCE    = 0.5;   // шанс, что в начале II круга взойдёт Кровавая луна (может не быть за игру)
@@ -3313,51 +3316,62 @@ function specialChance(base){
 
 /* ============================================================
    🐋 ВОПРОС ОТ DEEPSEEK: один раз за игру, только в битве с боссом,
-   только при интернете и ключе в настройках. Генерация + самопроверка.
+   только при интернете. Генерация через Puter.js (модель DeepSeek,
+   без своего API-ключа и баланса — User-Pays) + самопроверка.
    ============================================================ */
-const AI_ENDPOINT = "https://api.deepseek.com/chat/completions";
 const AI = {
   genId:0,                                        // защита от «поздних» ответов (смена хода/новая игра)
   lastError:"",                                   // последняя причина сбоя — показывается в тосте
 
   online(){ try{ return navigator.onLine !== false; }catch(e){ return true; } },   // есть ли интернет
-  ready(){ return aiEnabled() && !!aiKey() && this.online(); },
+  available(){                                    // Puter.js загрузился (офлайн его скрипт не приходит)
+    try{ return typeof puter !== "undefined" && !!puter && puter.ai && typeof puter.ai.chat === "function"; }
+    catch(e){ return false; }
+  },
+  ready(){ return aiEnabled() && this.available() && this.online(); },
 
-  /* ---- один запрос к DeepSeek API; при любой ошибке — reject, причина в AI.lastError ---- */
-  ask(messages, temperature, noFormat){
+  /* ---- достать текст из ответа Puter.js (строка или массив блоков) ---- */
+  extract(resp){
+    if(typeof resp === "string") return resp;
+    if(!resp || typeof resp !== "object") return "";
+    const c = (resp.message && resp.message.content != null) ? resp.message.content
+            : (resp.content != null) ? resp.content : resp.text;
+    if(typeof c === "string") return c;
+    if(Array.isArray(c)) return c.map(b=> (b && (b.text != null ? b.text : b.content)) || "").join("");
+    return "";
+  },
+
+  /* ---- один запрос к Puter.js; при любой ошибке — reject, причина в AI.lastError ---- */
+  ask(messages, temperature){
     const ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
-    const t = ctrl ? setTimeout(()=>{ try{ ctrl.abort(); }catch(e){} }, AI_TIMEOUT) : null;
-    const body = {model:"deepseek-chat", messages, temperature};
-    if(!noFormat) body.response_format = {type:"json_object"};   // если API его вдруг не примет — повторим без формата
-    return fetch(AI_ENDPOINT, {
-      method:"POST",
-      headers:{"Content-Type":"application/json", "Authorization":"Bearer "+aiKey()},
-      body:JSON.stringify(body),
-      signal: ctrl ? ctrl.signal : undefined
-    })
-    .then(r=> r.text().then(txt=>{
-      // API не знает response_format — повторяем запрос без него (парсер умеет и markdown)
-      if(!r.ok && r.status===400 && !noFormat && /response_format/i.test(txt)) return AI.ask(messages, temperature, true);
-      if(!r.ok){
-        let msg = "HTTP "+r.status;
-        try{ const er = JSON.parse(txt); if(er && er.error && er.error.message) msg += " — "+er.error.message; }
-        catch(e){ if(txt) msg += " — "+txt.slice(0,140); }
-        if(r.status===401) msg += " · ключ не принят — проверьте API-ключ";
-        if(r.status===402) msg += " · на балансе DeepSeek нет средств";
-        if(r.status===429) msg += " · слишком частые запросы — подождите немного";
-        throw new Error(msg);
-      }
-      let j; try{ j = JSON.parse(txt); }catch(e){ throw new Error("DeepSeek вернул не JSON"); }
-      const c = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
-      if(!c) throw new Error("пустой ответ DeepSeek");
-      return c;
-    }))
-    .catch(e=>{
-      AI.lastError = (e && e.name==="AbortError") ? "DeepSeek молчит дольше "+Math.round(AI_TIMEOUT/1000)+" секунд"
-        : (e && e.message) ? e.message : "сетевая ошибка";
-      throw e;
-    })
-    .finally(()=>{ if(t) clearTimeout(t); });
+    let timer = null;
+    const timeout = new Promise((_, reject)=>{        // страховка, если puter не поддерживает signal
+      timer = setTimeout(()=>{
+        if(ctrl){ try{ ctrl.abort(); }catch(e){} }
+        reject(new Error("__timeout__"));
+      }, AI_TIMEOUT);
+    });
+    const call = Promise.resolve().then(()=> puter.ai.chat(messages, {
+      model: aiModel(), temperature, signal: ctrl ? ctrl.signal : undefined
+    }));
+    return Promise.race([call, timeout])
+      .then(resp=>{
+        clearTimeout(timer);
+        const text = AI.extract(resp);
+        if(!text) throw new Error("пустой ответ DeepSeek");
+        AI.lastError = "";
+        return text;
+      })
+      .catch(e=>{
+        clearTimeout(timer);
+        let msg = (e && (e.name==="AbortError" || e.message==="__timeout__"))
+          ? "DeepSeek молчит дольше "+Math.round(AI_TIMEOUT/1000)+" секунд"
+          : (e && e.message) ? e.message : "ошибка Puter.js";
+        if(/auth|sign|login|unauthorized|401|403|account|permission/i.test(msg))
+          msg += " · нужен вход в аккаунт Puter — разрешите окно входа";
+        AI.lastError = msg;
+        throw e;
+      });
   },
 
   /* ---- достать JSON из текста ответа (иногда модель оборачивает в ```json) ---- */
@@ -3420,7 +3434,7 @@ const AI = {
         const q = await this.make(topic);
         if(await this.verify(q)) return q;
         AI.lastError = "нейросеть не подтвердила свой же вопрос (две попытки)";
-      }catch(e){ /* причина уже записана в AI.lastError */ }
+      }catch(e){ AI.lastError = AI.lastError || (e && e.message) || "сбой генерации"; }
     }
     throw new Error(AI.lastError || "DeepSeek: вопрос не прошёл самопроверку");
   }
@@ -3500,7 +3514,7 @@ function pickTopic(topicIdx){
   }
   // ---- казино: вместо вопроса барабан (только битва с боссом, один раз за игру) ----
   if(state.phase==="boss" && state.mode!=="quick" && !state.casinoUsed && Math.random() < specialChance(CASINO_CHANCE)){ startCasino(topicIdx); return; }
-  // ---- вопрос от DeepSeek: один раз за игру, только против босса и только при интернете+ключе ----
+  // ---- вопрос от DeepSeek: один раз за игру, только против босса и только при интернете (Puter.js) ----
   if(state.phase==="boss" && state.mode!=="quick" && !state.aiUsed && AI.ready()
      && Math.random() < specialChance(AI_CHANCE)){ startAIQuestion(topicIdx); return; }
   // ---- сначала игрок выбирает сложность ----
@@ -5011,40 +5025,38 @@ function setBlur(v){
 }
 $("set-blur").onclick = ()=> setBlur(!blurred);
 
-// ---- вопросы от DeepSeek: переключатель и API-ключ (хранятся только на этом устройстве) ----
-const AI_STORE_KEY = "cbq-ds-key", AI_STORE_ON = "cbq-ai";
+// ---- вопросы от DeepSeek: переключатель и модель Puter.js (без API-ключа) ----
+const AI_STORE_MODEL = "cbq-ai-model", AI_STORE_ON = "cbq-ai";
+const AI_DEFAULT_MODEL = "deepseek/deepseek-v4.1-flash";   // модель DeepSeek через Puter.js
 function aiEnabled(){ return store.get(AI_STORE_ON) !== "0"; }        // по умолчанию включено
-function aiKey(){ return String(store.get(AI_STORE_KEY) || "").trim(); }
+function aiModel(){ return String(store.get(AI_STORE_MODEL) || "").trim() || AI_DEFAULT_MODEL; }
 function setAiEnabled(v){ store.set(AI_STORE_ON, v ? "1" : "0"); renderAiSettings(); }
 function renderAiSettings(){
   $("set-ai").textContent = aiEnabled() ? "Вкл" : "Выкл";
-  const k = aiKey();
-  $("ai-key").placeholder = k ? "ключ сохранён ••••"+k.slice(-4) : "API-ключ DeepSeek (sk-…)";
-  $("set-ai-key").textContent = k ? "♻ Обновить" : "💾 Сохранить";
+  const m = String(store.get(AI_STORE_MODEL) || "").trim();
+  $("ai-model").placeholder = m ? "модель: "+m : "модель: "+AI_DEFAULT_MODEL+" (по умолчанию)";
 }
 $("set-ai").onclick = ()=> setAiEnabled(!aiEnabled());
-$("set-ai-key").onclick = ()=>{
-  const v = $("ai-key").value.trim();
-  $("ai-key").value = "";
-  if(!v){
-    store.set(AI_STORE_KEY, "");
-    toast("Ключ DeepSeek удалён — ИИ-вопросы выключены");
-  }else{
-    store.set(AI_STORE_KEY, v);
-    if(!aiEnabled()) store.set(AI_STORE_ON, "1");   // ключ сохранён — включаем событие
-    toast('<span class="t-good">🐋 Ключ DeepSeek сохранён</span> только на этом устройстве');
-  }
+$("set-ai-model").onclick = ()=>{
+  const v = $("ai-model").value.trim();
+  $("ai-model").value = "";
+  store.set(AI_STORE_MODEL, v || "");               // пустой ввод — снова модель по умолчанию
+  toast(v ? '<span class="t-good">🐋 Модель сохранена:</span> '+esc(v)
+          : "Возвращена модель по умолчанию: "+esc(AI_DEFAULT_MODEL));
   renderAiSettings();
 };
-$("ai-key").addEventListener("keydown", e=>{ if(e.key==="Enter") $("set-ai-key").click(); });
-// ---- тестовый запрос: проверяет, что ключ принят и DeepSeek отвечает ----
+$("ai-model").addEventListener("keydown", e=>{ if(e.key==="Enter") $("set-ai-model").click(); });
+// ---- тестовый запрос: связь с Puter.js и ответ модели DeepSeek ----
 $("set-ai-test").onclick = async ()=>{
-  if(!aiKey()){ toast("Сначала сохраните API-ключ DeepSeek"); return; }
+  if(!AI.available()){
+    toast('🐋 <span class="t-bad">Puter.js не загрузился</span><br>Нужен интернет — обновите страницу (F5)', 6000);
+    return;
+  }
   const b = $("set-ai-test");
   b.disabled = true; b.textContent = "⏳ Ждём…";
   try{
     await AI.ask([{role:"user", content:'Верни только json вида {"ok":true}'}], 0);
-    toast('<span class="t-good">🐋 Ключ работает!</span> DeepSeek ответил на тестовый запрос');
+    toast('<span class="t-good">🐋 DeepSeek отвечает!</span> Тестовый запрос прошёл');
   }catch(e){
     console.error("🐋 Тест DeepSeek:", AI.lastError || e);
     toast('🐋 <span class="t-bad">Тест не прошёл:</span><br>'+esc(AI.lastError || (e && e.message) || "неизвестная ошибка"), 7000);
@@ -5314,7 +5326,7 @@ buildThemeGrid();
 applyTheme(store.get("cbq-theme") || "fantasy");   // вернуть сохранённое оформление
 setMuted(store.get("cbq-muted") === "1");          // вернуть сохранённый звук
 setBlur(store.get("cbq-blur") === "1");            // вернуть сохранённое размытие фона
-renderAiSettings();                                // вернуть состояние ключа DeepSeek
+renderAiSettings();                                // вернуть состояние ИИ-вопросов (модель, вкл/выкл)
 
 </script>
 <!-- версия 1.0.0: маленький полупрозрачный логотип и подпись в левом нижнем углу -->
@@ -5333,7 +5345,7 @@ renderAiSettings();                                // вернуть состо�
     <rect x="4" y="4" width="112" height="146" rx="15" fill="url(#vbFace)" stroke="#2c3f73" stroke-width="6"/>
     <path d="M32 13C32 13 14 28 14 38.5c0 6 4.5 10.5 10.5 10.5 3 0 5.7-1.5 7.5-3.75 1.8 2.25 4.5 3.75 7.5 3.75 6 0 10.5-4.5 10.5-10.5C50 28 32 13 32 13z M27.5 46h9l2.5 8h-14z" fill="url(#vbPip)" transform="translate(19,34) scale(1.28)"/>
   </svg>
-  <span>Тёмные знания · v1.0.5</span>
+  <span>Тёмные знания · v1.0.6</span>
 </div>
 </body>
 </html>
