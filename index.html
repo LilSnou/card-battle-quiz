@@ -755,6 +755,8 @@ html[data-theme="notebook"] [style*="--pencil"]{
 #lb-wrap{max-height:46vh; overflow:auto; margin:4px 0 6px;}
 #lb-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
 #lb-actions .btn{flex:1; min-width:160px; margin:0; padding:13px 14px; font-size:18px;}
+#lb-clear{border-color:rgba(212,63,63,.65); color:#ff9d94;}
+#lb-clear:hover{border-color:var(--ruby); box-shadow:0 0 26px rgba(212,63,63,.45), 0 8px 18px rgba(0,0,0,.55);}
 #lb-table td.pts{font-weight:800; font-family:'Tagesschrift','Georgia',serif; color:var(--gold-bright); font-size:20px;}
 /* ---- бой (Босс и Мордобой): интерфейс боя крупнее обычного (×1.19) — плашки, карточки, текст ----
    zoom пересчитывает раскладку (как смена базового размера), поэтому ничего не ломается;
@@ -845,6 +847,8 @@ html[data-battle="1"] #banner-overlay .card{max-width:80vw;}                    
 .q-opt.wrong{border-color:var(--ruby); background:linear-gradient(165deg,#331315,#240e10); box-shadow:0 0 18px rgba(212,63,63,.4);}
 .q-opt.wrong .letter{border-color:var(--ruby); color:#ff8a80;}
 .q-opt.disabled{pointer-events:none; opacity:.85;}
+.q-opt.missed{opacity:.4; filter:grayscale(1); text-decoration:line-through; cursor:default; pointer-events:none;}
+.q-opt.missed .letter{opacity:.55;}
 .q-actions{margin-top:22px; text-align:center;}
 
 /* --- Способности: 3 зелёные кнопки в углу окна с вопросом --- */
@@ -1836,14 +1840,14 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
         <li><b>🔥 Конец II круга</b>: если Босс ещё цел, он обрушивает удар по всем живым: −50 каждому (пулу каждой команды −100).</li>
         <li><b>🌕 Кровавая луна</b> (начало II круга, только в Классике и Войне гильдий; шанс 50% — может не быть за игру вовсе): пока длится событие, <b>весь урон ×1.2</b> — и босса, и игроков (кроме мега, проклятия и казино); экран плавно наливается кровью (отдельной луны на фоне нет — только красный оттенок), луна темы краснеет, огонь тыкв становится красным. С началом III круга всё возвращается в норму.</li>
         <li><b>👑 Конец III круга</b>: зачистка — Босс забирает 2–4 самых слабых игроков (при уже погибших — 1–2 самых низких по HP; в командах — одну команду).</li>
-        <li><b>💎 Способности</b> (только в обычном и командном режимах, одна каждого типа за игру): 🔀 <b>Замена</b> — заменить вопрос на другой; ⚡ <b>Азарт</b> — урон ×2, но при ошибке сам получаешь 200; 🎴 <b>Передача</b> — отдать вопрос случайному сопернику и пропустить ход (только против Босса). Работают до нажатия «Показать ответы» и не работают на мега/проклятии.</li>
+        <li><b>💎 Способности</b> (только в обычном и командном режимах, одна каждого типа за игру): 🔀 <b>Замена</b> — заменить вопрос на другой; ⚡ <b>Азарт</b> — урон ×2, но при ошибке сам получаешь 200 (только против Босса); 🎴 <b>Передача</b> — отдать вопрос случайному сопернику и пропустить ход (только против Босса). Работают до нажатия «Показать ответы» и не работают на мега/проклятии.</li>
       </ul>
       <h3>🛡 Акт II. Мордобой</h3>
       <p>Дуэли идут <b>в два шага</b>, вопрос задаётся <b>обоим</b> участникам:</p>
       <ul>
         <li><b>Атакующий</b> (красная рамка) отвечает <b>первым</b>.</li>
         <li>Если он <b>верен</b> — защитнику задаётся новый вопрос: защитник ответил верно → получает всего <b>50</b> урона; ошибся → <b>полный урон</b> по сложности.</li>
-        <li>Если атакующий <b>промахнулся</b> — урон пока не наносится, вопрос переходит защитнику (тот же вопрос): защитник верен → атакующий получает <b>урон + 50</b>; оба промахнулись → <b>оба</b> получают урон по вопросу.</li>
+        <li>Если атакующий <b>промахнулся</b> — урон пока не наносится, вопрос переходит защитнику (тот же вопрос; вариант, в котором промахнулся атакующий, показан <b>серым</b> — защитник не может его выбрать): защитник верен → атакующий получает <b>урон + 50</b>; оба промахнулись → <b>оба</b> получают урон по вопросу.</li>
         <li>Урон в Мордобое по сложности вопроса: <b>100 / 150 / 200</b>.</li>
       </ul>
       <p>Игра заканчивается, когда остаётся <b>3</b> живых: места по нанесённому урону, призы <b>5 / 3 / 2 балла</b>. Если Босс уничтожил всех — на итогах красное «ПОРАЖЕНИЕ», баллов не получает никто. Если вопросы закончились раньше — итоги по урону и запасу HP.</p>
@@ -1881,6 +1885,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
     <div id="lb-actions">
       <button class="btn" id="lb-export">⬇ Экспорт JSON</button>
       <button class="btn" id="lb-import">⬆ Импорт JSON</button>
+      <button class="btn" id="lb-clear">🗑 Очистить таблицу</button>
       <button class="btn btn-ruby" data-close>✕ Закрыть</button>
     </div>
     <input type="file" id="lb-file" accept=".json,application/json" class="hidden">
@@ -3595,6 +3600,7 @@ function setupQuestion(topicIdx, drawn){
   cur.q = q;
   cur.topicIdx = topicIdx;
   cur.boost = false;                              // способность «Азарт» ещё не активна
+  cur.missText = null;                            // серых «призраков» от прошлой дуэли нет
   cur.step = state.phase==="pvp" ? "attack" : null; // первый шаг дуэли — атака
   cur.defenderSpeakerId = null;
   cur.attackCorrect = null;
@@ -3652,6 +3658,7 @@ function buildOptions(){
   const q = cur.q;
   const variants = shuffle(q.options.map((text,origIdx)=>({text, correct:origIdx===q.answer})));
   cur.answerIdx = variants.findIndex(v=>v.correct);
+  cur.variants = variants;                       // текущая раскладка — по ней вспоминаем, в каком варианте промахнулся атакующий
   const opts = $("q-opts");
   opts.innerHTML = "";
   const letters = ["А","Б","В","Г"];
@@ -3660,6 +3667,10 @@ function buildOptions(){
     b.className = "q-opt";
     b.innerHTML = '<span class="letter">'+letters[i]+'</span><span>'+esc(v.text)+'</span>';
     b.onclick = ()=>answer(i);
+    if(cur.missText && v.text===cur.missText){   // защитник видит вариант, в котором промахнулся атакующий, — серым и нажать его нельзя
+      b.classList.add("missed");
+      b.disabled = true;
+    }
     opts.appendChild(b);
   });
   opts.classList.add("hidden");
@@ -3694,11 +3705,12 @@ function renderAbilities(){
   // 🔀 Замена — другой вопрос (обычный, до показа ответов)
   set("ab-swap", canAct && sp.ab.swap,
       sp && !sp.ab.swap ? "Способность уже использована" : (commonWhy || "Поменять этот вопрос на другой"));
-  // ⚡ Азарт — урон ×2, но при ошибке сам получаешь 200
+  // ⚡ Азарт — урон ×2, но при ошибке сам получаешь 200 (только против босса)
   const boostWhy = sp && !sp.ab.boost ? "Способность уже использована"
+    : !bossPhase ? "Только в битве с боссом"
     : isDef ? "Только для атакующего"
     : (commonWhy || "Урон ×2 этого вопроса · при ошибке сам получишь "+ABILITY_FLAT_RISK);
-  set("ab-boost", canAct && sp.ab.boost && !isDef, boostWhy);
+  set("ab-boost", canAct && sp.ab.boost && !isDef && bossPhase, boostWhy);
   // 🎴 Передача — отдать вопрос другому и пропустить ход (только битва с боссом)
   const giveWhy = sp && !sp.ab.give ? "Способность уже использована"
     : !bossPhase ? "Только в битве с боссом"
@@ -3721,6 +3733,7 @@ function useSwap(){
   sp.ab.swap = false;
   cur.q = drawn.q;
   cur.topicIdx = drawn.topicIdx;
+  cur.missText = null;         // новый вопрос — серая карточка промаха больше не показывается
   if(cur.step !== "defend"){   // у защиты урон считается от исходного вопроса атаки
     cur.dmg = cur.mega ? MEGA_DMG
       : (state.phase==="pvp" ? dmgPvpFor(drawn.q.difficulty) : dmgBossFor(drawn.q.difficulty));
@@ -3738,13 +3751,12 @@ function useBoost(){
   const cur = state.current;
   if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || cur.ai || !$("q-overlay").classList.contains("show")) return;
   const sp = speaker();
-  if(!sp || !sp.ab.boost || cur.curse || cur.step==="defend") return;
+  if(!sp || !sp.ab.boost || cur.curse || cur.step==="defend" || state.phase!=="boss") return;  // «Азарт» — только против босса
   sp.ab.boost = false;
   cur.boost = true;
   renderQDiff();
   renderAbilities();
-  toast('<span class="t-gold">⚡ Азарт!</span> урон этого вопроса ×2'
-    + (state.phase==="boss" ? ', но при ошибке ты получишь <b>'+ABILITY_FLAT_RISK+'</b>' : ' для соперника'));
+  toast('<span class="t-gold">⚡ Азарт!</span> урон этого вопроса ×2, но при ошибке ты получишь <b>'+ABILITY_FLAT_RISK+'</b>');
   sfx.mega();
 }
 
@@ -3943,19 +3955,6 @@ function duelAttack(chosen, correct, prefix){
   if(correct){ sp.correct++; if(!cur.mega) sp.streak = (sp.streak||0)+1; } else sp.streak = 0;   // мегавопрос серию не считает
   cur.attackCorrect = correct;
   if(chosen!=null) markAnswered(chosen, correct);   // отметки (следом варианты пересоберутся под защитника)
-  // азарт провалился: атакующий сразу теряет 200 себе
-  if(!correct && cur.boost){
-    at.hp -= ABILITY_FLAT_RISK; at.dmgTaken += ABILITY_FLAT_RISK;
-    if(isTeamMode()) sp.dmgTaken += ABILITY_FLAT_RISK;
-    floatDamage($("pcard-"+at.id), "-"+ABILITY_FLAT_RISK, "dmg-red");
-    const ae = $("pcard-"+at.id);
-    ae?.classList.add("shake");
-    setTimeout(()=>ae?.classList.remove("shake"), 550);
-    checkPlayerDead(at, "own");
-    toast('<span class="t-gold">⚡ Азарт!</span> провал — атакующий получает <b>'+ABILITY_FLAT_RISK+'</b> урона');
-    renderPlayers(); renderDuelZone();
-    if(!at.alive){ finishDuel(); return; }   // сам себя и добил — дуэль окончена
-  }
   toast((prefix||"") + (correct
     ? '<span class="t-good">⚔ Атака верна!</span> Защитник отвечает на новый вопрос'
     : '<span class="t-bad">⚔ Атака мимо!</span> Вопрос переходит защитнику'));
@@ -3969,8 +3968,13 @@ function duelAttack(chosen, correct, prefix){
     }
     cur.q = drawn.q;
     cur.topicIdx = drawn.topicIdx;
+    cur.missText = null;                 // новый вопрос — серых карточек нет
     $("q-topic").innerHTML = '<span class="tc-emoji">'+TOPICS[drawn.topicIdx].emoji+'</span> '+esc(TOPICS[drawn.topicIdx].name);
     $("q-text").textContent = drawn.q.text;
+  }else{
+    // атака мимо: защитник отвечает на тот же вопрос, а промахнувшийся вариант атакующего показан ему серым
+    const missV = (chosen!=null && cur.variants && cur.variants[chosen]) ? cur.variants[chosen] : null;
+    cur.missText = missV ? missV.text : null;
   }
   // ---- шаг защитника: тот же вопрос (если атака мимо) или новый ----
   cur.step = "defend";
@@ -4003,7 +4007,7 @@ function duelDefend(chosen, correct, prefix){
   if(correct){ defSp.correct++; defSp.streak = (defSp.streak||0)+1; } else defSp.streak = 0;
   markAnswered(chosen, correct);
   const base = cur.dmg;                                   // урон исходного вопроса
-  const dmg = (cur.boost && cur.attackCorrect) ? base*2 : base;  // азарт удваивает при верной атаке
+  const dmg = base;  // «Азарт» доступен только против босса — в Мордобое удвоения нет
   const aC = cur.attackCorrect;
   if(aC && correct){
     applyDuelDamage(tg, 50, at, defSp, atSp);
@@ -4861,7 +4865,7 @@ function renderLeaderboard(){
   }
   const medals = ["🥇","🥈","🥉"];
   tb.innerHTML = '<tr><th style="width:86px;">МЕСТО</th><th style="text-align:left;">ИГРОК</th><th style="width:120px;">БАЛЛЫ</th></tr>'
-    + rows.map((r,i)=>'<tr><td class="place">'+(i<3 ? medals[i] : (i+1))+'</td>'
+    + rows.map((r,i)=>'<tr><td class="place">'+(i<3 ? '<span class="tc-emoji">'+medals[i]+'</span>' : (i+1))+'</td>'
       + '<td class="name">'+esc(r.name)+'</td><td class="pts">'+r.total+'</td></tr>').join("");
 }
 
@@ -5090,9 +5094,17 @@ document.querySelectorAll("[data-close]").forEach(b=>{
   b.onclick = ()=> b.closest(".overlay").classList.remove("show");
 });
 
-// ---- таблица лидеров: экспорт в JSON и импорт с слиянием таблиц ----
+// ---- таблица лидеров: экспорт в JSON, импорт с слиянием и очистка ----
 $("lb-export").onclick = lbExportFile;
 $("lb-import").onclick = ()=> $("lb-file").click();
+$("lb-clear").onclick = ()=>{
+  if(!lbSorted(lbLoad()).length){ toast("🗑 Таблица лидеров уже пуста"); return; }
+  if(!confirm("Вы точно хотите очистить таблицу лидеров?")) return;
+  store.set(LB_KEY, "");   // пустое значение = таблица пуста (lbLoad вернёт {})
+  renderLeaderboard();
+  toast('🗑 <span class="t-gold">Таблица лидеров очищена</span>');
+  sfx.flip();
+};
 $("lb-file").onchange = (e)=>{
   const f = e.target.files && e.target.files[0];
   if(!f) return;
@@ -5357,7 +5369,7 @@ renderAiSettings();                                // вернуть состо�
     <rect x="4" y="4" width="112" height="146" rx="15" fill="url(#vbFace)" stroke="#2c3f73" stroke-width="6"/>
     <path d="M32 13C32 13 14 28 14 38.5c0 6 4.5 10.5 10.5 10.5 3 0 5.7-1.5 7.5-3.75 1.8 2.25 4.5 3.75 7.5 3.75 6 0 10.5-4.5 10.5-10.5C50 28 32 13 32 13z M27.5 46h9l2.5 8h-14z" fill="url(#vbPip)" transform="translate(19,34) scale(1.28)"/>
   </svg>
-  <span>Тёмные знания · v1.0.6</span>
+  <span>Тёмные знания · v1.0.7</span>
 </div>
 </body>
 </html>
