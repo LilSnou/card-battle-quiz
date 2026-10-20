@@ -666,6 +666,22 @@ html[data-theme="notebook"] [style*="--pencil"]{
   margin-bottom:12px; font-size:20px;
 }
 .set-note{font-size:14px; color:var(--muted); margin:0 2px 6px;}
+/* строка ввода API-ключа DeepSeek в настройках */
+#ai-key-row{display:flex; gap:10px; margin:-4px 0 12px;}
+#ai-key{
+  flex:1; min-width:0;
+  background:#140e1d; border:2px solid var(--edge); border-radius:12px;
+  padding:12px 14px; font-size:17px; color:var(--gold-bright); outline:none;
+  box-shadow:inset 0 3px 8px rgba(0,0,0,.6);
+}
+#ai-key::placeholder{color:#6b5f80;}
+#ai-key:focus{border-color:var(--gold); box-shadow:0 0 16px rgba(232,194,104,.4);}
+/* экран ожидания: DeepSeek придумывает вопрос */
+#ai-loading .card{text-align:center; width:min(540px,92vw); padding:34px 28px;}
+#ai-whale{font-size:64px; display:block; margin-bottom:14px; animation:whaleBob 1.4s ease-in-out infinite alternate;}
+@keyframes whaleBob{from{transform:translateY(-7px);} to{transform:translateY(7px);}}
+#ai-loading-text{font-size:20px; color:var(--silver);}
+.ai-dots{margin-top:10px; color:#6ec6ff; letter-spacing:8px; font-size:22px; animation:aiPulse 1s infinite alternate;}
 .rules-body{max-height:60vh; overflow:auto; padding:2px 12px 4px 4px; font-size:17px; line-height:1.55;}
 .rules-body h3{color:var(--gold-bright); font-size:21px; margin:16px 0 8px; letter-spacing:1px;}
 .rules-body p{margin:6px 0 8px; color:var(--silver);}
@@ -755,6 +771,13 @@ html[data-battle="1"] #banner-overlay .card{max-width:80vw;}                    
 }
 /* пульсация мега-карты через filter (GPU), а не через box-shadow — заметно легче */
 @keyframes megaGlow{from{filter:brightness(1);} to{filter:brightness(1.13);}}
+/* карточка «Вопроса от DeepSeek» — холодное оcean-свечение */
+.q-card.ai{
+  border-color:#4fc3f7;
+  box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 0 44px rgba(79,195,247,.55);
+  animation:aiGlow 1.4s infinite alternate;
+}
+@keyframes aiGlow{from{filter:brightness(1);} to{filter:brightness(1.1);}}
 .q-head{display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid var(--edge); padding-bottom:14px;}
 .q-topic{font-family:'Tagesschrift','Georgia',serif; font-weight:700; font-size:24px; color:var(--violet);}
 .q-for{font-size:19px; color:var(--silver); margin-top:5px; text-align:left;}
@@ -779,6 +802,12 @@ html[data-battle="1"] #banner-overlay .card{max-width:80vw;}                    
   animation:megaPulse 1s infinite alternate;
 }
 @keyframes megaPulse{from{transform:scale(1);} to{transform:scale(1.06);}}
+.q-ai-label{
+  font-family:'Tagesschrift','Georgia',serif; font-size:30px; font-weight:700; color:#6ec6ff;
+  letter-spacing:2px; text-align:center; margin-top:12px;
+  animation:aiPulse 1.3s infinite alternate;
+}
+@keyframes aiPulse{from{transform:scale(1);} to{transform:scale(1.06);}}
 .q-curse-label{
   font-family:'Tagesschrift','Georgia',serif; font-size:22px; font-weight:700; color:#c084fc;
   text-shadow:0 0 14px rgba(168,85,247,.8); letter-spacing:1px; text-align:center; margin-top:10px;
@@ -904,8 +933,9 @@ html[data-battle="1"] #banner-overlay .card{max-width:80vw;}                    
   --g-violet:linear-gradient(180deg,#efe8ff 0%,#c4b2fd 18%,#a78bfa 42%,#5b3fae 56%,#c4b2fd 72%,#5b3fae 100%);
   --g-ruby:linear-gradient(180deg,#ffe0e0 0%,#ff8a80 18%,#d43f3f 42%,#7e2222 56%,#ff8a80 72%,#7e2222 100%);
   --g-emerald:linear-gradient(180deg,#eafff2 0%,#86efac 18%,#4ade80 42%,#166534 56%,#86efac 72%,#166534 100%);
+  --g-ocean:linear-gradient(180deg,#e8f8ff 0%,#b3e5fc 18%,#6ec6ff 42%,#0d5a8a 56%,#6ec6ff 72%,#0d5a8a 100%);
 }
-.q-topic,.q-text,.q-timer,.q-mega-label,.q-curse-label,
+.q-topic,.q-text,.q-timer,.q-mega-label,.q-curse-label,.q-ai-label,
 .duel-side .who,.duel-side.attacker .role,.duel-side.target .role,
 .boss-name,.topic-card .t-name,.p-name,#results-title,.podium .p-nick,.podium .p-pts,
 table.stats th,table.stats td.place,#table-label,#table-label b,
@@ -933,6 +963,8 @@ table.stats th,table.stats td.place,#table-label,#table-label b,
 .q-topic,.q-curse-label,#phase-label,#round-label{background-image:var(--shine),var(--g-violet);}
 /* рубин */
 .q-mega-label,.boss-name,.duel-side.attacker .role{background-image:var(--shine),var(--g-ruby);}
+/* океан — «Вопрос от DeepSeek» */
+.q-ai-label{background-image:var(--shine),var(--g-ocean);}
 /* изумруд (щит защитника) */
 .duel-side.target .role{background-image:var(--shine),var(--g-emerald);}
 /* эмодзи/символы внутри металлического текста остаются обычными */
@@ -1045,7 +1077,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
     <button class="mode-btn" id="mode-quick">
       <div class="mode-ico">⚡</div>
       <div class="mode-name">Быстрый и мёртвый</div>
-      <div class="mode-desc">Короткий бой без сюрпризов: 8–12 игроков, у каждого 250 HP, у Босса 750. Без способностей, казино, мегавопросов и проклятий; Босс не бьёт по кругам и не устраивает зачистку. Мордобой — обычный.</div>
+      <div class="mode-desc">Короткий бой без сюрпризов: 8–12 игроков, у каждого 250 HP, у Босса 750. Без способностей, казино, мегавопросов, проклятий и ИИ-вопросов; Босс не бьёт по кругам и не устраивает зачистку. Мордобой — обычный.</div>
     </button>
     <button class="mode-btn" id="mode-team">
       <div class="mode-ico">🛡️</div>
@@ -1132,6 +1164,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       </div>
     </div>
     <div id="q-mega-label" class="q-mega-label hidden"><span class="tc-emoji">🔥</span> МЕГАВОПРОС <span class="tc-emoji">🔥</span></div>
+    <div id="q-ai-label" class="q-ai-label hidden"><span class="tc-emoji">🐋</span> Вопрос от DeepSeek <span class="tc-emoji">🐋</span></div>
     <div class="q-curse-wrap"><div id="q-curse-label" class="q-curse-label hidden"><span class="tc-emoji">☠</span> ВОПРОС-ПРОКЛЯТИЕ · неверно — всем −100 HP, верно — жертве +100 HP</div></div>
     <div class="q-text" id="q-text"></div>
     <div class="q-opts hidden" id="q-opts"></div>
@@ -1751,6 +1784,15 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <span>🌫 Размытие фона</span>
       <button class="btn" id="set-blur">Выкл</button>
     </div>
+    <div class="set-row">
+      <span>🐋 Вопросы от DeepSeek</span>
+      <button class="btn" id="set-ai">Вкл</button>
+    </div>
+    <div id="ai-key-row">
+      <input type="password" id="ai-key" placeholder="API-ключ DeepSeek (sk-…)" autocomplete="off" spellcheck="false">
+      <button class="btn" id="set-ai-key">💾 Сохранить</button>
+    </div>
+    <div class="set-note">🐋 Раз за игру (только в битве с Боссом) может выпасть «Вопрос от DeepSeek»: без уровня сложности и без таймера, верно — Боссу −100, неверно — игроку −100. Вопрос генерирует и перепроверяет нейросеть DeepSeek по выбранной теме. Нужен интернет и API-ключ с <b>platform.deepseek.com</b> (генерация стоит доли цента). Ключ хранится только на этом устройстве; без ключа или без сети вопрос не выпадает.</div>
     <div class="set-note">Переключатели общие: действуют во всей игре и запоминаются.</div>
     <button class="btn btn-ruby" data-close>✕ Закрыть</button>
   </div>
@@ -1777,6 +1819,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
         <li><b>☠ Вопрос-проклятие</b> (один раз за игру): верно — жертва (Босс или цель) восстанавливает +100; неверно — проклятие обрушивается сразу на ВСЕХ живых: −100 каждому.</li>
         <li><b>👹 Ярость Босса</b>: с шансом 5% за каждый неправильный ответ Босс <b>удваивает</b> урон ошибшемуся (слышен рёв, всплывает «БОСС РАЗЪЯРЁН»).</li>
         <li><b>🎰 Казино</b> (один раз за игру, только против Босса): вместо вопроса — колесо фортуны: исцеление, урон, пропуск хода, удар по Боссу или по случайному сопернику…</li>
+        <li><b>🐋 Вопрос от DeepSeek</b> (один раз за игру, только против Босса, только при наличии интернета и ключа DeepSeek в настройках): вместо выбора сложности — вопрос, который генерирует и перепроверяет сама нейросеть DeepSeek по выбранной теме: 4 варианта, ровно один верный, <b>без уровня сложности и без таймера</b>. <b>Верно</b> → Босс теряет 100; <b>неверно</b> → игрок получает 100. Способности на нём недоступны.</li>
         <li><b>⚡ Серия</b>: пять верных ответов подряд — с шансом 5% Босс вместе с пятым ударом получает ещё +300 урона. Считаются только обычные вопросы.</li>
         <li><b>🔥 Конец II круга</b>: если Босс ещё цел, он обрушивает удар по всем живым: −50 каждому (пулу каждой команды −100).</li>
         <li><b>🌕 Кровавая луна</b> (начало II круга, только в Классике и Войне гильдий; шанс 50% — может не быть за игру вовсе): пока длится событие, <b>весь урон ×1.2</b> — и босса, и игроков (кроме мега, проклятия и казино); экран плавно наливается кровью (отдельной луны на фоне нет — только красный оттенок), луна темы краснеет, огонь тыкв становится красным. С началом III круга всё возвращается в норму.</li>
@@ -1829,6 +1872,15 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <button class="btn btn-ruby" data-close>✕ Закрыть</button>
     </div>
     <input type="file" id="lb-file" accept=".json,application/json" class="hidden">
+  </div>
+</div>
+
+<!-- ================= ОЖИДАНИЕ: DEEPSEEK ПРИДУМЫВАЕТ ВОПРОС ================= -->
+<div id="ai-loading" class="overlay">
+  <div class="card ornate modal-card">
+    <span id="ai-whale" class="tc-emoji">🐋</span>
+    <div id="ai-loading-text">DeepSeek придумывает вопрос…</div>
+    <div class="ai-dots">● ● ●</div>
   </div>
 </div>
 
@@ -1889,6 +1941,9 @@ const MEGA_DMG        = 400;   // урон мегавопроса (наноси�
 const MEGA_CHANCE     = 0.12;  // шанс, что следующий вопрос станет мега (один раз за игру)
 const CURSE_CHANCE    = 0.06;  // шанс вопроса-проклятия (один раз за игру)
 const CASINO_CHANCE   = 0.07;  // шанс казино (только в битве с боссом, один раз за игру)
+const AI_CHANCE       = 0.08;  // шанс «Вопроса от DeepSeek» (только битва с боссом, один раз за игру)
+const AI_DMG          = 100;   // вопрос ИИ: верно — боссу −100, неверно — игроку −100 (ровно, без множителей)
+const AI_TIMEOUT      = 25000; // таймаут одного запроса к DeepSeek, мс
 const SPECIAL_HOLD    = 3;     // столько первых вопросов игры — точно без особых событий (мега/проклятье/казино)
 const SPECIAL_RAMP    = 6;     // и столько ещё — шанс особых плавно растёт от половины базового до полного
 const BLOOD_CHANCE    = 0.5;   // шанс, что в начале II круга взойдёт Кровавая луна (может не быть за игру)
@@ -2859,6 +2914,7 @@ function startGame(cfg){
     megaUsed:false,
     curseUsed:false,
     casinoUsed:false,
+    aiUsed:false,           // «Вопрос от DeepSeek» — один раз за игру
     qCount:0,               // сколько вопросов уже показано (в начале игры особые события не выпадают)
     bloodMoon:false,        // II круг под Кровавой луной (весь урон ×1.2)
     pendingTopic:null,       // тема выбрана, ждёт выбора сложности
@@ -2867,6 +2923,7 @@ function startGame(cfg){
     finishReason:null
   };
   devReset();      // режим разработчика: стеки отмены новой игры с нуля
+  if(typeof aiLoading === "function") aiLoading(false);   // если в прошлой игре ждали DeepSeek — гасим экран ожидания
   newRound();
 }
 function newGame(names, bossName){ startGame({mode:"solo", names, bossName}); }         // одиночная игра
@@ -3016,6 +3073,7 @@ const sfx = {
   gong:()=>{ tone(92,1.6,"sine",.25); tone(138,1.4,"sine",.18,.05); tone(46,1.8,"sine",.22,.02); }, // гонг мегавопроса
   bloodmoon:()=>{ tone(52,2.2,"sine",.22); tone(78,1.8,"triangle",.12,.3); noise(1.4,.12,900,80,"lowpass",.15); }, // низкий дрон Кровавой луны
   casino:()=>{ [1046,1318,1568].forEach((f,i)=>tone(f,.14,"triangle",.12,i*.09)); noise(.3,.05,4200,1800); }, // монетки казино
+  ai:()=>{ [233,174,131].forEach((f,i)=>tone(f,.7,"sine",.14,i*.3)); noise(.6,.05,700,220,"bandpass"); }, // низкий зов кита — вопрос от DeepSeek
   bossDie:()=>{ tone(70,1.2,"sawtooth",.25); tone(46,1.6,"sine",.3,.1); noise(1.0,.18,600,80,"lowpass"); [400,300,200,120].forEach((f,i)=>tone(f,.3,"sawtooth",.15,i*.15)); }, // гибель босса
   deathOwn:()=>{ [440,330,262,196].forEach((f,i)=>tone(f,.22,"square",.12,i*.13)); },   // падение за свою ошибку
   deathBoss:()=>{ tone(80,.7,"sawtooth",.25); noise(.6,.18,400,60,"lowpass"); tone(55,.9,"sine",.25,.08); }, // удар босса
@@ -3252,6 +3310,160 @@ function specialChance(base){
   return base * (k >= SPECIAL_RAMP ? 1 : 0.5 + 0.5*k/SPECIAL_RAMP);
 }
 
+/* ============================================================
+   🐋 ВОПРОС ОТ DEEPSEEK: один раз за игру, только в битве с боссом,
+   только при интернете и ключе в настройках. Генерация + самопроверка.
+   ============================================================ */
+const AI_ENDPOINT = "https://api.deepseek.com/chat/completions";
+const AI = {
+  genId:0,                                        // защита от «поздних» ответов (смена хода/новая игра)
+
+  online(){ try{ return navigator.onLine !== false; }catch(e){ return true; } },   // есть ли интернет
+  ready(){ return aiEnabled() && !!aiKey() && this.online(); },
+
+  /* ---- один запрос к DeepSeek API; при любой ошибке — reject ---- */
+  ask(messages, temperature){
+    const ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
+    const t = ctrl ? setTimeout(()=>{ try{ ctrl.abort(); }catch(e){} }, AI_TIMEOUT) : null;
+    return fetch(AI_ENDPOINT, {
+      method:"POST",
+      headers:{"Content-Type":"application/json", "Authorization":"Bearer "+aiKey()},
+      body:JSON.stringify({model:"deepseek-chat", messages, temperature, response_format:{type:"json_object"}}),
+      signal: ctrl ? ctrl.signal : undefined
+    })
+    .then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+    .then(j=>{
+      const c = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
+      if(!c) throw new Error("пустой ответ DeepSeek");
+      return c;
+    })
+    .finally(()=>{ if(t) clearTimeout(t); });
+  },
+
+  /* ---- достать JSON из текста ответа (иногда модель оборачивает в ```json) ---- */
+  parse(raw){
+    const s = String(raw).replace(/```/g, "");
+    const a = s.indexOf("{"), b = s.lastIndexOf("}");
+    if(a<0 || b<a) throw new Error("ответ не JSON");
+    return JSON.parse(s.slice(a, b+1));
+  },
+
+  /* ---- валидация вопроса: 4 различных варианта, ровно один верный ---- */
+  validate(q){
+    if(!q || typeof q.text!=="string" || !q.text.trim()) return null;
+    if(!Array.isArray(q.options) || q.options.length!==4) return null;
+    const opts = q.options.map(o=>String(o==null?"":o).trim());
+    if(opts.some(o=>!o)) return null;
+    if(new Set(opts.map(o=>o.toLowerCase())).size !== 4) return null;   // варианты должны различаться
+    const ans = Number(q.answer);
+    if(!Number.isInteger(ans) || ans<0 || ans>3) return null;
+    if(/все перечисленные|ничего из перечисленных|вышеупомянутые/i.test(opts.join(" "))) return null;
+    return {text:q.text.trim(), options:opts, answer:ans};
+  },
+
+  /* ---- шаг 1: сама генерация (без уровня сложности — он вопросу не нужен) ---- */
+  make(topic){
+    return this.ask([
+      {role:"system", content:"Ты — составитель вопросов для настольной викторины «Тёмные знания». Говоришь по-русски. Отвечаешь ТОЛЬКО валидным JSON, без markdown и пояснений."},
+      {role:"user", content:"Придумай один вопрос по теме «"+topic+"» для викторины.\n"
+        +"Требования: 4 варианта ответа и ровно один верный; варианты правдоподобные и сопоставимой длины; "
+        +"вопрос однозначен, без подвохов и без «все перечисленные/ничего из перечисленного»; не повторяй дословно школьные тестовые вопросы; "
+        +"средняя сложность — отдельного уровня сложности нет.\n"
+        +"Верни СТРОГО JSON: {\"text\":\"текст вопроса\",\"options\":[\"...\",\"...\",\"...\",\"...\"],\"answer\":0}"}
+    ], 1).then(raw=>{
+      const q = this.validate(this.parse(raw));
+      if(!q) throw new Error("DeepSeek: некорректный вопрос");
+      return q;
+    });
+  },
+
+  /* ---- шаг 2: самопроверка — модель отвечает на вопрос сама и сверяет ---- */
+  verify(q){
+    return this.ask([
+      {role:"system", content:"Ты — строгий проверщик вопросов викторины. Отвечаешь ТОЛЬКО валидным JSON, без markdown."},
+      {role:"user", content:"Проверь вопрос викторины:\nВопрос: "+q.text+"\nВарианты:\n"
+        + q.options.map((o,i)=>(i+1)+") "+o).join("\n")
+        + "\nЗаявлен верным вариант "+(q.answer+1)+": «"+q.options[q.answer]+"».\n"
+        +"Ответь САМ на вопрос и проверь: (1) верен ли заявленный ответ; (2) действительно ли ровно один вариант из четырёх правильный; "
+        +"(3) вопрос корректен, однозначен и честен.\n"
+        +"Верни СТРОГО JSON: {\"ok\":true|false,\"answer\":0}"}
+    ], 0).then(raw=>{
+      const v = this.parse(raw);
+      return !!(v && v.ok===true && Number(v.answer)===q.answer);
+    });
+  },
+
+  /* ---- полный цикл: генерация + самопроверка, до 2 попыток; если не вышло — reject ---- */
+  async gen(topic){
+    for(let i=0;i<2;i++){
+      try{
+        const q = await this.make(topic);
+        if(await this.verify(q)) return q;
+      }catch(e){ /* попробуем ещё раз */ }
+    }
+    throw new Error("DeepSeek: вопрос не прошёл самопроверку");
+  }
+};
+
+/* ---- экран ожидания, пока DeepSeek думает ---- */
+function aiLoading(on, topic){
+  $("ai-loading").classList.toggle("show", !!on);
+  if(on) $("ai-loading-text").textContent = "DeepSeek придумывает вопрос по теме «"+(topic||"")+"»…";
+}
+
+/* ---- запуск события: вместо выбора сложности — генерация вопроса ---- */
+function startAIQuestion(topicIdx){
+  const cur = state.current;
+  if(!cur || state.pendingTopic!=null) return;
+  const genId = ++AI.genId;
+  state.pendingTopic = topicIdx;                  // блокируем выбор, как при выборе сложности
+  aiLoading(true, TOPICS[topicIdx].name);
+  AI.gen(TOPICS[topicIdx].name).then(q=>{
+    aiLoading(false);
+    if(genId!==AI.genId || state.current!==cur || cur.answered) return;   // состояние изменилось (ход/игра)
+    state.pendingTopic = null;
+    state.aiUsed = true;                          // один раз за игру
+    setupAIQuestion(topicIdx, q);
+  }, ()=>{
+    aiLoading(false);
+    if(genId!==AI.genId || state.current!==cur) return;
+    state.pendingTopic = null;
+    showDiff(topicIdx);                           // не вышло (нет сети/ключи) — обычный путь, событие не тратится
+  });
+}
+
+/* ---- сам вопрос: без сложности, без таймера, урон ровно 100/100 ---- */
+function setupAIQuestion(topicIdx, q){
+  const unit = curUnit();
+  unit.lastTopic = topicIdx;                      // тема потрачена — дважды подряд не будет
+  state.qCount++;                                 // вопрос показан — шанс особых событий растёт дальше
+  const cur = state.current;
+  cur.ai = true;
+  cur.mega = false;
+  cur.curse = false;
+  cur.answered = false;
+  cur.q = {text:q.text, options:q.options, answer:q.answer};   // без difficulty — уровня сложности нет
+  cur.topicIdx = topicIdx;
+  cur.boost = false;
+  cur.step = null;                                // только битва с боссом — шагов дуэли нет
+  cur.defenderSpeakerId = null;
+  cur.attackCorrect = null;
+  cur.dmg = AI_DMG;
+  renderQDiff();
+  $("q-mega-label").classList.add("hidden");
+  $("q-curse-label").classList.add("hidden");
+  $("q-ai-label").classList.remove("hidden");
+  $("q-card").classList.remove("mega");
+  $("q-card").classList.add("ai");
+  sfx.ai();
+  renderQFor();
+  $("q-topic").innerHTML = '<span class="tc-emoji">'+TOPICS[topicIdx].emoji+'</span> '+esc(TOPICS[topicIdx].name);
+  $("q-text").textContent = q.text;
+  buildOptions();
+  $("q-overlay").classList.add("show");
+  renderAbilities();                              // после show — иначе кнопки сочтут окно закрытым
+}
+
 /* ---- ход: ведущий выбирает тему, игрок — сложность, потом вопрос ---- */
 function pickTopic(topicIdx){
   if(!state.current || state.current.answered || state.transitioning || state.pendingTopic!=null) return;
@@ -3264,6 +3476,9 @@ function pickTopic(topicIdx){
   }
   // ---- казино: вместо вопроса барабан (только битва с боссом, один раз за игру) ----
   if(state.phase==="boss" && state.mode!=="quick" && !state.casinoUsed && Math.random() < specialChance(CASINO_CHANCE)){ startCasino(topicIdx); return; }
+  // ---- вопрос от DeepSeek: один раз за игру, только против босса и только при интернете+ключе ----
+  if(state.phase==="boss" && state.mode!=="quick" && !state.aiUsed && AI.ready()
+     && Math.random() < specialChance(AI_CHANCE)){ startAIQuestion(topicIdx); return; }
   // ---- сначала игрок выбирает сложность ----
   showDiff(topicIdx);
 }
@@ -3342,7 +3557,9 @@ function setupQuestion(topicIdx, drawn){
   renderQDiff();
   $("q-mega-label").classList.toggle("hidden", !mega);
   $("q-curse-label").classList.toggle("hidden", !curse);
+  $("q-ai-label").classList.add("hidden");   // обычный вопрос — подписи DeepSeek нет
   $("q-card").classList.toggle("mega", mega);
+  $("q-card").classList.remove("ai");
   if(mega) sfx.gong();   // глубокий гонг мегавопроса
   renderQFor();
   $("q-topic").innerHTML = '<span class="tc-emoji">'+TOPICS[topicIdx].emoji+'</span> '+esc(TOPICS[topicIdx].name);
@@ -3355,6 +3572,10 @@ function setupQuestion(topicIdx, drawn){
 /* ---- сложность справа сверху: только звёзды, без надписей «урон»/«риск» ---- */
 function renderQDiff(){
   const cur = state.current;
+  if(cur.ai){
+    $("q-diff").innerHTML = '<span class="tc-emoji">🐋</span> <span class="dmg-note">100/100</span>';
+    return;
+  }
   if(cur.mega || cur.curse){
     $("q-diff").innerHTML = '<span class="tc-emoji" style="color:#ff6b5e;">☠</span> <span class="dmg-note">'
       + (cur.mega ? "мега "+MEGA_DMG : "проклятие") + '</span>';
@@ -3410,7 +3631,7 @@ function renderAbilities(){
   const sp = cur ? speaker() : null;
   const shown = $("q-overlay").classList.contains("show");
   // способности работают только на обычном вопросе и только до «Показать ответы»
-  const special = !!(cur && (cur.mega || cur.curse));
+  const special = !!(cur && (cur.mega || cur.curse || cur.ai));
   const revealed = !!(cur && cur.revealed);
   const canAct = !!(cur && shown && !cur.answered && !special && !revealed && sp && sp.ab);
   const isDef = !!(cur && cur.step==="defend");
@@ -3422,6 +3643,7 @@ function renderAbilities(){
     : revealed ? "Ответы уже показаны — способности недоступны"
     : cur && cur.mega ? "На мегавопросе способности недоступны"
     : cur && cur.curse ? "На вопросе-проклятии способности недоступны"
+    : cur && cur.ai ? "На ИИ-вопросе способности недоступны"
     : "";
   // 🔀 Замена — другой вопрос (обычный, до показа ответов)
   set("ab-swap", canAct && sp.ab.swap,
@@ -3440,7 +3662,7 @@ function renderAbilities(){
 
 function useSwap(){
   const cur = state.current;
-  if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || !$("q-overlay").classList.contains("show")) return;
+  if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || cur.ai || !$("q-overlay").classList.contains("show")) return;
   const sp = speaker();
   if(!sp || !sp.ab.swap) return;
   const d = cur.q.difficulty;
@@ -3468,7 +3690,7 @@ function useSwap(){
 
 function useBoost(){
   const cur = state.current;
-  if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || !$("q-overlay").classList.contains("show")) return;
+  if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || cur.ai || !$("q-overlay").classList.contains("show")) return;
   const sp = speaker();
   if(!sp || !sp.ab.boost || cur.curse || cur.step==="defend") return;
   sp.ab.boost = false;
@@ -3482,7 +3704,7 @@ function useBoost(){
 
 function useGive(){
   const cur = state.current;
-  if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || !$("q-overlay").classList.contains("show")) return;
+  if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || cur.ai || !$("q-overlay").classList.contains("show")) return;
   const sp = speaker();
   if(!sp || !sp.ab.give || state.phase!=="boss") return;
   const others = aliveUnits().filter(u=>u.id!==cur.attackerIdx);
@@ -3510,8 +3732,8 @@ $("q-show").onclick = ()=>{
   $("q-show").classList.add("hidden");
   state.current.revealed = true;   // ответы показаны → способности отключаются
   renderAbilities();
-  // у мегавопроса таймера нет, но защитник отвечает на новый вопрос — таймер идёт
-  if(!state.current.mega || state.current.step==="defend") startTimer();
+  // у мегавопроса и вопроса от DeepSeek таймера нет, но защитник отвечает на новый вопрос — таймер идёт
+  if((!state.current.mega && !state.current.ai) || state.current.step==="defend") startTimer();
 };
 
 $("ab-swap").onclick = useSwap;
@@ -3809,8 +4031,8 @@ function resolveCorrect(){
   const sp = speaker();           // отвечающий игрок
   const at = curUnit();           // боевая единица (игрок или команда)
   sp.answers++; sp.correct++;
-  // серия верных засчитывает ТОЛЬКО обычные вопросы (мега и проклятие не увеличивают серию и не сбрасывают её)
-  const normalQ = !mega && !curse;
+  // серия верных засчитывает ТОЛЬКО обычные вопросы (мега, проклятие и ИИ-вопрос серию не увеличивают)
+  const normalQ = !mega && !curse && !cur.ai;
   if(normalQ) sp.streak = (sp.streak||0)+1;
 
   // ---- вопрос-проклятие: верно — жертва лечится ----
@@ -3833,6 +4055,24 @@ function resolveCorrect(){
       floatDamage($("pcard-"+tg.id), "+"+healed, "dmg-green");
       renderPlayers(); renderDuelZone();
     }
+    $("q-next").classList.remove("hidden");
+    renderAbilities();
+    return;
+  }
+
+  // ---- вопрос от DeepSeek: верно — Босс теряет ровно 100 (только битва с боссом) ----
+  if(cur.ai){
+    const d = Math.min(AI_DMG, state.boss.hp);
+    state.boss.hp -= AI_DMG;
+    at.dmgBoss += d; at.dmgDealt += d;
+    if(isTeamMode()){ sp.dmgBoss += d; sp.dmgDealt += d; }   // личная статистика игрока в команде
+    sfx.correct(); sfx.hit();
+    toast('<span class="t-good">✔ Верно!</span> 🐋 Вопрос от DeepSeek: Босс теряет <b>100</b> урона');
+    floatDamage($("boss-zone"), "-100", "dmg-green");
+    const bz = $("boss-zone");
+    bz.classList.add("shake");
+    setTimeout(()=>bz.classList.remove("shake"), 550);
+    renderBossZone();
     $("q-next").classList.remove("hidden");
     renderAbilities();
     return;
@@ -3915,6 +4155,23 @@ function resolveWrong(prefix){
     });
     renderPlayers();
     if(state.phase==="pvp") renderDuelZone();
+    $("q-next").classList.remove("hidden");
+    renderAbilities();
+    return;
+  }
+
+  // ---- вопрос от DeepSeek: неверно — игрок получает ровно 100 (без ярости босса и множителей) ----
+  if(cur.ai){
+    at.hp -= AI_DMG; at.dmgTaken += AI_DMG;
+    if(isTeamMode()) sp.dmgTaken += AI_DMG;   // личная статистика игрока в команде
+    sfx.wrong(); sfx.hit();
+    toast((prefix || '<span class="t-bad">✘ Неверно…</span>')+' 🐋 Вопрос от DeepSeek: '+esc(at.name)+' получает <b>100</b> урона');
+    floatDamage($("pcard-"+at.id), "-100", "dmg-red");
+    const el = $("pcard-"+at.id);
+    el?.classList.add("shake");
+    setTimeout(()=>el?.classList.remove("shake"), 550);
+    checkPlayerDead(at, state.phase==="boss" ? "boss" : "own");
+    renderPlayers();
     $("q-next").classList.remove("hidden");
     renderAbilities();
     return;
@@ -4326,7 +4583,7 @@ function devRemoveDrawn(list){
 /* восстановить состояние из снимка и синхронизировать с ним экран */
 function devRestore(snap){
   state = JSON.parse(snap);
-  ["q-overlay","diff-overlay","banner-overlay","casino-overlay"].forEach(id=>$(id).classList.remove("show"));
+  ["q-overlay","diff-overlay","banner-overlay","casino-overlay","ai-loading"].forEach(id=>$(id).classList.remove("show"));
   hideTimer();
   document.documentElement.setAttribute("data-blood", state.bloodMoon ? "on" : "off");
   $("topic-table").classList.toggle("locked", !!state.transitioning);
@@ -4730,6 +4987,33 @@ function setBlur(v){
 }
 $("set-blur").onclick = ()=> setBlur(!blurred);
 
+// ---- вопросы от DeepSeek: переключатель и API-ключ (хранятся только на этом устройстве) ----
+const AI_STORE_KEY = "cbq-ds-key", AI_STORE_ON = "cbq-ai";
+function aiEnabled(){ return store.get(AI_STORE_ON) !== "0"; }        // по умолчанию включено
+function aiKey(){ return String(store.get(AI_STORE_KEY) || "").trim(); }
+function setAiEnabled(v){ store.set(AI_STORE_ON, v ? "1" : "0"); renderAiSettings(); }
+function renderAiSettings(){
+  $("set-ai").textContent = aiEnabled() ? "Вкл" : "Выкл";
+  const k = aiKey();
+  $("ai-key").placeholder = k ? "ключ сохранён ••••"+k.slice(-4) : "API-ключ DeepSeek (sk-…)";
+  $("set-ai-key").textContent = k ? "♻ Обновить" : "💾 Сохранить";
+}
+$("set-ai").onclick = ()=> setAiEnabled(!aiEnabled());
+$("set-ai-key").onclick = ()=>{
+  const v = $("ai-key").value.trim();
+  $("ai-key").value = "";
+  if(!v){
+    store.set(AI_STORE_KEY, "");
+    toast("Ключ DeepSeek удалён — ИИ-вопросы выключены");
+  }else{
+    store.set(AI_STORE_KEY, v);
+    if(!aiEnabled()) store.set(AI_STORE_ON, "1");   // ключ сохранён — включаем событие
+    toast('<span class="t-good">🐋 Ключ DeepSeek сохранён</span> только на этом устройстве');
+  }
+  renderAiSettings();
+};
+$("ai-key").addEventListener("keydown", e=>{ if(e.key==="Enter") $("set-ai-key").click(); });
+
 // ---- меню «⋯» на главном экране ----
 $("dots-btn").onclick = (e)=>{ e.stopPropagation(); $("dots-menu").classList.toggle("hidden"); sfx.flip(); };
 document.addEventListener("click", (e)=>{   // клик мимо меню — закрывает его
@@ -4873,7 +5157,7 @@ function stopRocket(){ clearTimeout(rocketTimer); rocketTimer = null; }
    — 1/2/3 — сложность; 1/2/3/4 и A/B/C/D (А/Б/В/Г) — вариант ответа
    — пробел: «Показать ответы», затем «Следующий ход»; после финала пробел молчит
    ============================================================ */
-function openSettings(){ $("dots-menu").classList.add("hidden"); $("settings-overlay").classList.add("show"); }
+function openSettings(){ $("dots-menu").classList.add("hidden"); renderAiSettings(); $("settings-overlay").classList.add("show"); }
 function closeSettings(){ $("settings-overlay").classList.remove("show"); }
 function inTypingField(e){
   const t = e.target;
@@ -4906,7 +5190,7 @@ document.addEventListener("keydown", (e)=>{
   // открыто любое меню (Настройки/Правила/Оформление/Лидеры/Разработчик) — игровые клавиши молчат
   if($("settings-overlay").classList.contains("show") || $("rules-overlay").classList.contains("show")
      || $("theme-overlay").classList.contains("show") || $("table-overlay").classList.contains("show")
-     || $("dev-overlay").classList.contains("show")) return;
+     || $("dev-overlay").classList.contains("show") || $("ai-loading").classList.contains("show")) return;   // пауза DeepSeek — тоже молчим
   if($("diff-overlay").classList.contains("show")){    // выбор сложности: клавиши 1/2/3 (и A/B/C/D)
     if(idx>=0 && idx<=2){
       const b = $("diff-"+(idx+1));
@@ -4992,6 +5276,7 @@ buildThemeGrid();
 applyTheme(store.get("cbq-theme") || "fantasy");   // вернуть сохранённое оформление
 setMuted(store.get("cbq-muted") === "1");          // вернуть сохранённый звук
 setBlur(store.get("cbq-blur") === "1");            // вернуть сохранённое размытие фона
+renderAiSettings();                                // вернуть состояние ключа DeepSeek
 
 </script>
 <!-- версия 1.0.0: маленький полупрозрачный логотип и подпись в левом нижнем углу -->
@@ -5010,7 +5295,7 @@ setBlur(store.get("cbq-blur") === "1");            // вернуть сохра�
     <rect x="4" y="4" width="112" height="146" rx="15" fill="url(#vbFace)" stroke="#2c3f73" stroke-width="6"/>
     <path d="M32 13C32 13 14 28 14 38.5c0 6 4.5 10.5 10.5 10.5 3 0 5.7-1.5 7.5-3.75 1.8 2.25 4.5 3.75 7.5 3.75 6 0 10.5-4.5 10.5-10.5C50 28 32 13 32 13z M27.5 46h9l2.5 8h-14z" fill="url(#vbPip)" transform="translate(19,34) scale(1.28)"/>
   </svg>
-  <span>Тёмные знания · v1.0.4</span>
+  <span>Тёмные знания · v1.0.5</span>
 </div>
 </body>
 </html>
