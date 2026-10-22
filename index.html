@@ -668,6 +668,8 @@ html[data-theme="notebook"] [style*="--pencil"]{
 .set-note{font-size:14px; color:var(--muted); margin:0 2px 6px;}
 /* строка выбора модели Puter.js в настройках */
 #ai-model-row{display:flex; gap:10px; margin:-4px 0 12px;}
+#hostq-row{display:flex; gap:10px; align-items:center; margin:-4px 0 8px;}
+#hostq-count{font-size:14px; color:var(--muted);}
 #ai-model{
   flex:1; min-width:0;
   background:#140e1d; border:2px solid var(--edge); border-radius:12px;
@@ -780,6 +782,13 @@ html[data-battle="1"] #banner-overlay .card{max-width:80vw;}                    
   animation:aiGlow 1.4s infinite alternate;
 }
 @keyframes aiGlow{from{filter:brightness(1);} to{filter:brightness(1.1);}}
+/* карточка «Вопроса от ведущего» — тёплое золотое свечение */
+.q-card.host{
+  border-color:rgba(232,194,104,.75);
+  box-shadow:inset 0 0 26px rgba(0,0,0,.55), 0 0 40px rgba(232,194,104,.4);
+  animation:hostGlow 1.5s infinite alternate;
+}
+@keyframes hostGlow{from{filter:brightness(1);} to{filter:brightness(1.08);}}
 .q-head{display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid var(--edge); padding-bottom:14px;}
 .q-topic{font-family:'Tagesschrift','Georgia',serif; font-weight:700; font-size:24px; color:var(--violet);}
 .q-for{font-size:19px; color:var(--silver); margin-top:5px; text-align:left;}
@@ -810,6 +819,11 @@ html[data-battle="1"] #banner-overlay .card{max-width:80vw;}                    
   animation:aiPulse 1.3s infinite alternate;
 }
 @keyframes aiPulse{from{transform:scale(1);} to{transform:scale(1.06);}}
+.q-host-label{
+  font-family:'Tagesschrift','Georgia',serif; font-size:30px; font-weight:700;
+  letter-spacing:2px; text-align:center; margin-top:12px;
+  animation:aiPulse 1.3s infinite alternate;
+}
 .q-curse-label{
   font-family:'Tagesschrift','Georgia',serif; font-size:22px; font-weight:700; color:#c084fc;
   text-shadow:0 0 14px rgba(168,85,247,.8); letter-spacing:1px; text-align:center; margin-top:10px;
@@ -849,6 +863,13 @@ html[data-battle="1"] #banner-overlay .card{max-width:80vw;}                    
 .q-opt.disabled{pointer-events:none; opacity:.85;}
 .q-opt.missed{opacity:.4; filter:grayscale(1); text-decoration:line-through; cursor:default; pointer-events:none;}
 .q-opt.missed .letter{opacity:.55;}
+/* ---- вопрос ведущего: две кнопки-вердикта вместо вариантов ---- */
+.q-verdict{display:flex; gap:18px; justify-content:center; margin:14px 0 4px;}
+.q-verdict .btn{flex:1; max-width:320px; font-size:21px; padding:14px 18px;}
+.q-verdict .v-yes{border-color:rgba(74,222,128,.7); color:#8ef0b0;}
+.q-verdict .v-yes:hover{border-color:var(--emerald); box-shadow:0 0 26px rgba(74,222,128,.45), 0 8px 18px rgba(0,0,0,.55);}
+.q-verdict .v-no{border-color:rgba(212,63,63,.7); color:#ff9d94;}
+.q-verdict .v-no:hover{border-color:var(--ruby); box-shadow:0 0 26px rgba(212,63,63,.45), 0 8px 18px rgba(0,0,0,.55);}
 .q-actions{margin-top:22px; text-align:center;}
 
 /* --- Способности: 3 зелёные кнопки в углу окна с вопросом --- */
@@ -939,7 +960,7 @@ html[data-battle="1"] #banner-overlay .card{max-width:80vw;}                    
   --g-emerald:linear-gradient(180deg,#eafff2 0%,#86efac 18%,#4ade80 42%,#166534 56%,#86efac 72%,#166534 100%);
   --g-ocean:linear-gradient(180deg,#e8f8ff 0%,#b3e5fc 18%,#6ec6ff 42%,#0d5a8a 56%,#6ec6ff 72%,#0d5a8a 100%);
 }
-.q-topic,.q-text,.q-timer,.q-mega-label,.q-curse-label,.q-ai-label,
+.q-topic,.q-text,.q-timer,.q-mega-label,.q-curse-label,.q-ai-label,.q-host-label,
 .duel-side .who,.duel-side.attacker .role,.duel-side.target .role,
 .boss-name,.topic-card .t-name,.p-name,#results-title,.podium .p-nick,.podium .p-pts,
 table.stats th,table.stats td.place,#table-label,#table-label b,
@@ -958,7 +979,7 @@ table.stats th,table.stats td.place,#table-label,#table-label b,
 }
 /* золото */
 .topic-card .t-name,.p-name,.duel-side .who,.q-for,.q-for b,.q-diff,#results-title,
-.podium .p-nick,table.stats th,#casino-result,#banner-title{background-image:var(--shine),var(--g-gold);}
+.podium .p-nick,table.stats th,#casino-result,#banner-title,.q-host-label{background-image:var(--shine),var(--g-gold);}
 /* серебро */
 .q-text,.q-timer,.podium .p-pts,table.stats td.place,#table-label,.q-for{background-image:var(--shine),var(--g-silver);}
 /* текст вопроса — собственное яркое серебро, чище и светлее прочего */
@@ -1023,6 +1044,19 @@ table.stats th,table.stats td.place,#table-label,#table-label b,
 /* ---------- Экран итогов ---------- */
 #screen-results{max-width:1060px; margin:0 auto; padding:36px 16px 70px;}
 #results-title{text-align:center; font-size:44px; color:var(--gold); text-shadow:0 0 22px rgba(232,194,104,.5);}
+/* ---- итоги: кликабельные строки (погиб / добил босса) и окно истории вопросов ---- */
+#stats-table tr[data-story]{cursor:pointer;}
+#stats-table tr[data-story]:hover .name{text-decoration:underline dotted; text-underline-offset:3px;}
+#story-card{max-width:720px; width:min(720px,92vw); max-height:86vh; overflow:auto;}
+#story-body{margin:8px 0 16px; text-align:left;}
+.story-sec{margin:12px 0; padding:12px 16px; border:1px solid rgba(232,194,104,.25); border-radius:12px; background:rgba(0,0,0,.28);}
+.story-sec.death{border-color:rgba(212,63,63,.4);}
+.story-sec.kill{border-color:rgba(74,222,128,.4);}
+.story-sec h4{margin:0 0 8px; font-family:'Tagesschrift','Georgia',serif; font-size:22px; color:var(--gold);}
+.story-cause{color:#ff9d94; margin-bottom:8px;}
+.story-topic{font-weight:700; color:var(--gold);}
+.story-text{margin-top:5px; font-size:18px; line-height:1.5; color:#e8e3d5;}
+#story-body .story-sec:not(.death):not(.kill) .story-text{color:var(--muted);}
 #results-sub{text-align:center; color:var(--violet); margin:10px 0 30px; font-size:19px;}
 #results-sub:empty{display:none;}
 .podium{display:flex; justify-content:center; gap:20px; margin-bottom:32px; flex-wrap:wrap;}
@@ -1180,9 +1214,14 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
     </div>
     <div id="q-mega-label" class="q-mega-label hidden"><span class="tc-emoji">🔥</span> МЕГАВОПРОС <span class="tc-emoji">🔥</span></div>
     <div id="q-ai-label" class="q-ai-label hidden"><span class="tc-emoji">🐋</span> Вопрос от DeepSeek <span class="tc-emoji">🐋</span></div>
+    <div id="q-host-label" class="q-host-label hidden"><span class="tc-emoji">🎙️</span> Вопрос от ведущего <span class="tc-emoji">🎙️</span></div>
     <div class="q-curse-wrap"><div id="q-curse-label" class="q-curse-label hidden"><span class="tc-emoji">☠</span> ВОПРОС-ПРОКЛЯТИЕ · неверно — всем −100 HP, верно — жертве +100 HP</div></div>
     <div class="q-text" id="q-text"></div>
     <div class="q-opts hidden" id="q-opts"></div>
+    <div class="q-verdict hidden" id="q-verdict">
+      <button class="btn v-yes" id="v-yes" title="Ответ засчитан — урон боссу (в Мордобое защитнику) 200"><span class="tc-emoji">✔</span> Правильно</button>
+      <button class="btn v-no" id="v-no" title="Ответ не засчитан — отвечающему 200 урона"><span class="tc-emoji">✘</span> Неправильно</button>
+    </div>
     <div class="q-actions">
       <button class="btn" id="q-show">Показать ответы ▶</button>
       <button class="btn hidden" id="q-next">Следующий ход ▶</button>
@@ -1253,6 +1292,15 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
   <div id="players-title" class="hidden">ИГРОКИ</div>
   <div class="table-wrap hidden" id="players-wrap"><table class="stats" id="players-table"></table></div>
   <div class="results-actions"><button class="btn btn-ruby btn-big" id="again-btn">⟲ Новая игра</button></div>
+</div>
+
+<!-- ================= ИСТОРИЯ ВОПРОСОВ (итоги: клик по имени) ================= -->
+<div class="overlay" id="story-overlay">
+  <div class="card ornate modal-card" id="story-card">
+    <div class="modal-title" id="story-title">История</div>
+    <div id="story-body"></div>
+    <button class="btn btn-ruby" data-close>✕ Закрыть</button>
+  </div>
 </div>
 
 <!-- ================= СЦЕНЫ ТЕМ ================= -->
@@ -1809,6 +1857,16 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <button class="btn" id="set-ai-test" title="Отправить тестовый запрос к DeepSeek через Puter.js">🧪 Проверить</button>
     </div>
     <div class="set-note">🐋 Раз за игру (только в битве с Боссом) может выпасть «Вопрос от DeepSeek»: без уровня сложности и без таймера, верно — Боссу −100, неверно — игроку −100. Вопрос генерирует и перепроверяет модель DeepSeek через <b>Puter.js</b> — <b>без API-ключа и баланса</b> (запросы оплачивает аккаунт Puter; при первом запросе может открыться окно входа в Puter — разрешите его). Нужен интернет. <b>Важно:</b> Puter не работает при открытии файла напрямую (file://) — для ИИ-вопросов запускайте игру через «<b>Запуск игры.bat</b>» (локальный сервер, всё в той же папке); двойной клик по index.html работает как раньше, только без ИИ-вопросов. Если запрос не прошёл, показывается причина, а вопрос идёт обычным путём.</div>
+    <div class="set-row">
+      <span>🎙 Вопросы от ведущего</span>
+      <button class="btn" id="set-hostq">Вкл</button>
+    </div>
+    <div id="hostq-row">
+      <button class="btn" id="set-hostq-import" title="Загрузить свой JSON-файл с вопросами ведущего">📥 Импорт вопросов (JSON)</button>
+      <span id="hostq-count"></span>
+      <input type="file" id="hostq-file" accept=".json,application/json" class="hidden">
+    </div>
+    <div class="set-note">🎙 Шестая тема на столе: «Вопросы от ведущего» — без сложности, таймера и вариантов: игрок отвечает вслух, а ведущий жмёт <b>«Правильно»</b> (Боссу −200) или <b>«Неправильно»</b> (игроку −200). Способности, мегавопрос, проклятие, казино и ИИ-вопросы на ней не работают; тема доступна во всех режимах и в Мордобое. Свои вопросы импортируются JSON-файлом: массив строк или объектов <b>{"text": "..."}</b> (можно и <b>{"questions": [...]}</b>) — они добавляются к встроенным, дубликаты отбрасываются, колода перемешивается автоматически при старте игры.</div>
     <div class="set-note">Переключатели общие: действуют во всей игре и запоминаются.</div>
     <button class="btn btn-ruby" data-close>✕ Закрыть</button>
   </div>
@@ -1823,11 +1881,12 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <p>Игра идёт в три акта: <b>Битва с Боссом</b> → <b>Мордобой</b> → <b>Итоги</b>. Игроки отвечают на вопросы по очереди. Ведущий (или сам ноутбук) ведёт игру: показывает вопрос, варианты ответов скрыты, пока ведущий не нажмёт «Показать ответы» — тогда идёт таймер.</p>
       <h3>⚔️ Акт I. Битва с Боссом</h3>
       <ol>
-        <li>Очередной игрок выбирает <b>тему</b> из пяти карточек на столе (одну и ту же тему дважды подряд брать нельзя).</li>
+        <li>Очередной игрок выбирает <b>тему</b> из карточек на столе — их пять, а с включённой темой ведущего шесть (одну и ту же тему дважды подряд брать нельзя).</li>
         <li>Потом — <b>сложность</b>: ★, ★★ или ★★★. <b>Одну и ту же сложность дважды подряд брать нельзя</b>.</li>
         <li>Вопрос появляется на экране. Игрок думает вслух, затем ведущий жмёт <b>«Показать ответы»</b> — с этого момента идёт таймер (15 секунд; в командной игре 20).</li>
         <li><b>Верно</b> → Босс теряет урон: 50 / 100 / 150 (по сложности). <b>Неверно</b> → игрок сам теряет: 100 / 125 / 150.</li>
         <li>Кто <b>добил Босса</b> — получает +1 балл. Все выжившие переходят к Мордобою.</li>
+        <li><b>🎙 Тема «Вопросы от ведущего»</b> (шестая карточка, включается в настройках): без сложности, таймера и вариантов — игрок отвечает вслух, а ведущий жмёт <b>«Правильно»</b> (Боссу −200, в Мордобое защитнику −200) или <b>«Неправильно»</b> (отвечающему −200). Способности, мегавопрос, проклятие, казино и ИИ-вопросы на ней не работают. Свои вопросы импортируются JSON-файлом в настройках.</li>
       </ol>
       <h3>👹 Особые события (обычный и командный режимы)</h3>
       <ul>
@@ -2068,6 +2127,39 @@ function randomAvatar(){
    5 тем: История и мифы · Наука · Искусство и музыка ·
    Поп-культура · Компьютерные игры
    ============================================================ */
+/* ============================================================
+   ВОПРОСЫ ОТ ВЕДУЩЕГО: шестая тема (в настройках можно выключить).
+   Без сложности, вариантов и таймера — игрок отвечает вслух,
+   правильность определяет ведущий кнопками «Правильно/Неправильно».
+   Урон фиксированный: верно — боссу (в Мордобое — защитнику) 200,
+   неверно — отвечающему 200. Способности, мега, проклятие, казино
+   и ИИ-вопросы на этой теме не работают.
+   ============================================================ */
+const HOST_TOPIC_IDX = 5;   // положение темы ведущего в TOPICS
+const HOST_DMG = 200;       // урон вопроса ведущего в обе стороны
+const HOST_Q_DEFAULTS = [   // встроенные вопросы; свои добавляются импортом JSON в настройках
+  {text:"Назови три столицы государств, которые когда-либо входили в СССР."},
+  {text:"Сколько планет в Солнечной системе?"},
+  {text:"Какой химический элемент обозначается символом Fe?"},
+  {text:"Кто написал роман «Мастер и Маргарита»?"},
+  {text:"Назови как минимум трёх русских полководцев."},
+  {text:"В каком году Юрий Гагарин полетел в космос?"},
+  {text:"Какая река самая длинная в России?"},
+  {text:"Сколько костей во взрослом теле человека?"},
+  {text:"Назови пять видов домашних животных."},
+  {text:"Какой язык программирования создал Гвидо ван Россум?"},
+  {text:"Сколько будет 17, умноженное на 6?"},
+  {text:"Как зовут коня Чапаева? Спорят? Решает ведущий!"},
+  {text:"Назови любую страну — члена БРИКС."},
+  {text:"Как называется башня-крепость на Красной площади в Москве?"},
+  {text:"Назови трёх персонажей мультфильма «Смешарики»."},
+  {text:"Как называется валюта Японии?"},
+  {text:"Сколько цветов в радуге?"},
+  {text:"Кто нарисовал картину «Чёрный квадрат»?"},
+  {text:"Какая группа записала альбом «The Dark Side of the Moon»?"},
+  {text:"Назови любую русскую народную сказку."}
+];
+
 const TOPICS = [
   {
     name:"История и мифы", emoji:"🏛️",
@@ -2834,6 +2926,10 @@ const TOPICS = [
       {difficulty:3, text:"Кто создал Minecraft (первоначально «Cave Game»)?", options:["Йенс Бергенстен","Крис Сойер","Маркус Персон (Notch)","Джон Кармак"], answer:2},
       {difficulty:3, text:"Какая игра выиграла «Игру года» на The Game Awards 2024?", options:["Metaphor: ReFantazio","Final Fantasy VII Rebirth","Astro Bot","Black Myth: Wukong"], answer:2}
     ]
+  },
+  {
+    name:"Вопросы от ведущего", emoji:"🎙️", host:true,
+    questions: HOST_Q_DEFAULTS.slice()   // при старте игры сюда подмешиваются импортированные вопросы
   }
 ];
 
@@ -2888,6 +2984,7 @@ function mkPlayer(id, name, hp){
 function startGame(cfg){
   document.documentElement.setAttribute("data-battle","1");   // бою — масштаб ×1.19 (плашки, карточки, текст)
   document.documentElement.setAttribute("data-blood","off");  // Кровавая луна — только внутри II круга
+  TOPICS[HOST_TOPIC_IDX].questions = HOST_Q_DEFAULTS.concat(hostCustomList());   // колода ведущего: встроенные + импортированные (перемешаются в пулах)
   const mode = cfg.mode;
   let players, teams = null;
   if(mode === "team"){
@@ -2979,14 +3076,17 @@ function poolHas(topicIdx, diff){
   }
   return false;
 }
-/* случайная карта нужной сложности из любой колоды (для «Замены») */
+/* активна ли тема в этой игре (тема ведущего выключается в настройках) */
+const topicActive = i => i!==HOST_TOPIC_IDX || hostEnabled();
+/* случайная карта нужной сложности из любой колоды (для «Замены» и нового вопроса защитнику).
+   Тему ведущего сюда не берём: его вопросы открываются только выбором карточки на столе */
 function drawAnywhere(diff){
-  const order = shuffle(TOPICS.map((t,i)=>i));
+  const order = shuffle(TOPICS.map((t,i)=>i).filter(i=> topicActive(i) && i!==HOST_TOPIC_IDX));
   for(const i of order){ const dr = drawQuestion(i, diff); if(dr) return dr; }
   return null;
 }
 function allDecksEmpty(){
-  return TOPICS.every((t,i)=> state.pools[i].pos >= state.pools[i].order.length);
+  return TOPICS.every((t,i)=> !topicActive(i) || state.pools[i].pos >= state.pools[i].order.length);
 }
 function shuffle(a){
   a = a.slice();
@@ -3147,8 +3247,9 @@ function renderTable(){
   const wrap = $("topic-table");
   wrap.innerHTML = "";
   const unit = state.current ? curUnit() : null;
-  const nonEmpty = TOPICS.filter((t,i)=>state.pools[i].pos < state.pools[i].order.length).length;
+  const nonEmpty = TOPICS.filter((t,i)=> topicActive(i) && state.pools[i].pos < state.pools[i].order.length).length;
   TOPICS.forEach((t,i)=>{
+    if(!topicActive(i)) return;   // тема ведущего выключена в настройках — карточки нет
     const left = state.pools[i].order.length - state.pools[i].pos;
     // эту тему единица уже брала на своём прошлом ходу — при наведении карточка загорается красным
     const forbidden = left>0 && nonEmpty>1 && unit && unit.lastTopic===i;
@@ -3492,6 +3593,7 @@ function setupAIQuestion(topicIdx, q){
   cur.ai = true;
   cur.mega = false;
   cur.curse = false;
+  cur.host = false;                               // ИИ-вопрос — кнопок ведущего нет
   cur.answered = false;
   cur.q = {text:q.text, options:q.options, answer:q.answer};   // без difficulty — уровня сложности нет
   cur.topicIdx = topicIdx;
@@ -3506,6 +3608,7 @@ function setupAIQuestion(topicIdx, q){
   $("q-ai-label").classList.remove("hidden");
   $("q-card").classList.remove("mega");
   $("q-card").classList.add("ai");
+  syncHostVisual();                               // снять метку/свечение ведущего, если был его вопрос
   sfx.ai();
   renderQFor();
   $("q-topic").innerHTML = '<span class="tc-emoji">'+TOPICS[topicIdx].emoji+'</span> '+esc(TOPICS[topicIdx].name);
@@ -3515,14 +3618,100 @@ function setupAIQuestion(topicIdx, q){
   renderAbilities();                              // после show — иначе кнопки сочтут окно закрытым
 }
 
+/* ---- вопрос от ведущего: без сложности, вариантов и таймера; ответ вслух,
+        правильность решает ведущий кнопками «Правильно/Неправильно» ---- */
+function setupHostQuestion(topicIdx){
+  const drawn = drawQuestion(topicIdx, null);      // карта из колоды ведущего (без difficulty)
+  if(!drawn){ toast('<span class="t-gold">🎙 Вопросы ведущего закончились!</span>'); return; }
+  const unit = curUnit();
+  unit.lastTopic = topicIdx;                       // тема потрачена — дважды подряд не будет
+  state.qCount++;                                  // вопрос показан — шанс особых событий растёт
+  const cur = state.current;
+  cur.host = true;
+  cur.ai = false;
+  cur.mega = false;
+  cur.curse = false;
+  cur.answered = false;
+  cur.revealed = false;
+  cur.q = drawn.q;                                 // {text} — без difficulty/options/answer
+  cur.topicIdx = topicIdx;
+  cur.boost = false;
+  cur.missText = null;
+  cur.dmg = HOST_DMG;                              // урон фиксированный: 200 в обе стороны
+  cur.step = state.phase==="pvp" ? "attack" : null; // в Мордобое — первый шаг дуэли
+  cur.defenderSpeakerId = null;
+  cur.attackCorrect = null;
+  renderQDiff();
+  $("q-mega-label").classList.add("hidden");
+  $("q-curse-label").classList.add("hidden");
+  $("q-ai-label").classList.add("hidden");
+  $("q-host-label").classList.remove("hidden");
+  $("q-card").classList.remove("mega");
+  $("q-card").classList.remove("ai");
+  $("q-card").classList.add("host");
+  sfx.flip();
+  renderQFor();
+  $("q-topic").innerHTML = '<span class="tc-emoji">'+TOPICS[topicIdx].emoji+'</span> '+esc(TOPICS[topicIdx].name);
+  $("q-text").textContent = drawn.q.text;
+  buildAnswerUI();                                 // вместо вариантов — кнопки ведущего
+  $("q-overlay").classList.add("show");
+  renderAbilities();                               // все три способности заблокированы
+}
+
+/* ---- что показать под вопросом: варианты (обычный вопрос) или кнопки ведущего ---- */
+function buildAnswerUI(){
+  const cur = state.current;
+  if(cur.host){
+    $("q-opts").classList.add("hidden");
+    $("q-next").classList.add("hidden");
+    $("q-show").classList.add("hidden");
+    $("q-verdict").classList.remove("hidden");
+    hideTimer();                                   // таймера на вопросе ведущего нет
+  }else{
+    $("q-verdict").classList.add("hidden");
+    buildOptions();
+  }
+}
+
+/* ---- метка и свечение карточки — под тип текущего вопроса (вопрос ведущего или обычный) ---- */
+function syncHostVisual(){
+  const cur = state.current;
+  const host = !!(cur && cur.host);
+  $("q-host-label").classList.toggle("hidden", !host);
+  $("q-card").classList.toggle("host", host);
+}
+
+/* ---- клик ведущего: правда ли ответил ---- */
+function hostVerdict(ok){
+  const cur = state.current;
+  if(!cur || cur.answered || !cur.host) return;
+  $("q-verdict").classList.add("hidden");
+  // ---- Мордобой: вердикт идёт по шагам дуэли (атака → защита) ----
+  if(state.phase==="pvp" && !cur.curse && cur.step){
+    if(cur.step==="attack") duelAttack(null, ok, null);
+    else duelDefend(null, ok, null);
+    return;
+  }
+  cur.answered = true;
+  stopTimer();
+  if(ok) resolveCorrect(); else resolveWrong(null);
+  renderAbilities();
+}
+
 /* ---- ход: ведущий выбирает тему, игрок — сложность, потом вопрос ---- */
 function pickTopic(topicIdx){
   if(!state.current || state.current.answered || state.transitioning || state.pendingTopic!=null) return;
   const unit = curUnit();
   // ---- одну и ту же тему дважды подряд брать нельзя (кроме последней оставшейся колоды) ----
-  const nonEmpty = TOPICS.filter((t,i)=>state.pools[i].pos < state.pools[i].order.length).length;
+  const nonEmpty = TOPICS.filter((t,i)=> topicActive(i) && state.pools[i].pos < state.pools[i].order.length).length;
   if(unit.lastTopic===topicIdx && nonEmpty>1){
     toast('<span class="t-bad">⛔ '+esc(unit.name)+': эта тема уже была!</span> Выберите другую');
+    return;
+  }
+  // ---- тема ведущего: без сложности, казино, ИИ и прочих событий — сразу вопрос с кнопками ведущего ----
+  if(topicIdx===HOST_TOPIC_IDX){
+    unit.lastTopic = topicIdx;
+    setupHostQuestion(topicIdx);
     return;
   }
   // ---- казино: вместо вопроса барабан (только битва с боссом, один раз за игру) ----
@@ -3596,6 +3785,7 @@ function setupQuestion(topicIdx, drawn){
   const cur = state.current;
   cur.mega = mega;
   cur.curse = curse;
+  cur.host = false;                             // обычный вопрос — кнопок ведущего нет
   cur.answered = false;
   cur.q = q;
   cur.topicIdx = topicIdx;
@@ -3612,6 +3802,7 @@ function setupQuestion(topicIdx, drawn){
   $("q-ai-label").classList.add("hidden");   // обычный вопрос — подписи DeepSeek нет
   $("q-card").classList.toggle("mega", mega);
   $("q-card").classList.remove("ai");
+  syncHostVisual();                             // снять метку/свечение ведущего, если был его вопрос
   if(mega) sfx.gong();   // глубокий гонг мегавопроса
   renderQFor();
   $("q-topic").innerHTML = '<span class="tc-emoji">'+TOPICS[topicIdx].emoji+'</span> '+esc(TOPICS[topicIdx].name);
@@ -3624,6 +3815,10 @@ function setupQuestion(topicIdx, drawn){
 /* ---- сложность справа сверху: только звёзды, без надписей «урон»/«риск» ---- */
 function renderQDiff(){
   const cur = state.current;
+  if(cur.host){
+    $("q-diff").innerHTML = '<span class="tc-emoji">🎙️</span> <span class="dmg-note">'+HOST_DMG+'/'+HOST_DMG+'</span>';
+    return;
+  }
   if(cur.ai){
     $("q-diff").innerHTML = '<span class="tc-emoji">🐋</span> <span class="dmg-note">100/100</span>';
     return;
@@ -3676,6 +3871,7 @@ function buildOptions(){
   opts.classList.add("hidden");
   $("q-next").classList.add("hidden");
   $("q-show").classList.remove("hidden");
+  $("q-verdict").classList.add("hidden");   // кнопки ведущего — только на его вопросах
   cur.revealed = false;   // ответы ещё не показаны → способности разрешены
   hideTimer();
 }
@@ -3688,7 +3884,7 @@ function renderAbilities(){
   const sp = cur ? speaker() : null;
   const shown = $("q-overlay").classList.contains("show");
   // способности работают только на обычном вопросе и только до «Показать ответы»
-  const special = !!(cur && (cur.mega || cur.curse || cur.ai));
+  const special = !!(cur && (cur.mega || cur.curse || cur.ai || cur.host));
   const revealed = !!(cur && cur.revealed);
   const canAct = !!(cur && shown && !cur.answered && !special && !revealed && sp && sp.ab);
   const isDef = !!(cur && cur.step==="defend");
@@ -3701,6 +3897,7 @@ function renderAbilities(){
     : cur && cur.mega ? "На мегавопросе способности недоступны"
     : cur && cur.curse ? "На вопросе-проклятии способности недоступны"
     : cur && cur.ai ? "На ИИ-вопросе способности недоступны"
+    : cur && cur.host ? "На вопросе ведущего способности недоступны"
     : "";
   // 🔀 Замена — другой вопрос (обычный, до показа ответов)
   set("ab-swap", canAct && sp.ab.swap,
@@ -3720,7 +3917,7 @@ function renderAbilities(){
 
 function useSwap(){
   const cur = state.current;
-  if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || cur.ai || !$("q-overlay").classList.contains("show")) return;
+  if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || cur.ai || cur.host || !$("q-overlay").classList.contains("show")) return;
   const sp = speaker();
   if(!sp || !sp.ab.swap) return;
   const d = cur.q.difficulty;
@@ -3749,7 +3946,7 @@ function useSwap(){
 
 function useBoost(){
   const cur = state.current;
-  if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || cur.ai || !$("q-overlay").classList.contains("show")) return;
+  if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || cur.ai || cur.host || !$("q-overlay").classList.contains("show")) return;
   const sp = speaker();
   if(!sp || !sp.ab.boost || cur.curse || cur.step==="defend" || state.phase!=="boss") return;  // «Азарт» — только против босса
   sp.ab.boost = false;
@@ -3762,7 +3959,7 @@ function useBoost(){
 
 function useGive(){
   const cur = state.current;
-  if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || cur.ai || !$("q-overlay").classList.contains("show")) return;
+  if(!cur || cur.answered || cur.revealed || cur.mega || cur.curse || cur.ai || cur.host || !$("q-overlay").classList.contains("show")) return;
   const sp = speaker();
   if(!sp || !sp.ab.give || state.phase!=="boss") return;
   const others = aliveUnits().filter(u=>u.id!==cur.attackerIdx);
@@ -3785,7 +3982,7 @@ function useGive(){
 }
 
 $("q-show").onclick = ()=>{
-  if(!state.current || state.current.answered) return;
+  if(!state.current || state.current.answered || state.current.host) return;
   $("q-opts").classList.remove("hidden");
   $("q-show").classList.add("hidden");
   state.current.revealed = true;   // ответы показаны → способности отключаются
@@ -3793,6 +3990,10 @@ $("q-show").onclick = ()=>{
   // у мегавопроса и вопроса от DeepSeek таймера нет, но защитник отвечает на новый вопрос — таймер идёт
   if((!state.current.mega && !state.current.ai) || state.current.step==="defend") startTimer();
 };
+
+// ---- вопрос ведущего: правильность ответа решает ведущий ----
+$("v-yes").onclick = ()=>hostVerdict(true);
+$("v-no").onclick  = ()=>hostVerdict(false);
 
 $("ab-swap").onclick = useSwap;
 $("ab-boost").onclick = useBoost;
@@ -3877,7 +4078,7 @@ function applyCasino(idx, at){
       sfx.wrong(); sfx.hit();
       toast('<span class="t-bad">💀 Казино:</span> '+esc(at.name)+' теряет <b>100</b> HP');
       floatDamage($("pcard-"+at.id), "-100", "dmg-red");
-      checkPlayerDead(at, "casino");
+      checkPlayerDead(at, "casino", {kind:"casino"});
       break;
     }
     case 3: { // урон боссу −100
@@ -3968,7 +4169,9 @@ function duelAttack(chosen, correct, prefix){
     }
     cur.q = drawn.q;
     cur.topicIdx = drawn.topicIdx;
+    cur.host = drawn.topicIdx===HOST_TOPIC_IDX;   // новый вопрос — возможно, уже не от ведущего (его колода кончилась)
     cur.missText = null;                 // новый вопрос — серых карточек нет
+    syncHostVisual();                    // метка и свечение — под тип нового вопроса
     $("q-topic").innerHTML = '<span class="tc-emoji">'+TOPICS[drawn.topicIdx].emoji+'</span> '+esc(TOPICS[drawn.topicIdx].name);
     $("q-text").textContent = drawn.q.text;
   }else{
@@ -3979,7 +4182,7 @@ function duelAttack(chosen, correct, prefix){
   // ---- шаг защитника: тот же вопрос (если атака мимо) или новый ----
   cur.step = "defend";
   cur.defenderSpeakerId = pickDefenderSpeaker();
-  buildOptions();             // варианты пересобраны без отметок и снова скрыты
+  buildAnswerUI();           // варианты пересобраны без отметок (или кнопки ведущего — на его вопросе)
   renderQFor();
   renderAbilities();          // в углу теперь способности защитника
   sfx.flip();
@@ -4075,7 +4278,8 @@ function resolveCorrect(){
   const cur = state.current;
   const mega = cur.mega;
   const curse = cur.curse;
-  const dmgBase = mega ? MEGA_DMG     // мегавопрос не удваивается в командном режиме
+  const dmgBase = cur.host ? HOST_DMG        // вопрос ведущего: урон ровно 200 (без множителей)
+    : mega ? MEGA_DMG     // мегавопрос не удваивается в командном режиме
     : (state.phase==="pvp" ? dmgPvpFor(cur.q.difficulty) : dmgBossFor(cur.q.difficulty));
   const dmg = (cur.boost && !curse) ? dmgBase*2 : dmgBase;   // «Азарт»: урон ×2 при верном ответе
   const sp = speaker();           // отвечающий игрок
@@ -4182,9 +4386,10 @@ function resolveWrong(prefix){
   const sp = speaker();           // отвечающий игрок
   const at = curUnit();           // боевая единица (игрок или команда)
   // урон, который получает единица: против босса — DMG_SELF, в Мордобе — DMG_PVP (×2 в командах)
-  const selfDmg = state.phase==="pvp" ? dmgPvpFor(cur.q.difficulty) : dmgSelfFor(cur.q.difficulty);
-  // ---- ярость босса: с шансом 5% за каждый неправильный ответ он удваивает урон ----
-  const dbl = state.phase==="boss" && Math.random() < BOSS_DOUBLE_CHANCE;
+  const selfDmg = cur.host ? HOST_DMG   // вопрос ведущего: ровно 200, без множителей и ярости
+    : state.phase==="pvp" ? dmgPvpFor(cur.q.difficulty) : dmgSelfFor(cur.q.difficulty);
+  // ---- ярость босса: с шансом 5% за каждый неправильный ответ он удваивает урон (вопросы ведущего не яростит) ----
+  const dbl = state.phase==="boss" && !cur.host && Math.random() < BOSS_DOUBLE_CHANCE;
   // ---- «Азарт» провален: вместо обычного риска ровно 200 (ярость может удвоить) ----
   const dmg = (cur.boost && !curse)
     ? ABILITY_FLAT_RISK * (dbl ? 2 : 1)
@@ -4243,16 +4448,26 @@ function resolveWrong(prefix){
   renderAbilities();
 }
 
-function checkPlayerDead(p, cause){   // p — боевая единица: игрок или команда
+/* ---- снимок текущего вопроса — для истории на итогах (от какого вопроса погиб / каким добил босса) ---- */
+function qSnap(){
+  const cur = state.current;
+  if(!cur || !cur.q) return null;
+  const t = TOPICS[cur.topicIdx];
+  return {emoji:t ? t.emoji : "❔", topic:t ? t.name : "?", text:cur.q.text || "", host:!!cur.host};
+}
+
+function checkPlayerDead(p, cause, qinfo){   // p — боевая единица: игрок или команда; qinfo — вопрос на момент смерти (по умолчанию — текущий)
   if(p.hp<=0 && p.alive){
     p.alive = false; p.hp = 0;
     p.deathCause = cause;
+    p.deathQ = qinfo!==undefined ? qinfo : qSnap();   // история для итогов
     p.eliminatedIn = state.phase==="boss" ? "I" : "II";
     if(p.members){ // команда погибла целиком — выбывают оба игрока
       p.members.forEach(pid=>{
         const m = state.players[pid];
         m.alive = false; m.hp = 0;
         m.deathCause = cause;
+        m.deathQ = p.deathQ;
         m.eliminatedIn = p.eliminatedIn;
         m.killedBy = p.killedBy;
       });
@@ -4280,7 +4495,7 @@ function bossRound2Strike(){
     const el = $("pcard-"+u.id);
     el?.classList.add("shake");
     setTimeout(()=>el?.classList.remove("shake"), 550);
-    checkPlayerDead(u, "boss");
+    checkPlayerDead(u, "boss", {kind:"strike"});
   });
   renderPlayers();
   showBanner("🔥", "КОНЕЦ II КРУГА",
@@ -4313,7 +4528,7 @@ function bossMassacre(){
   sfx.roar();
   victims.forEach(v=>{
     v.hp = 0;
-    checkPlayerDead(v, "boss");
+    checkPlayerDead(v, "boss", {kind:"massacre"});
     floatDamage($("pcard-"+v.id), "☠", "dmg-red");
     const el = $("pcard-"+v.id);
     el?.classList.add("shake");
@@ -4331,6 +4546,7 @@ function bossDefeated(){
   const killer = curUnit();   // игрок или команда, добившая босса
   state.bossKiller = killer.id;
   killer.points += BOSS_KILL_BONUS;
+  killer.bossKillQ = qSnap();               // каким вопросом добил босса — покажем на итогах
   sfx.bossDie();                          // гибель босса: рёв и грохот
   state.transitioning = true;             // на время анимации стол с темами заблокирован
   const bz = $("boss-zone");
@@ -4442,6 +4658,8 @@ function renderResults(finalists, defeat){
   };
 
   let html;
+  // клик по имени на итогах — история вопросов: от какого вопроса погиб и каким добил босса
+  const storyAttr = u => (!u.alive || state.bossKiller===u.id) ? ' data-story="'+u.id+'"' : '';
   if(isTeamMode()){
     // ---- командные итоги: баллы и статистика на команду ----
     const rows = state.teams.slice().sort((a,b)=> b.points-a.points || b.dmgDealt-a.dmgDealt);
@@ -4453,7 +4671,7 @@ function renderResults(finalists, defeat){
       const correct = members.reduce((s,m)=>s+m.correct,0);
       const answers = members.reduce((s,m)=>s+m.answers,0);
       const dmgPvp = t.dmgDealt - t.dmgBoss;
-      html += "<tr class='"+(t.alive?"":"dead-row")+"'>"+
+      html += "<tr class='"+(t.alive?"":"dead-row")+"'"+storyAttr(t)+">"+
         "<td class='place'>"+(i+1)+"</td>"+
         "<td class='name'>"+emojis+" <b>"+esc(t.name)+"</b><br><small>"+nicks+"</small>"+(state.bossKiller===t.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
         "<td><b>"+t.points+"</b></td><td>"+statusOf(t, true)+"</td>"+
@@ -4465,7 +4683,7 @@ function renderResults(finalists, defeat){
     html = "<tr><th>Место</th><th>Игрок</th><th>Очки</th><th>Статус</th><th>Урон боссу</th><th>Урон игрокам</th><th>Всего урона</th><th>Получено</th><th>Ответы</th></tr>";
     rows.forEach((p,i)=>{
       const dmgPvp = p.dmgDealt - p.dmgBoss;
-      html += "<tr class='"+(p.alive?"":"dead-row")+"'>"+
+      html += "<tr class='"+(p.alive?"":"dead-row")+"'"+storyAttr(p)+">"+
         "<td class='place'>"+(i+1)+"</td>"+
         "<td class='name' style='color:"+p.color+";--pencil:"+p.pencil+"'>"+p.avatar.emoji+" "+esc(p.name)+(state.bossKiller===p.id?' <span class="badge-boss">💀 босс</span>':'')+"</td>"+
         "<td><b>"+p.points+"</b></td><td>"+statusOf(p, false)+"</td>"+
@@ -4713,7 +4931,7 @@ function devUnitAction(heal){
     u.hp -= applied;
     u.dmgTaken += applied;
     floatDamage($("pcard-"+u.id), "-"+applied, "dmg-red");
-    if(u.hp<=0) checkPlayerDead(u, "dev");
+    if(u.hp<=0) checkPlayerDead(u, "dev", {kind:"dev"});
     toast('⚔ <span class="t-bad">'+esc(u.name)+' получает '+applied+' урона</span> ('+u.hp+'/'+u.maxHp+')');
   }
   renderPlayers();
@@ -5003,6 +5221,48 @@ $("again-btn").onclick = ()=>{
   // назад — в меню выбора режима
   backToMenu();
 };
+
+/* ---- итоги: клик по имени (погибший или добивший босса) — история вопросов ---- */
+$("stats-table").onclick = (e)=>{
+  const tr = e.target.closest("tr[data-story]");
+  if(!tr) return;
+  const u = units()[+tr.dataset.story];
+  if(u) showUnitStory(u);
+};
+function storyBlock(q){
+  if(!q) return "";
+  if(q.kind==="casino")   return '<div class="story-topic"><span class="tc-emoji">🎲</span> Вопрос-казино</div><div class="story-text">Вместо вопроса — колесо фортуны</div>';
+  if(q.kind==="strike")   return '<div class="story-topic"><span class="tc-emoji">🔥</span> Удар босса</div><div class="story-text">Босс обрушил удар по всем живым в конце II круга</div>';
+  if(q.kind==="massacre") return '<div class="story-topic"><span class="tc-emoji">👑</span> Зачистка III круга</div><div class="story-text">Босс забрал самых слабых</div>';
+  if(q.kind==="dev")      return '<div class="story-topic"><span class="tc-emoji">🛠</span> Режим разработчика</div><div class="story-text">Урон нанесён вручную из меню разработчика</div>';
+  return '<div class="story-topic"><span class="tc-emoji">'+q.emoji+'</span> '+esc(q.topic)+'</div>'
+    + '<div class="story-text">«'+esc(q.text)+'»</div>';
+}
+function showUnitStory(u){
+  const team = !!(u && u.members);
+  $("story-title").innerHTML = '<span class="tc-emoji">'+(team ? "🛡" : (u.avatar ? u.avatar.emoji : "❔"))+'</span> '+esc(u.name);
+  let body = "";
+  if(!u.alive){   // у выживших смертей нет — секции не будет (строка кликабельна только если добил босса)
+    const cause = u.deathCause;
+    const causeLabel = cause==="curse"   ? '☠ Вопрос-проклятие'
+      : cause==="casino" ? '🎲 Казино'
+      : cause==="boss"   ? '👹 Босс'
+      : cause==="own"    ? '⚔ Своя ошибка в Мордобое'
+      : cause==="dev"    ? '🛠 Режим разработчика'
+      : (cause ? '☠ Убит игроком: '+esc(cause) : '☠ Погиб');
+    body += '<div class="story-sec death"><h4>💀 От какого вопроса погиб</h4>'
+      + '<div class="story-cause">'+causeLabel+'</div>'
+      + storyBlock(u.deathQ) + '</div>';
+  }
+  if(u.bossKillQ){
+    body += '<div class="story-sec kill"><h4>👑 Каким вопросом добил босса</h4>'
+      + storyBlock(u.bossKillQ) + '</div>';
+  }
+  if(!body) body = '<div class="story-sec"><div class="story-text">Ничего особенного — этот игрок не погибал и босса не добивал.</div></div>';
+  $("story-body").innerHTML = body;
+  $("story-overlay").classList.add("show");
+  sfx.flip();
+}
 /* ============================================================
    МЕНЮ «⋯», НАСТРОЙКИ, ПРАВИЛА, ОФОРМЛЕНИЕ
    ============================================================ */
@@ -5078,6 +5338,56 @@ $("set-ai-test").onclick = async ()=>{
     toast('🐋 <span class="t-bad">Тест не прошёл:</span><br>'+esc(AI.lastError || (e && e.message) || "неизвестная ошибка"), 7000);
   }
   b.disabled = false; b.textContent = "🧪 Проверить";
+};
+
+// ---- вопрос от ведущего: переключатель темы и импорт своих вопросов (JSON) ----
+const HOSTQ_STORE_ON = "cbq-hostq", HOSTQ_STORE_LIST = "cbq-hostq-list";
+function hostEnabled(){ return store.get(HOSTQ_STORE_ON) !== "0"; }   // по умолчанию включена
+function setHostEnabled(v){ store.set(HOSTQ_STORE_ON, v ? "1" : "0"); renderHostSettings(); }
+function hostCustomList(){   // импортированные вопросы: [{"text":"..."}]
+  try{
+    const raw = store.get(HOSTQ_STORE_LIST);
+    if(!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.filter(q=>q && typeof q.text==="string" && q.text.trim()) : [];
+  }catch(e){ return []; }
+}
+function renderHostSettings(){
+  $("set-hostq").textContent = hostEnabled() ? "Вкл" : "Выкл";
+  const extra = hostCustomList().length;
+  $("hostq-count").textContent = "в колоде: "+(HOST_Q_DEFAULTS.length + extra)
+    + (extra ? " (встроенные + "+extra+" импорт.)" : " (встроенные)");
+}
+// разбор текста JSON-файла: массив строк | [{"text"}] | {"questions":[...]}; дубликаты отбрасываются
+function hostqImportText(text){
+  let list = [];
+  try{
+    const data = JSON.parse(String(text||""));
+    const arr = Array.isArray(data) ? data : (data && Array.isArray(data.questions) ? data.questions : null);
+    if(!arr) return {error:true};
+    list = arr.map(q => typeof q==="string" ? {text:q.trim()} : (q && typeof q.text==="string" ? {text:q.text.trim()} : null))
+              .filter(q=>q && q.text);
+  }catch(e){ return {error:true}; }
+  if(!list.length) return {error:true};
+  const before = hostCustomList();
+  const merged = before.concat(list.filter(q=>!before.some(x=>x.text===q.text)));
+  store.set(HOSTQ_STORE_LIST, JSON.stringify(merged));
+  renderHostSettings();
+  return {added: merged.length - before.length, total: HOST_Q_DEFAULTS.length + merged.length};
+}
+$("set-hostq").onclick = ()=> setHostEnabled(!hostEnabled());
+$("set-hostq-import").onclick = ()=> $("hostq-file").click();
+$("hostq-file").onchange = (e)=>{
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    const res = hostqImportText(String(r.result||""));
+    if(res.error) toast('⚠ <span class="t-bad">Вопросы не распознаны</span><br>Нужен JSON: массив строк или объектов {"text": "..."} (можно {"questions": [...]})', 6000);
+    else toast('<span class="t-good">🎙 Импортировано вопросов: '+res.added+'</span><br>Всего в колоде ведущего: '+res.total);
+  };
+  r.readAsText(f);
+  e.target.value = "";   // тот же файл можно выбрать повторно
 };
 
 // ---- меню «⋯» на главном экране ----
@@ -5231,7 +5541,7 @@ function stopRocket(){ clearTimeout(rocketTimer); rocketTimer = null; }
    — 1/2/3 — сложность; 1/2/3/4 и A/B/C/D (А/Б/В/Г) — вариант ответа
    — пробел: «Показать ответы», затем «Следующий ход»; после финала пробел молчит
    ============================================================ */
-function openSettings(){ $("dots-menu").classList.add("hidden"); renderAiSettings(); $("settings-overlay").classList.add("show"); }
+function openSettings(){ $("dots-menu").classList.add("hidden"); renderAiSettings(); renderHostSettings(); $("settings-overlay").classList.add("show"); }
 function closeSettings(){ $("settings-overlay").classList.remove("show"); }
 function inTypingField(e){
   const t = e.target;
@@ -5250,7 +5560,7 @@ document.addEventListener("keydown", (e)=>{
   if(inTypingField(e)) return;                        // ввод имён игроков/босса — клавиши не перехватываем
   const k = String(e.key||"").toLowerCase();
   if(e.key==="Escape"){                               // Esc: сначала закрыть открытое окно (сверху вниз), иначе «назад»
-    const top = ["dev-overlay","table-overlay","theme-overlay","rules-overlay","settings-overlay"].map(id=>$(id))
+    const top = ["story-overlay","dev-overlay","table-overlay","theme-overlay","rules-overlay","settings-overlay"].map(id=>$(id))
       .find(o=>o && o.classList.contains("show"));
     if(top){ top.classList.remove("show"); e.preventDefault(); return; }
     if(!$("screen-setup").classList.contains("hidden")){ backToMenu(); e.preventDefault(); return; }
@@ -5351,6 +5661,7 @@ applyTheme(store.get("cbq-theme") || "fantasy");   // вернуть сохра�
 setMuted(store.get("cbq-muted") === "1");          // вернуть сохранённый звук
 setBlur(store.get("cbq-blur") === "1");            // вернуть сохранённое размытие фона
 renderAiSettings();                                // вернуть состояние ИИ-вопросов (модель, вкл/выкл)
+renderHostSettings();                              // и состояние темы ведущего (вкл/выкл, счётчик колоды)
 
 </script>
 <!-- версия 1.0.0: маленький полупрозрачный логотип и подпись в левом нижнем углу -->
@@ -5369,7 +5680,7 @@ renderAiSettings();                                // вернуть состо�
     <rect x="4" y="4" width="112" height="146" rx="15" fill="url(#vbFace)" stroke="#2c3f73" stroke-width="6"/>
     <path d="M32 13C32 13 14 28 14 38.5c0 6 4.5 10.5 10.5 10.5 3 0 5.7-1.5 7.5-3.75 1.8 2.25 4.5 3.75 7.5 3.75 6 0 10.5-4.5 10.5-10.5C50 28 32 13 32 13z M27.5 46h9l2.5 8h-14z" fill="url(#vbPip)" transform="translate(19,34) scale(1.28)"/>
   </svg>
-  <span>Тёмные знания · v1.0.7</span>
+  <span>Тёмные знания · v1.0.8</span>
 </div>
 </body>
 </html>
