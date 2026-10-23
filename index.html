@@ -1153,7 +1153,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
     <span id="count-hp"></span>
   </div>
   <div class="nickname-grid" id="nick-grid"></div>
-  <input id="boss-name-input" maxlength="20" placeholder="Имя босса (или пусть сам себя назовёт)">
+  <input id="boss-name-input" maxlength="20" placeholder="Имя босса (или пусть назовёт себя сам по оформлению)">
   <button class="btn btn-ruby btn-big" id="start-btn">⚔ Начать битву</button>
 </div>
 
@@ -2038,7 +2038,24 @@ const STREAK_BONUS_DMG    = 300;  // размер бонуса серии
 const ABILITY_FLAT_RISK   = 200;  // урон себе при провале способности «Азарт»
 
 /* имена босса, если ведущий не ввёл своё */
-const BOSS_NAMES = ["Владыка тьмы", "Повелитель ужаса", "Лорд теней"];
+/* боссы по оформлению: если имя босса не задано, игра сама называет его одним из трёх
+   боссов текущей темы — и у каждого босса свой смайлик на карточке */
+const THEME_BOSSES = {
+  fantasy:  [ {name:"Лорд теней", emoji:"💀"}, {name:"Сумрак", emoji:"😈"}, {name:"Убийца смерти", emoji:"🎭"} ],
+  halloween:[ {name:"Всадник без головы", emoji:"🎃"}, {name:"Майкл Маерс", emoji:"🔪"}, {name:"Ведьминский шабаш", emoji:"🧙‍♀️"} ],
+  newyear:  [ {name:"Крампус", emoji:"👹"}, {name:"Гринч", emoji:"🧌"}, {name:"Призрак Грядущего Рождества", emoji:"👻"} ],
+  japan:    [ {name:"Сёгун", emoji:"🥷"}, {name:"Садако Ямамура", emoji:"🧕"}, {name:"Гасадокуро", emoji:"💀"} ],
+  stars:    [ {name:"Ксеноморф", emoji:"👽"}, {name:"Марсиянин", emoji:"🛸"}, {name:"Дарт Вейдер", emoji:"🤖"} ],
+  notebook: [ {name:"Ягами Лайт", emoji:"📓"}, {name:"Вовочка из 5 «Ъ»", emoji:"🧢"}, {name:"Лев Толстой", emoji:"👴"} ]
+};
+function currentThemeId(){   // текущее оформление (темы оформлены ниже — к моменту вызова они уже определены)
+  const t = document.documentElement.getAttribute("data-theme");
+  return (t && THEMES[t]) ? t : "fantasy";
+}
+function pickThemeBoss(){    // случайный босс текущего оформления: {name, emoji}
+  const pool = THEME_BOSSES[currentThemeId()] || THEME_BOSSES.fantasy;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
 
 /* сектора барабана казино (только битва с боссом) */
 const CASINO = [
@@ -3021,6 +3038,7 @@ function startGame(cfg){
     players, teams,
     boss:{hp:bossHp, maxHp:bossHp},
     bossName: cfg.bossName,
+    bossEmoji: cfg.bossEmoji || "💀",   // смайлик босса: из пула оформления или классический череп
     bossKiller:null,
     queue:[], queuePos:0,
     current:null,            // {attackerIdx, targetIdx|null, speakerId?, mega, answerIdx, q, answered, step}
@@ -3040,9 +3058,9 @@ function startGame(cfg){
   if(typeof aiLoading === "function") aiLoading(false);   // если в прошлой игре ждали DeepSeek — гасим экран ожидания
   newRound();
 }
-function newGame(names, bossName){ startGame({mode:"solo", names, bossName}); }         // одиночная игра
-function newQuickGame(names, bossName){ startGame({mode:"quick", names, bossName}); }   // быстрая игра (без сюрпризов)
-function newTeamGame(teamDefs, bossName){ startGame({mode:"team", teamDefs, bossName}); } // командная игра
+function newGame(names, bossName, bossEmoji){ startGame({mode:"solo", names, bossName, bossEmoji}); }         // одиночная игра
+function newQuickGame(names, bossName, bossEmoji){ startGame({mode:"quick", names, bossName, bossEmoji}); }   // быстрая игра (без сюрпризов)
+function newTeamGame(teamDefs, bossName, bossEmoji){ startGame({mode:"team", teamDefs, bossName, bossEmoji}); } // командная игра
 
 function makePool(n){
   const arr = [...Array(n).keys()];
@@ -4861,6 +4879,7 @@ function devRestore(snap){
   $("duel-zone").classList.toggle("hidden", bossPhase);
   $("duel-zone").style.display = bossPhase ? "none" : "flex";
   $("boss-name").textContent = state.bossName;
+  $("boss-emoji").textContent = state.bossEmoji || "💀";
   renderAll();
   devFillTargets();
 }
@@ -5163,7 +5182,11 @@ $("mode-quick").onclick = ()=>{ gameMode = "quick"; showSetupScreen(); };
 $("mode-team").onclick = ()=>{ gameMode = "team"; showSetupScreen(); };
 
 $("start-btn").onclick = ()=>{
-  const bossName = $("boss-name-input").value.trim() || BOSS_NAMES[Math.floor(Math.random()*BOSS_NAMES.length)];
+  // босс без своего имени берётся из пула текущего оформления (у каждого свой смайлик)
+  const customBoss = $("boss-name-input").value.trim();
+  const tb = pickThemeBoss();
+  const bossName = customBoss || tb.name;
+  const bossEmoji = customBoss ? "💀" : tb.emoji;   // своё имя — классический череп
   if(gameMode === "team"){
     const defs = [];
     for(let t=0;t<teamCount;t++){
@@ -5178,7 +5201,7 @@ $("start-btn").onclick = ()=>{
       if(seen[m]){ let k=2; while(seen[m+" ("+k+")"]) k++; m = m+" ("+k+")"; seen[m]=true; d.members[i]=m; }
       else seen[m]=true;
     }));
-    newTeamGame(defs, bossName);
+    newTeamGame(defs, bossName, bossEmoji);
   }else{
     const names = [];
     for(let i=0;i<playerCount;i++){
@@ -5189,8 +5212,8 @@ $("start-btn").onclick = ()=>{
       if(seen[names[i]]){ let k=2; while(seen[names[i]+" ("+k+")"]) k++; names[i]=names[i]+" ("+k+")"; }
       seen[names[i]] = true;
     }
-    if(gameMode==="quick") newQuickGame(names, bossName);
-    else newGame(names, bossName);
+    if(gameMode==="quick") newQuickGame(names, bossName, bossEmoji);
+    else newGame(names, bossName, bossEmoji);
   }
   // сброс игрового экрана от прошлой партии (иначе сразу откроется второй этап)
   $("screen-mode").classList.add("hidden");
@@ -5204,7 +5227,7 @@ $("start-btn").onclick = ()=>{
   $("duel-zone").classList.add("hidden");
   $("duel-zone").classList.remove("stage2-in");
   $("duel-zone").style.display = "none";
-  $("boss-emoji").textContent = "💀";
+  $("boss-emoji").textContent = state.bossEmoji || "💀";
   $("boss-name").textContent = state.bossName;
   $("screen-setup").classList.add("hidden");
   $("screen-results").classList.add("hidden");
@@ -5680,7 +5703,7 @@ renderHostSettings();                              // и состояние те
     <rect x="4" y="4" width="112" height="146" rx="15" fill="url(#vbFace)" stroke="#2c3f73" stroke-width="6"/>
     <path d="M32 13C32 13 14 28 14 38.5c0 6 4.5 10.5 10.5 10.5 3 0 5.7-1.5 7.5-3.75 1.8 2.25 4.5 3.75 7.5 3.75 6 0 10.5-4.5 10.5-10.5C50 28 32 13 32 13z M27.5 46h9l2.5 8h-14z" fill="url(#vbPip)" transform="translate(19,34) scale(1.28)"/>
   </svg>
-  <span>Тёмные знания · v1.0.8</span>
+  <span>Тёмные знания · v1.0.9</span>
 </div>
 </body>
 </html>
