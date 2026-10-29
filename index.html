@@ -666,7 +666,7 @@ html[data-theme="notebook"] [style*="--pencil"]{
   margin-bottom:12px; font-size:20px;
 }
 .set-note{font-size:14px; color:var(--muted); margin:0 2px 6px;}
-/* строка выбора модели Puter.js в настройках */
+/* строка выбора модели ProxyAPI в настройках */
 #ai-model-row{display:flex; gap:10px; margin:-4px 0 12px;}
 #hostq-row{display:flex; gap:10px; align-items:center; margin:-4px 0 8px;}
 #hostq-count{font-size:14px; color:var(--muted);}
@@ -728,7 +728,22 @@ html[data-theme="notebook"] [style*="--pencil"]{
   transition:transform .15s, box-shadow .15s;
 }
 #dev-fab:hover{transform:scale(1.07); box-shadow:0 0 22px rgba(232,194,104,.5);}
+/* две быстрые кнопки под фабом: убийство/воскрешение и замена вопроса */
+#dev-tools{
+  position:fixed; right:20px; bottom:90px; z-index:130;
+  display:flex; flex-direction:column; gap:10px;
+}
+#dev-tools button{
+  width:50px; height:50px; border-radius:50%; cursor:pointer;
+  background:linear-gradient(165deg,var(--panel-2),var(--panel));
+  border:2px solid var(--gold); color:var(--gold-bright); font-size:21px; line-height:1;
+  box-shadow:0 8px 20px rgba(0,0,0,.5);
+  transition:transform .15s, box-shadow .15s;
+}
+#dev-tools button:hover{transform:scale(1.08); box-shadow:0 0 18px rgba(232,194,104,.5);}
 #dev-overlay{z-index:140;}
+#dev-kill-overlay{z-index:145;}
+#dev-kill-overlay .dev-card{width:min(520px,95vw);}
 .dev-card{
   width:min(620px,95vw); max-height:92vh; overflow:auto; padding:24px 28px 28px;
   border-color:var(--violet); transform:translateY(18px) scale(.96); transition:transform .3s ease-out;
@@ -1074,17 +1089,9 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
 .badge-boss{background:rgba(232,194,104,.15); border:1px solid var(--gold); color:var(--gold); border-radius:9px; padding:2px 9px; font-size:13px; font-weight:700;}
 .results-actions{text-align:center; margin-top:32px;}
 </style>
-<!-- Puter.js — генерация «Вопроса от DeepSeek» без своего API-ключа (User-Pays).
-     Puter не работает с file:// (странице без origin) — при открытии файла напрямую
-     скрипт не подключается: событие просто не выпадает, без ошибок. Запуск с ИИ —
-     через «Запуск игры.bat» (локальный сервер http://localhost). -->
-<script>
-  if(location.protocol === "http:" || location.protocol === "https:"){
-    var puterScript = document.createElement("script");
-    puterScript.src = "https://js.puter.com/v2/";
-    document.head.appendChild(puterScript);
-  }
-</script>
+<!-- 🐋 Вопросы от DeepSeek генерируются напрямую через ProxyAPI (api.proxyapi.ru)
+     по API-ключу игрока — ключ вводится в ⚙️ Настройках и хранится на устройстве.
+     Без ключа событие просто не выпадает — без ошибок и диалогов. -->
 </head>
 <body>
 
@@ -1851,12 +1858,16 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
       <span>🐋 Вопросы от DeepSeek</span>
       <button class="btn" id="set-ai">Вкл</button>
     </div>
-    <div id="ai-model-row">
-      <input type="text" id="ai-model" placeholder="модель: deepseek/deepseek-v4.1-flash (по умолчанию)" autocomplete="off" spellcheck="false">
-      <button class="btn" id="set-ai-model" title="Сохранить модель; пустое поле — вернуть модель по умолчанию">💾 Сохранить</button>
-      <button class="btn" id="set-ai-test" title="Отправить тестовый запрос к DeepSeek через Puter.js">🧪 Проверить</button>
+    <div id="ai-key-row">
+      <input type="password" id="ai-key" placeholder="API-ключ ProxyAPI (sk-…, console.proxyapi.ru)" autocomplete="off" spellcheck="false">
+      <button class="btn" id="set-ai-key" title="Сохранить API-ключ на этом устройстве; пустое поле — стереть ключ">💾 Ключ</button>
     </div>
-    <div class="set-note">🐋 Раз за игру (только в битве с Боссом) может выпасть «Вопрос от DeepSeek»: без уровня сложности и без таймера, верно — Боссу −100, неверно — игроку −100. Вопрос генерирует и перепроверяет модель DeepSeek через <b>Puter.js</b> — <b>без API-ключа и баланса</b> (запросы оплачивает аккаунт Puter; при первом запросе может открыться окно входа в Puter — разрешите его). Нужен интернет. <b>Важно:</b> Puter не работает при открытии файла напрямую (file://) — для ИИ-вопросов запускайте игру через «<b>Запуск игры.bat</b>» (локальный сервер, всё в той же папке); двойной клик по index.html работает как раньше, только без ИИ-вопросов. Если запрос не прошёл, показывается причина, а вопрос идёт обычным путём.</div>
+    <div id="ai-model-row">
+      <input type="text" id="ai-model" placeholder="модель: xiaomi/mimo-v2.6-flash (по умолчанию)" autocomplete="off" spellcheck="false">
+      <button class="btn" id="set-ai-model" title="Сохранить модель; пустое поле — вернуть модель по умолчанию">💾 Модель</button>
+      <button class="btn" id="set-ai-test" title="Отправить тестовый запрос к ProxyAPI по вашему ключу">🧪 Проверить</button>
+    </div>
+    <div class="set-note">🐋 Раз за игру (только в битве с Боссом) может выпасть «Вопрос от DeepSeek»: без уровня сложности и без таймера, верно — Боссу −100, неверно — игроку −100. Вопрос генерирует и перепроверяет нейросеть через <b>ProxyAPI</b> (console.proxyapi.ru) по вашему <b>API-ключу</b> — ключ хранится <b>только на этом устройстве</b>, вводится один раз. По умолчанию модель <b>xiaomi/mimo-v2.6-flash</b>; в поле можно указать любую другую модель из каталога ProxyAPI. В игре вопрос по-прежнему подписывается «Вопрос от DeepSeek». Нужен интернет и непустой баланс ProxyAPI. Если браузер заблокирует прямой запрос (CORS) — запустите игру через «<b>Запуск игры.bat</b>» или откройте онлайн-версию. Если запрос не прошёл, показывается причина, а вопрос идёт обычным путём.</div>
     <div class="set-row">
       <span>🎙 Вопросы от ведущего</span>
       <button class="btn" id="set-hostq">Вкл</button>
@@ -1894,7 +1905,7 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
         <li><b>☠ Вопрос-проклятие</b> (один раз за игру): верно — жертва (Босс или цель) восстанавливает +100; неверно — проклятие обрушивается сразу на ВСЕХ живых: −100 каждому.</li>
         <li><b>👹 Ярость Босса</b>: с шансом 5% за каждый неправильный ответ Босс <b>удваивает</b> урон ошибшемуся (слышен рёв, всплывает «БОСС РАЗЪЯРЁН»).</li>
         <li><b>🎰 Казино</b> (один раз за игру, только против Босса): вместо вопроса — колесо фортуны: исцеление, урон, пропуск хода, удар по Боссу или по случайному сопернику…</li>
-        <li><b>🐋 Вопрос от DeepSeek</b> (один раз за игру, только против Босса, только при наличии интернета): вместо выбора сложности — вопрос, который генерирует и перепроверяет сама нейросеть DeepSeek по выбранной теме: 4 варианта, ровно один верный, <b>без уровня сложности и без таймера</b>. <b>Верно</b> → Босс теряет 100; <b>неверно</b> → игрок получает 100. Способности на нём недоступны.</li>
+        <li><b>🐋 Вопрос от DeepSeek</b> (один раз за игру, только против Босса, при наличии интернета и API-ключа ProxyAPI): вместо выбора сложности — вопрос, который генерирует и перепроверяет нейросеть по выбранной теме: 4 варианта, ровно один верный, <b>без уровня сложности и без таймера</b>. <b>Верно</b> → Босс теряет 100; <b>неверно</b> → игрок получает 100. Способности на нём недоступны.</li>
         <li><b>⚡ Серия</b>: пять верных ответов подряд — с шансом 5% Босс вместе с пятым ударом получает ещё +300 урона. Считаются только обычные вопросы.</li>
         <li><b>🔥 Конец II круга</b>: если Босс ещё цел, он обрушивает удар по всем живым: −50 каждому (пулу каждой команды −100).</li>
         <li><b>🌕 Кровавая луна</b> (начало II круга, только в Классике и Войне гильдий; шанс 50% — может не быть за игру вовсе): пока длится событие, <b>весь урон ×1.2</b> — и босса, и игроков (кроме мега, проклятия и казино); экран плавно наливается кровью (отдельной луны на фоне нет — только красный оттенок), луна темы краснеет, огонь тыкв становится красным. С началом III круга всё возвращается в норму.</li>
@@ -1962,6 +1973,10 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
 
 <!-- ================= РЕЖИМ РАЗРАБОТЧИКА (Ctrl+M) ================= -->
 <button id="dev-fab" class="hidden" title="Режим разработчика (Ctrl+M)">🛠️</button>
+<div id="dev-tools" class="hidden">
+  <button id="dev-kill" title="Мгновенно убить или воскресить с полным HP выбранного игрока или Босса">☠️</button>
+  <button id="dev-reroll" title="Заменить текущий вопрос на другой той же темы и сложности">🔀</button>
+</div>
 <div id="dev-overlay" class="overlay">
   <div class="card ornate dev-card">
     <div class="modal-title">🛠️ Режим разработчика</div>
@@ -1997,6 +2012,14 @@ table.stats td.place{font-weight:800; font-family:'Tagesschrift','Georgia',serif
     <div class="dev-row"><button class="btn btn-ruby" data-close>✕ Закрыть</button></div>
   </div>
 </div>
+<div id="dev-kill-overlay" class="overlay">
+  <div class="card ornate dev-card">
+    <div class="modal-title">☠️ Убить или воскресить</div>
+    <div class="set-note">Клик по цели: живой <b>погибает</b>, выбывший <b>воскресает с полным HP</b>. Босс — только в его фазе (убитый босс побеждается сразу, добившим считается текущий отвечающий).</div>
+    <div class="dev-row" id="dev-kill-list"></div>
+    <div class="dev-row"><button class="btn btn-ruby" data-close>✕ Закрыть</button></div>
+  </div>
+</div>
 
 <div id="toast"></div>
 
@@ -2019,7 +2042,7 @@ const CURSE_CHANCE    = 0.06;  // шанс вопроса-проклятия (о
 const CASINO_CHANCE   = 0.07;  // шанс казино (только в битве с боссом, один раз за игру)
 const AI_CHANCE       = 0.08;  // шанс «Вопроса от DeepSeek» (только битва с боссом, один раз за игру)
 const AI_DMG          = 100;   // вопрос ИИ: верно — боссу −100, неверно — игроку −100 (ровно, без множителей)
-const AI_TIMEOUT      = 60000; // таймаут одного запроса к Puter.js, мс (первый запрос может ждать окно входа в Puter)
+const AI_TIMEOUT      = 60000; // таймаут одного запроса к ProxyAPI, мс
 const SPECIAL_HOLD    = 3;     // столько первых вопросов игры — точно без особых событий (мега/проклятье/казино)
 const SPECIAL_RAMP    = 6;     // и столько ещё — шанс особых плавно растёт от половины базового до полного
 const BLOOD_CHANCE    = 0.5;   // шанс, что в начале II круга взойдёт Кровавая луна (может не быть за игру)
@@ -3449,59 +3472,86 @@ function specialChance(base){
 
 /* ============================================================
    🐋 ВОПРОС ОТ DEEPSEEK: один раз за игру, только в битве с боссом,
-   только при интернете. Генерация через Puter.js (модель DeepSeek,
-   без своего API-ключа и баланса — User-Pays) + самопроверка.
+   только при интернете. Генерация через ProxyAPI (api.proxyapi.ru)
+   по API-ключу игрока + самопроверка. В игре подписывается «DeepSeek».
    ============================================================ */
 const AI = {
   genId:0,                                        // защита от «поздних» ответов (смена хода/новая игра)
   lastError:"",                                   // последняя причина сбоя — показывается в тосте
 
   online(){ try{ return navigator.onLine !== false; }catch(e){ return true; } },   // есть ли интернет
-  available(){                                    // Puter.js загрузился (офлайн его скрипт не приходит)
-    try{ return typeof puter !== "undefined" && !!puter && puter.ai && typeof puter.ai.chat === "function"; }
+  available(){                                    // браузер умеет fetch (в файлах старых браузеров события не будет)
+    try{ return typeof fetch === "function"; }
     catch(e){ return false; }
   },
-  ready(){ return aiEnabled() && this.available() && this.online(); },
+  ready(){ return aiEnabled() && !!aiKey() && this.available() && this.online(); },
 
-  /* ---- достать текст из ответа Puter.js (строка или массив блоков) ---- */
+  /* ---- достать текст из ответа OpenAI-формата (ProxyAPI) ---- */
   extract(resp){
     if(typeof resp === "string") return resp;
     if(!resp || typeof resp !== "object") return "";
-    const c = (resp.message && resp.message.content != null) ? resp.message.content
+    const c = (resp.choices && resp.choices[0] && resp.choices[0].message) ? resp.choices[0].message.content
+            : (resp.message && resp.message.content != null) ? resp.message.content
             : (resp.content != null) ? resp.content : resp.text;
     if(typeof c === "string") return c;
     if(Array.isArray(c)) return c.map(b=> (b && (b.text != null ? b.text : b.content)) || "").join("");
     return "";
   },
 
-  /* ---- один запрос к Puter.js; при любой ошибке — reject, причина в AI.lastError ---- */
+  /* ---- человекочитаемая причина по HTTP-коду ProxyAPI ---- */
+  errMsg(status, j){
+    const detail = (j && ((j.detail && String(j.detail)) || (j.error && j.error.message))) || "";
+    const base = status===401 ? "неверный API-ключ (401)"
+      : status===402 ? "недостаточно средств на балансе ProxyAPI (402)"
+      : status===403 ? "ключу не разрешена эта модель или IP (403)"
+      : status===404 ? "модель не найдена (404) — проверьте её название"
+      : status===429 ? "слишком частые запросы — лимит (429)"
+      : status>=500 ? "ProxyAPI временно недоступен ("+status+")"
+      : "ошибка "+status;
+    return base + (detail && !/^\s*$/.test(detail) ? " · "+detail : "");
+  },
+
+  /* ---- один запрос к ProxyAPI (OpenAI-совместимый chat/completions) ---- */
   ask(messages, temperature){
+    const key = aiKey();
+    if(!key){
+      this.lastError = "нет API-ключа ProxyAPI — введите его в ⚙️ Настройках";
+      return Promise.reject(new Error(this.lastError));
+    }
     const ctrl = (typeof AbortController !== "undefined") ? new AbortController() : null;
     let timer = null;
-    const timeout = new Promise((_, reject)=>{        // страховка, если puter не поддерживает signal
+    const timeout = new Promise((_, reject)=>{        // страховка: не ждём вечно
       timer = setTimeout(()=>{
         if(ctrl){ try{ ctrl.abort(); }catch(e){} }
         reject(new Error("__timeout__"));
       }, AI_TIMEOUT);
     });
-    const call = Promise.resolve().then(()=> puter.ai.chat(messages, {
-      model: aiModel(), temperature, signal: ctrl ? ctrl.signal : undefined
-    }));
+    const call = fetch(AI_BASE, {
+      method:"POST",
+      headers:{"Content-Type":"application/json", "Authorization":"Bearer "+key},
+      body: JSON.stringify({model:aiModel(), messages:messages, temperature:temperature}),
+      signal: ctrl ? ctrl.signal : undefined
+    }).then(resp=>
+      resp.json().catch(()=>({})).then(j=>{
+        if(!resp.ok) throw new Error(AI.errMsg(resp.status, j));
+        return j;
+      })
+    );
     return Promise.race([call, timeout])
       .then(resp=>{
         clearTimeout(timer);
         const text = AI.extract(resp);
-        if(!text) throw new Error("пустой ответ DeepSeek");
+        if(!text) throw new Error("пустой ответ модели");
         AI.lastError = "";
         return text;
       })
       .catch(e=>{
         clearTimeout(timer);
-        let msg = (e && (e.name==="AbortError" || e.message==="__timeout__"))
+        const msg = (e && (e.name==="AbortError" || e.message==="__timeout__"))
           ? "DeepSeek молчит дольше "+Math.round(AI_TIMEOUT/1000)+" секунд"
-          : (e && e.message) ? e.message : "ошибка Puter.js";
-        if(/auth|sign|login|unauthorized|401|403|account|permission/i.test(msg))
-          msg += " · нужен вход в аккаунт Puter — разрешите окно входа";
+          : (e && e.message==="Failed to fetch")
+          ? "нет сети или браузер заблокировал запрос (CORS) — попробуйте «Запуск игры.bat» или онлайн-версию"
+          : (e && e.message) ? e.message : "ошибка запроса к ProxyAPI";
         AI.lastError = msg;
         throw e;
       });
@@ -3735,7 +3785,7 @@ function pickTopic(topicIdx){
   }
   // ---- казино: вместо вопроса барабан (только битва с боссом, один раз за игру) ----
   if(state.phase==="boss" && state.mode!=="quick" && !state.casinoUsed && Math.random() < specialChance(CASINO_CHANCE)){ startCasino(topicIdx); return; }
-  // ---- вопрос от DeepSeek: один раз за игру, только против босса и только при интернете (Puter.js) ----
+  // ---- вопрос от DeepSeek: один раз за игру, только против босса и только при интернете и ключе (ProxyAPI) ----
   if(state.phase==="boss" && state.mode!=="quick" && !state.aiUsed && AI.ready()
      && Math.random() < specialChance(AI_CHANCE)){ startAIQuestion(topicIdx); return; }
   // ---- сначала игрок выбирает сложность ----
@@ -4842,7 +4892,11 @@ function devBattle(){ return !!(state && state.phase!=="end" && !$("screen-game"
 function devSyncUi(){
   const show = DEV.on && devBattle();
   $("dev-fab").classList.toggle("hidden", !show);
-  if(!show) $("dev-overlay").classList.remove("show");
+  $("dev-tools").classList.toggle("hidden", !show);
+  if(!show){
+    $("dev-overlay").classList.remove("show");
+    $("dev-kill-overlay").classList.remove("show");
+  }
 }
 /* Ctrl+M: включить/выключить режим (работает только во время боя) */
 function toggleDev(){
@@ -4870,7 +4924,7 @@ function devRemoveDrawn(list){
 /* восстановить состояние из снимка и синхронизировать с ним экран */
 function devRestore(snap){
   state = JSON.parse(snap);
-  ["q-overlay","diff-overlay","banner-overlay","casino-overlay","ai-loading"].forEach(id=>$(id).classList.remove("show"));
+  ["q-overlay","diff-overlay","banner-overlay","casino-overlay","dev-kill-overlay","ai-loading"].forEach(id=>$(id).classList.remove("show"));
   hideTimer();
   document.documentElement.setAttribute("data-blood", state.bloodMoon ? "on" : "off");
   $("topic-table").classList.toggle("locked", !!state.transitioning);
@@ -5002,6 +5056,109 @@ function devFillTargets(){
       + '<br>Урон и лечение применяются сразу. «На ход назад» отменяет последний ответ — достанется новый вопрос. '
       + '«В начало круга» отменяет все ходы круга (HP как в начале круга, вопросы новые, казино/супервопрос/проклятие смогут выпасть снова).'
     : "";
+}
+
+/* ☠️/❤️ мгновенное убийство и воскрешение: список целей (игроки/команды + Босс) */
+function devKillList(){
+  const list = $("dev-kill-list");
+  list.innerHTML = "";
+  if(!state) return;
+  units().forEach(u=>{
+    const b = document.createElement("button");
+    b.className = "btn";
+    b.innerHTML = (u.alive ? "☠ Убить " : "❤ Воскресить ") + esc(u.name)
+      + " <small>("+u.hp+"/"+u.maxHp+" HP)</small>";
+    b.onclick = ()=> devKillToggle(u.id);
+    list.appendChild(b);
+  });
+  if(state.phase==="boss"){
+    const b = document.createElement("button");
+    b.className = "btn";
+    b.innerHTML = (state.boss.hp>0 ? "☠ Убить " : "❤ Воскресить ") + esc(state.bossName)
+      + " <small>("+state.boss.hp+"/"+state.boss.maxHp+" HP)</small>";
+    b.onclick = devKillBoss;
+    list.appendChild(b);
+  }
+}
+function devKillToggle(id){
+  if(!devBattle()) return;
+  const u = units()[id];
+  if(!u) return;
+  if(u.alive){
+    u.hp = 0;
+    checkPlayerDead(u, "dev", {kind:"dev"});
+    floatDamage($("pcard-"+u.id), "☠", "dmg-red");
+    toast('☠ <span class="t-bad">'+esc(u.name)+' убит</span> режимом разработчика');
+  }else{
+    u.hp = u.maxHp; u.alive = true; u.deathCause = null; u.eliminatedIn = null;
+    if(u.members) u.members.forEach(pid=>{   // команда воскресает целиком
+      const m = state.players[pid];
+      m.alive = true; m.hp = m.maxHp; m.deathCause = null; m.eliminatedIn = null;
+    });
+    floatDamage($("pcard-"+u.id), "+"+u.maxHp, "dmg-green");
+    toast('❤ <span class="t-good">'+esc(u.name)+' воскрес с полным HP</span> ('+u.hp+'/'+u.maxHp+')');
+  }
+  renderPlayers();
+  if(state.phase==="pvp") renderDuelZone();
+  devKillList(); devFillTargets();
+}
+function devKillBoss(){
+  if(!devBattle() || state.phase!=="boss") return;
+  const b = state.boss;
+  if(b.hp>0){
+    b.hp = 0;
+    renderBossZone();
+    toast('☠ <span class="t-bad">'+esc(state.bossName)+' убит</span> режимом разработчика');
+    if(state.current && state.current.attackerIdx!=null) bossDefeated();   // добившим считается отвечающий
+  }else{
+    b.hp = b.maxHp;
+    renderBossZone();
+    toast('❤ <span class="t-good">'+esc(state.bossName)+' воскрес с полным HP</span> ('+b.hp+'/'+b.maxHp+')');
+  }
+  devKillList(); devFillTargets();
+}
+/* 🔀 замена текущего вопроса на другой из той же темы и той же сложности */
+function devReroll(){
+  if(!devBattle()) return;
+  const cur = state.current;
+  if(state.transitioning || state.pendingTopic!=null){ toast("⏳ Дождитесь окончания анимации"); return; }
+  if(!cur || cur.answered || !$("q-overlay").classList.contains("show")){
+    toast('🔀 Сейчас нет открытого вопроса для замены'); return;
+  }
+  const t = cur.topicIdx;
+  // ---- ИИ-вопрос: просим модель придумать новый (сложности у него нет) ----
+  if(cur.ai){
+    const genId = ++AI.genId;
+    aiLoading(true, TOPICS[t].name);
+    AI.gen(TOPICS[t].name).then(q=>{
+      aiLoading(false);
+      if(genId!==AI.genId || state.current!==cur || cur.answered) return;
+      cur.q = {text:q.text, options:q.options, answer:q.answer};
+      $("q-text").textContent = q.text;
+      buildOptions(); renderAbilities();
+      toast('<span class="t-good">🔀 Новый вопрос</span> от DeepSeek'); sfx.flip();
+    }, ()=>{
+      aiLoading(false);
+      toast('🐋 <span class="t-bad">DeepSeek не ответил</span> — '+esc(AI.lastError || "причина сбоя")+' — вопрос остался прежний', 6000);
+    });
+    return;
+  }
+  // ---- обычный или ведущий: берём другую карту той же темы и сложности ----
+  const drawn = cur.host ? drawQuestion(t, null)
+                         : (drawQuestion(t, cur.q.difficulty) || drawQuestion(t, null));
+  if(!drawn){ toast('<span class="t-bad">В этой колоде больше нет подходящих вопросов</span>'); return; }
+  cur.q = drawn.q;
+  cur.missText = null;         // новый вопрос — «призрак» промаха защитника не показывается
+  if(cur.step !== "defend"){   // у защиты урон считается от исходного вопроса атаки
+    cur.dmg = cur.mega ? MEGA_DMG
+      : (state.phase==="pvp" ? dmgPvpFor(drawn.q.difficulty) : dmgBossFor(drawn.q.difficulty));
+  }
+  $("q-text").textContent = drawn.q.text;
+  renderQDiff();
+  buildAnswerUI();             // варианты (или кнопки ведущего) заново — ответ снова скрыт
+  renderAbilities();
+  toast('<span class="t-good">🔀 Вопрос заменён</span> — другая карта той же темы и сложности');
+  sfx.flip();
 }
 
 /* ============================================================
@@ -5321,18 +5478,31 @@ function setBlur(v){
 }
 $("set-blur").onclick = ()=> setBlur(!blurred);
 
-// ---- вопросы от DeepSeek: переключатель и модель Puter.js (без API-ключа) ----
-const AI_STORE_MODEL = "cbq-ai-model", AI_STORE_ON = "cbq-ai";
-const AI_DEFAULT_MODEL = "deepseek/deepseek-v4.1-flash";   // модель DeepSeek через Puter.js
+// ---- вопросы от DeepSeek: переключатель, API-ключ ProxyAPI и модель ----
+const AI_STORE_MODEL = "cbq-ai-model", AI_STORE_ON = "cbq-ai", AI_STORE_KEY = "cbq-ai-key";
+const AI_DEFAULT_MODEL = "xiaomi/mimo-v2.6-flash";   // модель по умолчанию (ProxyAPI)
+const AI_BASE = "https://api.proxyapi.ru/v1/chat/completions";
 function aiEnabled(){ return store.get(AI_STORE_ON) !== "0"; }        // по умолчанию включено
+function aiKey(){ return String(store.get(AI_STORE_KEY) || "").trim(); }
 function aiModel(){ return String(store.get(AI_STORE_MODEL) || "").trim() || AI_DEFAULT_MODEL; }
 function setAiEnabled(v){ store.set(AI_STORE_ON, v ? "1" : "0"); renderAiSettings(); }
 function renderAiSettings(){
   $("set-ai").textContent = aiEnabled() ? "Вкл" : "Выкл";
   const m = String(store.get(AI_STORE_MODEL) || "").trim();
   $("ai-model").placeholder = m ? "модель: "+m : "модель: "+AI_DEFAULT_MODEL+" (по умолчанию)";
+  const k = aiKey();
+  $("ai-key").placeholder = k ? "ключ сохранён: "+k.slice(0,5)+"••••"+k.slice(-4) : "API-ключ ProxyAPI (sk-…, console.proxyapi.ru)";
 }
 $("set-ai").onclick = ()=> setAiEnabled(!aiEnabled());
+$("set-ai-key").onclick = ()=>{
+  const v = $("ai-key").value.trim();
+  $("ai-key").value = "";
+  store.set(AI_STORE_KEY, v || "");                // пустой ввод — стереть ключ
+  toast(v ? '<span class="t-good">🐋 API-ключ сохранён</span> — ИИ-вопросы готовы'
+          : "API-ключ стёрт — без него ИИ-вопросы не выпадают");
+  renderAiSettings();
+};
+$("ai-key").addEventListener("keydown", e=>{ if(e.key==="Enter") $("set-ai-key").click(); });
 $("set-ai-model").onclick = ()=>{
   const v = $("ai-model").value.trim();
   $("ai-model").value = "";
@@ -5342,14 +5512,10 @@ $("set-ai-model").onclick = ()=>{
   renderAiSettings();
 };
 $("ai-model").addEventListener("keydown", e=>{ if(e.key==="Enter") $("set-ai-model").click(); });
-// ---- тестовый запрос: связь с Puter.js и ответ модели DeepSeek ----
+// ---- тестовый запрос: связь с ProxyAPI по вашему ключу ----
 $("set-ai-test").onclick = async ()=>{
-  if(location.protocol === "file:"){
-    toast('🐋 <span class="t-bad">Файл открыт напрямую (file://)</span><br>Puter.js требует origin — запустите игру через «<b>Запуск игры.bat</b>» (или хостинг), и ИИ-вопросы заработают без ключа', 8000);
-    return;
-  }
-  if(!AI.available()){
-    toast('🐋 <span class="t-bad">Puter.js не загрузился</span><br>Нужен интернет — обновите страницу (F5)', 6000);
+  if(!aiKey()){
+    toast('🐋 <span class="t-bad">Нет API-ключа</span><br>Вставьте ключ ProxyAPI (sk-…) в поле выше — он хранится только на этом устройстве', 7000);
     return;
   }
   const b = $("set-ai-test");
@@ -5455,6 +5621,8 @@ $("lb-file").onchange = (e)=>{
 
 // ---- режим разработчика: кнопка в углу, панель, урон/хил, отмена ----
 $("dev-fab").onclick = ()=>{ if(!DEV.on) return; devFillTargets(); $("dev-overlay").classList.add("show"); };
+$("dev-kill").onclick = ()=>{ if(!DEV.on) return; devKillList(); $("dev-kill-overlay").classList.add("show"); };
+$("dev-reroll").onclick = ()=>{ if(!DEV.on) return; devReroll(); };
 $("dev-dmg").onclick      = ()=> devUnitAction(false);
 $("dev-heal").onclick     = ()=> devUnitAction(true);
 $("dev-boss-dmg").onclick = ()=> devBossAction(false);
@@ -5584,7 +5752,7 @@ document.addEventListener("keydown", (e)=>{
   if(inTypingField(e)) return;                        // ввод имён игроков/босса — клавиши не перехватываем
   const k = String(e.key||"").toLowerCase();
   if(e.key==="Escape"){                               // Esc: сначала закрыть открытое окно (сверху вниз), иначе «назад»
-    const top = ["story-overlay","dev-overlay","table-overlay","theme-overlay","rules-overlay","settings-overlay"].map(id=>$(id))
+    const top = ["story-overlay","dev-kill-overlay","dev-overlay","table-overlay","theme-overlay","rules-overlay","settings-overlay"].map(id=>$(id))
       .find(o=>o && o.classList.contains("show"));
     if(top){ top.classList.remove("show"); e.preventDefault(); return; }
     if(!$("screen-setup").classList.contains("hidden")){ backToMenu(); e.preventDefault(); return; }
@@ -5598,7 +5766,8 @@ document.addEventListener("keydown", (e)=>{
   // открыто любое меню (Настройки/Правила/Оформление/Лидеры/Разработчик) — игровые клавиши молчат
   if($("settings-overlay").classList.contains("show") || $("rules-overlay").classList.contains("show")
      || $("theme-overlay").classList.contains("show") || $("table-overlay").classList.contains("show")
-     || $("dev-overlay").classList.contains("show") || $("ai-loading").classList.contains("show")) return;   // пауза DeepSeek — тоже молчим
+     || $("dev-overlay").classList.contains("show") || $("dev-kill-overlay").classList.contains("show")
+     || $("ai-loading").classList.contains("show")) return;   // пауза DeepSeek — тоже молчим
   if($("diff-overlay").classList.contains("show")){    // выбор сложности: клавиши 1/2/3 (и A/B/C/D)
     if(idx>=0 && idx<=2){
       const b = $("diff-"+(idx+1));
@@ -5704,7 +5873,7 @@ renderHostSettings();                              // и состояние те
     <rect x="4" y="4" width="112" height="146" rx="15" fill="url(#vbFace)" stroke="#2c3f73" stroke-width="6"/>
     <path d="M32 13C32 13 14 28 14 38.5c0 6 4.5 10.5 10.5 10.5 3 0 5.7-1.5 7.5-3.75 1.8 2.25 4.5 3.75 7.5 3.75 6 0 10.5-4.5 10.5-10.5C50 28 32 13 32 13z M27.5 46h9l2.5 8h-14z" fill="url(#vbPip)" transform="translate(19,34) scale(1.28)"/>
   </svg>
-  <span>Тёмные знания · v1.0.10</span>
+  <span>Тёмные знания · v1.0.11</span>
 </div>
 </body>
 </html>
